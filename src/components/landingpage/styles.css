@@ -1,0 +1,19 @@
+h1,
+p {
+  font-family: "Onest", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%;
+}
+
+h1 {
+  font-size: 3rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%;
+}
+
+span {
+  color: #52601a;
+}

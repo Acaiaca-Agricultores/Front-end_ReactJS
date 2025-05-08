@@ -1,25 +1,45 @@
 import React from "react";
+import { Button } from "@chakra-ui/react";
+import Logo from "../../assets/logo_semfundo.png";
+
 import "./style.css";
+import "../../global-styles.css";
 
 const Header = () => {
   return (
     <header>
-      <img src="/src/assets/logo_semfundo.png" alt="" />
+      <img src={Logo} alt="" />
       <nav>
         <ul className="flex space-x-4">
           <li>
-            <a href="#home">Inicio</a>
+            <a href="#home">
+              <p>Inicio</p>
+            </a>
           </li>
           <li>
-            <a href="#about">Sobre</a>
+            <a href="#about">
+              <p>Sobre</p>
+            </a>
           </li>
           <li>
-            <a href="#menu">Plataforma</a>
+            <a href="#menu">
+              <p>Plataforma</p>
+            </a>
           </li>
         </ul>
       </nav>
       <div className="button-group">
-        <button>Login/Cadastro</button>
+        <Button
+          color={"white"}
+          background={"#52601A"}
+          borderRadius={"none"}
+          fontFamily={"Onest"}
+          _hover={{
+            background: "#c0ab8e",
+          }}
+        >
+          Login / Registrar
+        </Button>
       </div>
     </header>
   );
