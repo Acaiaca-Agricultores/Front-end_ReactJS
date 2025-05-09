@@ -34,6 +34,7 @@ const Header = () => {
           background={"#52601A"}
           borderRadius={"none"}
           fontFamily={"Onest"}
+          padding={"0.75rem 1.25rem"}
           _hover={{
             background: "#c0ab8e",
           }}

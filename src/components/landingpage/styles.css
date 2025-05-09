@@ -14,6 +14,14 @@ h1 {
   line-height: 150%;
 }
 
+h2 {
+  color: #83A11D;
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 140%;
+}
+
 span {
   color: #52601a;
 }

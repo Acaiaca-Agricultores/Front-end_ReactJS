@@ -1,11 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap");
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 header {
   background-color: #839e6b;
   padding: 0.625rem 1.875rem;
