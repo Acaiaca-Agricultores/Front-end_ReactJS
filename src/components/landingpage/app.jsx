@@ -1,5 +1,4 @@
-import React from "react";
-import "./styles.css";
+import "./styles-app.css";
 import {
   Button,
   Image,
@@ -17,19 +16,23 @@ import IconValues from "../../assets/icons/values.svg";
 const App = () => {
   return (
     <>
-      <Grid templateColumns="repeat(5, 1fr)" gap={6} margin={"4.5rem 7.5rem"}>
+      <Grid
+        templateColumns={{ base: "1fr", md: "repeat(5, 1fr)" }}
+        gap={6}
+        margin={{ base: "2rem", md: "4.5rem 7.5rem" }}
+      >
         <GridItem
-          colSpan={3}
+          id="texto"
+          colSpan={{ base: 1, md: 3 }}
           rowSpan={1}
           display={"flex"}
           flexDirection={"column"}
           justifyContent={"center"}
-          alignItems={"flex-start"}
-          gap={"5rem"}
+          alignItems={{ base: "center", md: "flex-start" }}
+          gap={"2rem"}
         >
-          <h1>
-            O <span>Amor</span> é algo que se <span>planta</span> e se{" "}
-            <span>rega</span> todos os dias
+          <h1 style={{ textAlign: "center" }}>
+            O <span>Amor</span> é algo que se <span>planta</span> e se <span>rega</span> todos os dias
           </h1>
           <Button
             color={"white"}
@@ -37,12 +40,12 @@ const App = () => {
             borderRadius={"none"}
             textAlign={"center"}
             fontFamily={"Onest"}
-            fontSize={"1.5rem"}
+            fontSize={"1.2rem"}
             fontStyle={"normal"}
             fontWeight={400}
             lineHeight={"150%"}
-            w={"13rem"}
-            padding={"2rem"}
+            w={{ base: "10rem", md: "13rem" }}
+            padding={"1.5rem"}
             _hover={{
               background: "#c0ab8e",
             }}
@@ -50,35 +53,39 @@ const App = () => {
             Saiba Mais!
           </Button>
         </GridItem>
-        <GridItem colSpan={2} rowSpan={1}>
+        <GridItem colSpan={{ base: 1, md: 2 }} rowSpan={1}>
           <Image
             src={ImagemAgricultor}
             alt="Description"
             display={"flex"}
-            w={"640px"}
-            h={"560px"}
-            flex={100}
+            w={{ base: "100%", md: "640px" }}
+            h={{ base: "auto", md: "560px" }}
             objectFit={"cover"}
           />
         </GridItem>
       </Grid>
       <Grid
-        templateColumns="repeat(6, 1fr)"
+        templateColumns={{ base: "1fr", md: "repeat(6, 1fr)" }}
         gap={6}
         background={"#FFF0D7"}
-        padding={"4.5rem 12.5rem"}
+        padding={{ base: "2rem", md: "4.5rem 12.5rem" }}
       >
         <GridItem
           display={"flex"}
           flexDirection={"column"}
           alignItems={"center"}
-          gap={"2rem"}
-          colSpan={2}
+          gap={"1.5rem"}
+          colSpan={{ base: 1, md: 2 }}
           rowSpan={1}
         >
-          <Image src={IconMission} alt="Mission Icon" boxSize="100px" />
+          <Image src={IconMission} alt="Mission Icon" boxSize="80px" />
           <h2>Missão</h2>
-          <UnorderedList display={"flex"} flexDirection={"column"} gap={"1rem"}>
+          <UnorderedList
+            display={"flex"}
+            flexDirection={"column"}
+            gap={"1rem"}
+            textAlign={"center"}
+          >
             <ListItem>Fortalecer pequenos agricultores</ListItem>
             <ListItem>Promover a sustentabilidade</ListItem>
             <ListItem>Conectar colheitas a pessoas conscientes</ListItem>
@@ -91,17 +98,22 @@ const App = () => {
           display={"flex"}
           flexDirection={"column"}
           alignItems={"center"}
-          gap={"2rem"}
-          colSpan={2}
+          gap={"1.5rem"}
+          colSpan={{ base: 1, md: 2 }}
           rowSpan={1}
         >
-          <Image src={IconVision} alt="Mission Icon" boxSize="100px" />
+          <Image src={IconVision} alt="Vision Icon" boxSize="80px" />
           <h2>Visão</h2>
-          <UnorderedList display={"flex"} flexDirection={"column"} gap={"1rem"}>
-            <ListItem> Sustentabilidade no cultivo </ListItem>
+          <UnorderedList
+            display={"flex"}
+            flexDirection={"column"}
+            gap={"1rem"}
+            textAlign={"center"}
+          >
+            <ListItem>Sustentabilidade no cultivo</ListItem>
             <ListItem>
               Promovemos práticas agrícolas que respeitam a natureza e cuidam
-              dofuturo.
+              do futuro.
             </ListItem>
             <ListItem>Protagonismo do agricultor familiar</ListItem>
             <ListItem>
@@ -125,19 +137,24 @@ const App = () => {
           display={"flex"}
           flexDirection={"column"}
           alignItems={"center"}
-          gap={"2rem"}
-          colSpan={2}
+          gap={"1.5rem"}
+          colSpan={{ base: 1, md: 2 }}
           rowSpan={1}
         >
-          <Image src={IconValues} alt="Mission Icon" boxSize="100px" />
-          <h2>Visão</h2>
-          <UnorderedList display={"flex"} flexDirection={"column"} gap={"1rem"}>
+          <Image src={IconValues} alt="Values Icon" boxSize="80px" />
+          <h2>Valores</h2>
+          <UnorderedList
+            display={"flex"}
+            flexDirection={"column"}
+            gap={"1rem"}
+            textAlign={"center"}
+          >
             <ListItem>
               Construir a principal plataforma de conexão direta entre
               agricultores familiares e consumidores no Brasil, promovendo uma
               nova economia do alimento — mais justa, transparente e afetiva —
               onde cada colheita gera renda digna, fortalece comunidades e
-              inspira escolhas conscientes.{" "}
+              inspira escolhas conscientes.
             </ListItem>
           </UnorderedList>
         </GridItem>
@@ -145,4 +162,5 @@ const App = () => {
     </>
   );
 };
+
 export default App;
