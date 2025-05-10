@@ -6,6 +6,9 @@ import {
   GridItem,
   ListItem,
   UnorderedList,
+  Box,
+  Flex,
+  Text,
 } from "@chakra-ui/react";
 
 import ImagemAgricultor from "../../assets/agricultor.jpg";
@@ -31,9 +34,10 @@ const App = () => {
           alignItems={{ base: "center", md: "flex-start" }}
           gap={"2rem"}
         >
-          <h1 style={{ textAlign: "center" }}>
-            O <span>Amor</span> é algo que se <span>planta</span> e se <span>rega</span> todos os dias
-          </h1>
+          <Text fontSize={{ base: "2rem", md: "3rem" }}>
+            O <span>Amor</span> é algo que se <span>planta</span> e se{" "}
+            <span>rega</span> todos os dias
+          </Text>
           <Button
             color={"white"}
             background={"#52601A"}
@@ -112,8 +116,8 @@ const App = () => {
           >
             <ListItem>Sustentabilidade no cultivo</ListItem>
             <ListItem>
-              Promovemos práticas agrícolas que respeitam a natureza e cuidam
-              do futuro.
+              Promovemos práticas agrícolas que respeitam a natureza e cuidam do
+              futuro.
             </ListItem>
             <ListItem>Protagonismo do agricultor familiar</ListItem>
             <ListItem>
@@ -159,6 +163,30 @@ const App = () => {
           </UnorderedList>
         </GridItem>
       </Grid>
+      <Flex
+        gap={6}
+        margin={{ base: "2rem", md: "4.5rem 7.5rem" }}
+        display={"flex"}
+        flexDirection={"column"}
+      >
+        <Box id="texto" display={"flex"} justifyContent={"center"}>
+          <Text fontSize={{ base: "2rem", md: "3rem" }}>
+            Sobre <span>Acaiacá</span>
+          </Text>
+        </Box>
+        <Box display={"flex"} justifyContent={"center"}>
+          <iframe
+            width="1014"
+            height="570"
+            src="https://www.youtube.com/embed/cYsm9WHt4yg"
+            title="Comercial Acaiacá legendado"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </Box>
+      </Flex>
     </>
   );
 };

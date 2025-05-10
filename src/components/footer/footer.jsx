@@ -1,5 +1,6 @@
 import React from "react";
 import "./style-footer.css";
+import packageJson from "../../../package.json";
 
 import { Divider, Box, Flex, Image, Text, Link } from "@chakra-ui/react";
 
@@ -71,6 +72,7 @@ const Footer = () => {
           <Link href="#">Política de Cookies</Link>
         </Flex>
       </Flex>
+       <pre>{`v${packageJson.version}`}</pre>
     </Box>
   );
 };
