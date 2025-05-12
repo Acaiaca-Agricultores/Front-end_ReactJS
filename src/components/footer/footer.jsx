@@ -1,12 +1,12 @@
 import React from "react";
-import "./style-footer.css";
+// import "./style-footer.css";
 import packageJson from "../../../package.json";
 
 import { Divider, Box, Flex, Image, Text, Link } from "@chakra-ui/react";
 
 const Footer = () => {
   return (
-    <Box as="footer" background="#839e6b" color="white" padding="2rem">
+    <Box as="footer" background="#839e6b" color="white" padding="2rem" display={{ base: "block", md: "flex" }} flexDirection="column" justifyContent={"space-between"} alignItems="center">
       <Flex
         direction={{ base: "column", md: "row" }}
         justifyContent="space-between"
@@ -32,7 +32,7 @@ const Footer = () => {
             <Image
               src="/src/assets/icons/github60.svg"
               alt="Github"
-              boxSize="30px"
+              boxSize="50px"
             />
             <Text>Github</Text>
           </Link>
@@ -40,7 +40,7 @@ const Footer = () => {
             <Image
               src="/src/assets/icons/instagram50.svg"
               alt="Instagram"
-              boxSize="30px"
+              boxSize="50px"
             />
             <Text>Instagram</Text>
           </Link>
@@ -48,7 +48,7 @@ const Footer = () => {
             <Image
               src="/src/assets/icons/linkedin50.svg"
               alt="LinkedIn"
-              boxSize="30px"
+              boxSize="50px"
             />
             <Text>LinkedIn</Text>
           </Link>

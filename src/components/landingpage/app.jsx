@@ -19,53 +19,77 @@ import IconValues from "../../assets/icons/values.svg";
 const App = () => {
   return (
     <>
-      <Grid
-        templateColumns={{ base: "1fr", md: "repeat(5, 1fr)" }}
-        gap={6}
-        margin={{ base: "2rem", md: "4.5rem 7.5rem" }}
-      >
+      <Grid gap={6}>
         <GridItem
           id="texto"
           colSpan={{ base: 1, md: 3 }}
-          rowSpan={1}
           display={"flex"}
           flexDirection={"column"}
           justifyContent={"center"}
           alignItems={{ base: "center", md: "flex-start" }}
           gap={"2rem"}
+          backgroundImage={`url(${ImagemAgricultor})`}
+          backgroundSize={"cover"}
+          backgroundPosition={"center"}
+          backgroundRepeat={"no-repeat"}
+          height={{
+            base: "400px",
+            md: "600px",
+          }}
+          position="relative"
         >
-          <Text fontSize={{ base: "2rem", md: "3rem" }}>
-            O <span>Amor</span> é algo que se <span>planta</span> e se{" "}
-            <span>rega</span> todos os dias
-          </Text>
-          <Button
-            color={"white"}
-            background={"#52601A"}
-            borderRadius={"none"}
-            textAlign={"center"}
-            fontFamily={"Onest"}
-            fontSize={"1.2rem"}
-            fontStyle={"normal"}
-            fontWeight={400}
-            lineHeight={"150%"}
-            w={{ base: "10rem", md: "13rem" }}
-            padding={"1.5rem"}
-            _hover={{
-              background: "#c0ab8e",
-            }}
-          >
-            Saiba Mais!
-          </Button>
-        </GridItem>
-        <GridItem colSpan={{ base: 1, md: 2 }} rowSpan={1}>
-          <Image
-            src={ImagemAgricultor}
-            alt="Description"
+          <Box
+            position="absolute"
+            top="0"
+            left="0"
+            boxSize={"100%"}
+            background="rgba(0, 0, 0, 0.5)"
+            backdropFilter="blur(8px)"
+            zIndex="1"
+          ></Box>
+          <Box
+            zIndex="2"
+            textAlign="left"
+            color="white"
             display={"flex"}
-            w={{ base: "100%", md: "640px" }}
-            h={{ base: "auto", md: "560px" }}
-            objectFit={"cover"}
-          />
+            flexDirection={"column"}
+            alignItems={"flex-start"}
+            gap={"1rem"}
+            padding={{ base: "2rem", md: "4.5rem 12.5rem" }}
+          >
+            <Box>
+              <Text fontSize={{ base: "2rem", md: "3rem" }}>
+                O <span>Amor</span> é algo que se <span>planta</span>
+              </Text>
+              <Text fontSize={{ base: "2rem", md: "3rem" }}>
+                e se <span>rega</span> todos os dias
+              </Text>
+            </Box>
+            <Box>
+              <Text fontSize={{ base: "1rem" }}>
+                Cada colheita é um gesto de cuidado.
+              </Text>
+              <Text fontSize={{ base: "1rem" }}>
+                Cada compra, um apoio ao pequeno agricultor.
+              </Text>
+            </Box>
+            <Button
+              color={"white"}
+              background={"#52601A"}
+              borderRadius={"none"}
+              fontFamily={"Onest"}
+              fontSize={"1.2rem"}
+              fontWeight={400}
+              lineHeight={"150%"}
+              w={{ base: "10rem", md: "13rem" }}
+              padding={"1.5rem"}
+              _hover={{
+                background: "#c0ab8e",
+              }}
+            >
+              Saiba Mais!
+            </Button>
+          </Box>
         </GridItem>
       </Grid>
       <Grid
