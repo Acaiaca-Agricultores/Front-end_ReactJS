@@ -1,4 +1,5 @@
 import "./styles-app.css";
+//Chakra Importações
 import {
   Button,
   Image,
@@ -9,13 +10,14 @@ import {
   Box,
   Flex,
   Text,
+  SimpleGrid,
 } from "@chakra-ui/react";
 
 import ImagemAgricultor from "../../assets/agricultor.jpg";
 import IconMission from "../../assets/icons/mission.svg";
 import IconVision from "../../assets/icons/vision.svg";
 import IconValues from "../../assets/icons/values.svg";
-
+import ImagemTecnologia from "../../assets/tecnologia-e-plataforma.png"
 const App = () => {
   return (
     <>
@@ -113,6 +115,7 @@ const App = () => {
             flexDirection={"column"}
             gap={"1rem"}
             textAlign={"center"}
+            fontSize={{base: "1rem", md: "1.5rem"}}
           >
             <ListItem>Fortalecer pequenos agricultores</ListItem>
             <ListItem>Promover a sustentabilidade</ListItem>
@@ -137,6 +140,7 @@ const App = () => {
             flexDirection={"column"}
             gap={"1rem"}
             textAlign={"center"}
+            fontSize={{base: "1rem", md: "1.5rem"}}
           >
             <ListItem>Sustentabilidade no cultivo</ListItem>
             <ListItem>
@@ -176,6 +180,7 @@ const App = () => {
             flexDirection={"column"}
             gap={"1rem"}
             textAlign={"center"}
+            fontSize={{base: "1rem", md: "1.5rem"}}
           >
             <ListItem>
               Construir a principal plataforma de conexão direta entre
@@ -187,6 +192,45 @@ const App = () => {
           </UnorderedList>
         </GridItem>
       </Grid>
+
+      <SimpleGrid columns={2} spacing={10}
+        padding={{ base: "2rem", md: "4.5rem 12.5rem" }}
+        templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+        
+
+      >
+
+        <Box
+        display={"flex"}
+        flexDirection={"column"}
+        justifyContent={"center"}
+        gap={"24px"}
+        
+        >
+
+          <Text fontSize={{ base: "2rem", md: "3rem" }}><span>Tecnologia e Plataforma</span></Text>
+          <UnorderedList
+            display={"flex"}
+            flexDirection={"column"}
+            gap={"1rem"}
+            fontSize={{base: "1rem", md:"1.5rem"  }}
+          >
+
+            <ListItem>Layout simples e intuitivo</ListItem>
+            <ListItem>Funções nativas para auxiliar pessoas com deficiência</ListItem>
+            <ListItem>Chat em tempo real</ListItem>
+            <ListItem>Listas de compras com recurso de voz</ListItem>
+
+          </UnorderedList>
+        </Box>
+
+        <Box>
+          <Image src={ImagemTecnologia} alt="Imagem que une tecnologia com a agricultura" width={"100%"} />
+        </Box>
+
+
+      </SimpleGrid>
+
       <Flex
         gap={6}
         margin={{ base: "2rem", md: "4.5rem 7.5rem" }}
