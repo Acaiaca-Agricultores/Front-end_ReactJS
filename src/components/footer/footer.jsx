@@ -44,7 +44,7 @@ const Footer = () => {
             gap="0.5rem"
           >
             <Image
-              src="/src/assets/icons/github.svg"
+              src="src/assets/icons/github.svg"
               alt="Github"
               boxSize="40px"
             />
@@ -57,7 +57,7 @@ const Footer = () => {
             gap="0.5rem"
           >
             <Image
-              src="/src/assets/icons/instagram.svg"
+              src="src/assets/icons/instagram.svg"
               alt="Github"
               boxSize="40px"
             />
@@ -65,7 +65,7 @@ const Footer = () => {
           </Link>
           <Link href="#" display="flex" alignItems="center" gap="0.5rem">
             <Image
-              src="/src/assets/icons/linkedin.svg"
+              src="src/assets/icons/linkedin.svg"
               alt="Github"
               boxSize="40px"
             />
