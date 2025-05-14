@@ -11,13 +11,18 @@ import {
   Flex,
   Text,
   SimpleGrid,
+  Card,
+  CardHeader,
+  CardBody,
+  Heading,
 } from "@chakra-ui/react";
 
 import ImagemAgricultor from "../../assets/agricultor.jpg";
 import IconMission from "../../assets/icons/mission.svg";
 import IconVision from "../../assets/icons/vision.svg";
 import IconValues from "../../assets/icons/values.svg";
-import ImagemTecnologia from "../../assets/tecnologia-e-plataforma.png"
+import ImagemTecnologia from "../../assets/tecnologia-e-plataforma.png";
+import FolhaCheck from "../../assets/icons/folhaDeLouro.png";
 const App = () => {
   return (
     <>
@@ -78,13 +83,13 @@ const App = () => {
             <Button
               color={"white"}
               background={"#52601A"}
-              borderRadius={"none"}
+              borderRadius={"10px"}
               fontFamily={"Onest"}
               fontSize={"1.2rem"}
               fontWeight={400}
               lineHeight={"150%"}
               w={{ base: "10rem", md: "13rem" }}
-              padding={"1.5rem"}
+              padding={"2rem"}
               _hover={{
                 background: "#c0ab8e",
               }}
@@ -94,6 +99,7 @@ const App = () => {
           </Box>
         </GridItem>
       </Grid>
+
       <Grid
         templateColumns={{ base: "1fr", md: "repeat(6, 1fr)" }}
         gap={6}
@@ -115,7 +121,7 @@ const App = () => {
             flexDirection={"column"}
             gap={"1rem"}
             textAlign={"center"}
-            fontSize={{base: "1rem", md: "1.5rem"}}
+            fontSize={{ base: "1rem", md: "1.5rem" }}
           >
             <ListItem>Fortalecer pequenos agricultores</ListItem>
             <ListItem>Promover a sustentabilidade</ListItem>
@@ -140,7 +146,7 @@ const App = () => {
             flexDirection={"column"}
             gap={"1rem"}
             textAlign={"center"}
-            fontSize={{base: "1rem", md: "1.5rem"}}
+            fontSize={{ base: "1rem", md: "1.5rem" }}
           >
             <ListItem>Sustentabilidade no cultivo</ListItem>
             <ListItem>
@@ -180,7 +186,7 @@ const App = () => {
             flexDirection={"column"}
             gap={"1rem"}
             textAlign={"center"}
-            fontSize={{base: "1rem", md: "1.5rem"}}
+            fontSize={{ base: "1rem", md: "1.5rem" }}
           >
             <ListItem>
               Construir a principal plataforma de conexão direta entre
@@ -193,43 +199,171 @@ const App = () => {
         </GridItem>
       </Grid>
 
-      <SimpleGrid columns={2} spacing={10}
+      <SimpleGrid
+        columns={2}
+        spacing={10}
         padding={{ base: "2rem", md: "4.5rem 12.5rem" }}
         templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-        
-
       >
-
         <Box
-        display={"flex"}
-        flexDirection={"column"}
-        justifyContent={"center"}
-        gap={"24px"}
-        
+          display={"flex"}
+          flexDirection={"column"}
+          justifyContent={"center"}
+          gap={"24px"}
         >
-
-          <Text fontSize={{ base: "2rem", md: "3rem" }}><span>Tecnologia e Plataforma</span></Text>
+          <Text fontSize={{ base: "2rem", md: "3rem" }}>
+            <span>Tecnologia e Plataforma</span>
+          </Text>
           <UnorderedList
             display={"flex"}
             flexDirection={"column"}
             gap={"1rem"}
-            fontSize={{base: "1rem", md:"1.5rem"  }}
+            fontSize={{ base: "1rem", md: "1.5rem" }}
           >
-
             <ListItem>Layout simples e intuitivo</ListItem>
-            <ListItem>Funções nativas para auxiliar pessoas com deficiência</ListItem>
+            <ListItem>
+              Funções nativas para auxiliar pessoas com deficiência
+            </ListItem>
             <ListItem>Chat em tempo real</ListItem>
             <ListItem>Listas de compras com recurso de voz</ListItem>
-
           </UnorderedList>
         </Box>
 
         <Box>
-          <Image src={ImagemTecnologia} alt="Imagem que une tecnologia com a agricultura" width={"100%"} />
+          <Image
+            src={ImagemTecnologia}
+            alt="Imagem que une tecnologia com a agricultura"
+            width={"100%"}
+          />
         </Box>
-
-
       </SimpleGrid>
+
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"center"}
+        backgroundColor={"#839e5b"}
+        padding={"7rem"}
+      >
+        <Text fontSize={{ base: "2rem", md: "3rem" }} color={"#FFFF"}>
+          Assinatura
+        </Text>
+        <Text color={"#FFFF"}>
+          Vantagens da sua assinatura após o limite gratuito
+        </Text>
+
+        <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}>
+          <GridItem width={"304px"} padding={"24px"}>
+            <Card border={"3px solid #52601A"}>
+              <CardHeader textAlign={"center"}>
+                <Heading fontSize={"1.5rem"}>Plano Semente</Heading>
+                <Heading fontSize={"1.3rem"}>R$89 / mês</Heading>
+                <CardBody>
+                  <UnorderedList spacing={3}>
+                    <ListItem display="flex" alignItems="flex-start">
+                      <Image src={FolhaCheck} alt="check" boxSize="1.2em" />
+                      <Text color={"#52601A"}>
+                        Cesta com 5 a 7 produtos selecionados da estação.
+                      </Text>
+                    </ListItem>
+                    <ListItem display="flex" alignItems="flex-start">
+                      <Image src={FolhaCheck} boxSize="1.2em" />
+                      <Text color={"#52601A"}>
+                        Frutas frescas, hortaliças e temperos.
+                      </Text>
+                    </ListItem>
+                    <ListItem display="flex" alignItems="flex-start">
+                      <Image src={FolhaCheck} boxSize="1.2em" />
+                      <Text color={"#52601A"}>
+                        Sugestões de receitas acompanhando a cesta.
+                      </Text>
+                    </ListItem>
+                  </UnorderedList>
+                </CardBody>
+              </CardHeader>
+            </Card>
+          </GridItem>
+          
+          <GridItem width={"304px"} padding={"24px"}>
+            <Card border={"3px solid #52601A"}>
+              <CardHeader textAlign={"center"}>
+                <Heading fontSize={"1.5rem"}>Plano Semente</Heading>
+                <Heading fontSize={"1.3rem"}>R$89 / mês</Heading>
+                <CardBody>
+                  <UnorderedList spacing={3}>
+                    <ListItem display="flex" alignItems="flex-start">
+                      <Image src={FolhaCheck} alt="check" boxSize="1.2em" />
+                      <Text color={"#52601A"}>
+                        Cesta com 5 a 7 produtos selecionados da estação.
+                      </Text>
+                    </ListItem>
+                    <ListItem display="flex" alignItems="flex-start">
+                      <Image src={FolhaCheck} boxSize="1.2em" />
+                      <Text color={"#52601A"}>
+                        Frutas frescas, hortaliças e temperos.
+                      </Text>
+                    </ListItem>
+                    <ListItem display="flex" alignItems="flex-start">
+                      <Image src={FolhaCheck} boxSize="1.2em" />
+                      <Text color={"#52601A"}>
+                        Sugestões de receitas acompanhando a cesta.
+                      </Text>
+                    </ListItem>
+                  </UnorderedList>
+                </CardBody>
+              </CardHeader>
+            </Card>
+          </GridItem>
+
+          <GridItem width={"304px"} padding={"24px"}>
+            <Card border={"3px solid #52601A"}>
+              <CardHeader textAlign={"center"}>
+                <Heading fontSize={"1.5rem"}>Plano Semente</Heading>
+                <Heading fontSize={"1.3rem"}>R$89 / mês</Heading>
+                <CardBody>
+                  <UnorderedList spacing={3}>
+                    <ListItem display="flex" alignItems="flex-start">
+                      <Image src={FolhaCheck} alt="check" boxSize="1.2em" />
+                      <Text color={"#52601A"}>
+                        Cesta com 5 a 7 produtos selecionados da estação.
+                      </Text>
+                    </ListItem>
+                    <ListItem display="flex" alignItems="flex-start">
+                      <Image src={FolhaCheck} boxSize="1.2em" />
+                      <Text color={"#52601A"}>
+                        Frutas frescas, hortaliças e temperos.
+                      </Text>
+                    </ListItem>
+                    <ListItem display="flex" alignItems="flex-start">
+                      <Image src={FolhaCheck} boxSize="1.2em" />
+                      <Text color={"#52601A"}>
+                        Sugestões de receitas acompanhando a cesta.
+                      </Text>
+                    </ListItem>
+                  </UnorderedList>
+                </CardBody>
+              </CardHeader>
+            </Card>
+          </GridItem>
+        </Grid>
+
+        <Button
+          color={"white"}
+          background={"#52601A"}
+          borderRadius={"10px"}
+          fontFamily={"Onest"}
+          fontSize={"1.2rem"}
+          fontWeight={400}
+          lineHeight={"150%"}
+          w={{ base: "10rem", md: "13rem" }}
+          padding={"2rem"}
+          _hover={{
+            background: "#c0ab8e",
+          }}
+        >
+          Saiba Mais!
+        </Button>
+      </Box>
 
       <Flex
         gap={6}

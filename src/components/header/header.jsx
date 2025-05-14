@@ -23,8 +23,8 @@ const Header = () => {
           as="nav"
           display={{ base: "none", md: "flex" }}
           alignItems="center"
-          gap="1.5rem"
-          fontSize={{ base: "0.8rem", md: "1rem" }}
+          gap="6.25rem"
+          fontSize={{ base: "0.8rem", md: "1.5rem" }}
           color={"#ffffff"}
           >
           <a href="#home">
@@ -42,9 +42,9 @@ const Header = () => {
           <Button
             color="white"
             background="#52601A"
-            borderRadius="none"
+            borderRadius="10px"
             fontFamily="Onest"
-            padding="0.75rem 1.25rem"
+            padding=" 2rem"
             _hover={{
               background: "#c0ab8e",
             }}
