@@ -1,4 +1,5 @@
 import "./styles-app.css";
+import { React, useState } from "react";
 //Chakra Importações
 import {
   Button,
@@ -14,6 +15,14 @@ import {
   CardHeader,
   CardBody,
   Heading,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import ImagemAgricultor from "../../assets/agricultor.jpg";
@@ -57,7 +66,64 @@ const cardData = [
   },
 ];
 
+// Array de dados para Missão, Visão e Valores
+const MVVData = [
+  {
+    title: "Missão",
+    icon: IconMission,
+    description:
+      "Nossa missão é focada no Agricultor Familiar e na Comunidade Local que o cerca.",
+    modalItems: [
+      "Protagonismo do agricultor familiar",
+      "Valorizamos quem planta com dedicação, dando visibilidade, voz e renda justa.",
+      "Comércio justo e transparente",
+      "Cultivar o futuro com cuidado e esperança",
+      "Alimentação saudável e acessível",
+      "Levamos comida de verdade a quem valoriza saúde, sabor e origem.",
+      "Educação e transformação social",
+      "Espalhamos conhecimento que fortalece o campo e inspira escolhas conscientes.",
+    ],
+  },
+  {
+    title: "Visão",
+    icon: IconVision,
+    description:
+      "Nossa visão é de um futuro onde a agricultura familiar é valorizada e respeitada.",
+    modalItems: [
+      "Sustentabilidade no cultivo",
+      "Promovemos práticas agrícolas que respeitam a natureza e cuidam do futuro.",
+      "Protagonismo do agricultor familiar",
+      "Valorizamos quem planta com dedicação, dando visibilidade, voz e renda justa.",
+      "Comércio justo e transparente",
+      "Cultivar o futuro com cuidado e esperança",
+      "Alimentação saudável e acessível",
+      "Levamos comida de verdade a quem valoriza saúde, sabor e origem.",
+      "Educação e transformação social",
+      "Espalhamos conhecimento que fortalece o campo e inspira escolhas conscientes.",
+    ],
+  },
+  {
+    title: "Valores",
+    icon: IconValues,
+    description:
+      "Nossos valores são fundamentais para a construção de um futuro mais justo e sustentável.",
+    modalItems: [
+      "Construir a principal plataforma de conexão direta entre agricultores familiares e consumidores no Brasil.",
+      "Promover uma nova economia do alimento — mais justa, transparente e afetiva.",
+      "Cada colheita gera renda digna, fortalece comunidades e inspira escolhas conscientes.",
+    ],
+  },
+];
+
 const App = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [activeModal, setActiveModal] = useState(null);
+
+  const handleOpenModal = (index) => {
+    setActiveModal(index);
+    onOpen();
+  };
+
   return (
     <>
       <Grid gap={6}>
@@ -133,104 +199,102 @@ const App = () => {
           </Box>
         </GridItem>
       </Grid>
+
       <Grid
         templateColumns={{ base: "1fr", md: "repeat(6, 1fr)" }}
         gap={6}
         background={"#FFF0D7"}
-        padding={{ base: "2rem", md: "4.5rem 12.5rem" }}
+        padding={{ base: "2rem", md: "10rem;" }}
       >
-        <GridItem
-          display={"flex"}
-          flexDirection={"column"}
-          alignItems={"center"}
-          gap={"1.5rem"}
-          colSpan={{ base: 1, md: 2 }}
-          rowSpan={1}
-        >
-          <Image src={IconMission} alt="Mission Icon" boxSize="80px" />
-          <h2>Missão</h2>
-          <UnorderedList
+        {MVVData.map((item, index) => (
+          <GridItem
+            key={index}
             display={"flex"}
             flexDirection={"column"}
-            gap={"1rem"}
-            textAlign={"center"}
-            fontSize={{ base: "1rem", md: "1.5rem" }}
+            alignItems={"center"}
+            gap={"1.5rem"}
+            colSpan={{ base: 1, md: 2 }}
+            rowSpan={1}
           >
-            <ListItem>Fortalecer pequenos agricultores</ListItem>
-            <ListItem>Promover a sustentabilidade</ListItem>
-            <ListItem>Conectar colheitas a pessoas conscientes</ListItem>
-            <ListItem>Valorizar alimentos cultivados</ListItem>
-            <ListItem>Construir uma rede justa e humana</ListItem>
-            <ListItem>Cultivar o futuro com cuidado e esperança</ListItem>
-          </UnorderedList>
-        </GridItem>
-        <GridItem
-          display={"flex"}
-          flexDirection={"column"}
-          alignItems={"center"}
-          gap={"1.5rem"}
-          colSpan={{ base: 1, md: 2 }}
-          rowSpan={1}
-        >
-          <Image src={IconVision} alt="Vision Icon" boxSize="80px" />
-          <h2>Visão</h2>
-          <UnorderedList
-            display={"flex"}
-            flexDirection={"column"}
-            gap={"1rem"}
-            textAlign={"center"}
-            fontSize={{ base: "1rem", md: "1.5rem" }}
-          >
-            <ListItem>Sustentabilidade no cultivo</ListItem>
-            <ListItem>
-              Promovemos práticas agrícolas que respeitam a natureza e cuidam do
-              futuro.
-            </ListItem>
-            <ListItem>Protagonismo do agricultor familiar</ListItem>
-            <ListItem>
-              Valorizamos quem planta com dedicação, dando visibilidade, voz e
-              renda justa.
-            </ListItem>
-            <ListItem>Comércio justo e transparente</ListItem>
-            <ListItem>Cultivar o futuro com cuidado e esperança</ListItem>
-            <ListItem>Alimentação saudável e acessível</ListItem>
-            <ListItem>
-              Levamos comida de verdade a quem valoriza saúde, sabor e origem.
-            </ListItem>
-            <ListItem>Educação e transformação social</ListItem>
-            <ListItem>
-              Espalhamos conhecimento que fortalece o campo e inspira escolhas
-              conscientes.
-            </ListItem>
-          </UnorderedList>
-        </GridItem>
-        <GridItem
-          display={"flex"}
-          flexDirection={"column"}
-          alignItems={"center"}
-          gap={"1.5rem"}
-          colSpan={{ base: 1, md: 2 }}
-          rowSpan={1}
-        >
-          <Image src={IconValues} alt="Values Icon" boxSize="80px" />
-          <h2>Valores</h2>
-          <UnorderedList
-            display={"flex"}
-            flexDirection={"column"}
-            gap={"1rem"}
-            textAlign={"center"}
-            fontSize={{ base: "1rem", md: "1.5rem" }}
-          >
-            <ListItem>
-              Construir a principal plataforma de conexão direta entre
-              agricultores familiares e consumidores no Brasil, promovendo uma
-              nova economia do alimento — mais justa, transparente e afetiva —
-              onde cada colheita gera renda digna, fortalece comunidades e
-              inspira escolhas conscientes.
-            </ListItem>
-          </UnorderedList>
-        </GridItem>
+            <Image src={item.icon} alt={`${item.title} Icon`} boxSize="80px" />
+            <h2>{item.title}</h2>
+            <Text>{item.description}</Text>
+            <Button
+              onClick={() => handleOpenModal(index)}
+              color={"white"}
+              background={"#52601A"}
+              borderRadius={"10px"}
+              fontFamily={"Onest"}
+              fontSize={"1.2rem"}
+              fontWeight={400}
+              lineHeight={"150%"}
+              w={{ base: "10rem", md: "13rem" }}
+              padding={"1.5rem"}
+              _hover={{
+                background: "#c0ab8e",
+              }}
+            >
+              Conheça Mais
+            </Button>
+          </GridItem>
+        ))}
       </Grid>
+      {activeModal !== null && (
+        <Modal isOpen={isOpen} onClose={onClose} isCentered margin={"3rem"}>
+          <ModalOverlay />
+          <ModalContent
+            display={"flex"}
+            flexDirection={"column"}
+            alignItems={"center"}
+          >
+            <ModalHeader
+              fontFamily={"Onest"}
+              fontSize={"2rem"}
+              fontWeight={700}
+              lineHeight={"150%"}
+              color={"#52601A"}
+            >
+              {MVVData[activeModal].title}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <UnorderedList
+                display={"flex"}
+                flexDirection={"column"}
+                gap={"1.2rem"}
+                fontSize={"1.2rem"}
+              >
+                {MVVData[activeModal].modalItems.map((item, idx) => (
+                  <ListItem key={idx} display="flex" alignItems="flex-start">
+                    <Image src={FolhaCheck} alt="check" boxSize="1.2em" />
+                    <Text color={"#52601A"}>{item}</Text>
+                  </ListItem>
+                ))}
+              </UnorderedList>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                onClick={onClose}
+                color={"white"}
+                background={"#52601A"}
+                borderRadius={"10px"}
+                fontFamily={"Onest"}
+                fontSize={"1.2rem"}
+                fontWeight={400}
+                lineHeight={"150%"}
+                w={{ base: "10rem", md: "13rem" }}
+                padding={"1.5rem"}
+                _hover={{
+                  background: "#c0ab8e",
+                }}
+              >
+                Fechar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
+
       <Grid
         columns={2}
         spacing={10}
@@ -268,6 +332,7 @@ const App = () => {
           />
         </GridItem>
       </Grid>
+
       <Box
         display={"flex"}
         flexDirection={"column"}
@@ -324,6 +389,7 @@ const App = () => {
           Saiba Mais!
         </Button>
       </Box>
+
       <Flex
         gap={6}
         margin={{ base: "2rem", md: "4.5rem 7.5rem" }}
