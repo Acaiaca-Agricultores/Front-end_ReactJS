@@ -6,12 +6,21 @@ import { Divider, Box, Flex, Image, Text, Link } from "@chakra-ui/react";
 
 const Footer = () => {
   return (
-    <Box as="footer" background="#839e6b" color="white" padding="2rem" display={{ base: "block", md: "flex" }} flexDirection="column" justifyContent={"space-between"} alignItems="center">
+    <Box
+      as="footer"
+      background="#839e6b"
+      color="white"
+      padding="2rem"
+      display={{ base: "block", md: "flex" }}
+      flexDirection="column"
+      justifyContent={"space-between"}
+      alignItems="center"
+    >
       <Flex
         direction={{ base: "column", md: "row" }}
         justifyContent="space-between"
         alignItems="center"
-        gap={{base: "3rem", md: "10rem"}}
+        gap={{ base: "3rem", md: "10rem" }}
         maxWidth="1200px"
         margin="0 auto"
       >
@@ -28,27 +37,37 @@ const Footer = () => {
           alignItems="center"
           gap="1.5rem"
         >
-          <Link href="https://github.com/Acaiaca-Agricultores" display="flex" alignItems="center" gap="0.5rem">
+          <Link
+            href="https://github.com/Acaiaca-Agricultores"
+            display="flex"
+            alignItems="center"
+            gap="0.5rem"
+          >
             <Image
-              src="/src/assets/icons/github60.svg"
+              src="/src/assets/icons/github.svg"
               alt="Github"
-              boxSize="50px"
+              boxSize="40px"
             />
             <Text>Github</Text>
           </Link>
-          <Link href="https://www.instagram.com/acaiaca.plataforma/" display="flex" alignItems="center" gap="0.5rem">
+          <Link
+            href="https://www.instagram.com/acaiaca.plataforma/"
+            display="flex"
+            alignItems="center"
+            gap="0.5rem"
+          >
             <Image
-              src="/src/assets/icons/instagram50.svg"
-              alt="Instagram"
-              boxSize="50px"
+              src="/src/assets/icons/instagram.svg"
+              alt="Github"
+              boxSize="40px"
             />
             <Text>Instagram</Text>
           </Link>
           <Link href="#" display="flex" alignItems="center" gap="0.5rem">
             <Image
-              src="/src/assets/icons/linkedin50.svg"
-              alt="LinkedIn"
-              boxSize="50px"
+              src="/src/assets/icons/linkedin.svg"
+              alt="Github"
+              boxSize="40px"
             />
             <Text>LinkedIn</Text>
           </Link>
@@ -72,7 +91,7 @@ const Footer = () => {
           <Link href="#">Política de Cookies</Link>
         </Flex>
       </Flex>
-       <pre>{`v${packageJson.version}`}</pre>
+      <pre>{`v${packageJson.version}`}</pre>
     </Box>
   );
 };
