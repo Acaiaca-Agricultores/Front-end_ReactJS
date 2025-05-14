@@ -1,5 +1,5 @@
 import "./styles-app.css";
-import { React, useState } from "react";
+import { useState } from "react";
 //Chakra Importações
 import {
   Button,
@@ -199,7 +199,6 @@ const App = () => {
           </Box>
         </GridItem>
       </Grid>
-
       <Grid
         templateColumns={{ base: "1fr", md: "repeat(6, 1fr)" }}
         gap={6}
@@ -240,7 +239,7 @@ const App = () => {
         ))}
       </Grid>
       {activeModal !== null && (
-        <Modal isOpen={isOpen} onClose={onClose} isCentered margin={"3rem"}>
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
           <ModalOverlay />
           <ModalContent
             display={"flex"}
@@ -294,7 +293,6 @@ const App = () => {
           </ModalContent>
         </Modal>
       )}
-
       <Grid
         columns={2}
         spacing={10}
@@ -332,7 +330,6 @@ const App = () => {
           />
         </GridItem>
       </Grid>
-
       <Box
         display={"flex"}
         flexDirection={"column"}
@@ -349,7 +346,7 @@ const App = () => {
         <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}>
           {cardData.map((card, index) => (
             <GridItem key={index} width={"304px"} padding={"24px"}>
-              <Card border={"3px solid #52601A"}>
+              <Card border={"3px solid #52601A"} boxSize={"100%"}>
                 <CardHeader textAlign={"center"}>
                   <Heading fontSize={"1.5rem"}>{card.title}</Heading>
                   <Heading fontSize={"1.3rem"}>{card.price}</Heading>
@@ -389,7 +386,6 @@ const App = () => {
           Saiba Mais!
         </Button>
       </Box>
-
       <Flex
         gap={6}
         margin={{ base: "2rem", md: "4.5rem 7.5rem" }}

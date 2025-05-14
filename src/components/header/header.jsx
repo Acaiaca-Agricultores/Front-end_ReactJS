@@ -8,7 +8,7 @@ import "../../global-styles.css";
 
 const Header = () => {
   return (
-    <Box as="header" padding="1rem" background="#839e6b" display={"block"}>
+    <Box as="header" padding="0 1rem" background="#839e6b" display={"block"}>
       <Flex
         justifyContent="space-between"
         alignItems="center"
@@ -24,7 +24,7 @@ const Header = () => {
           display={{ base: "none", md: "flex" }}
           alignItems="center"
           gap="6.25rem"
-          fontSize={{ base: "0.8rem", md: "1.5rem" }}
+          fontSize={{ base: "0.8rem", md: "1.2rem" }}
           color={"#ffffff"}
           >
           <a href="#home">
