@@ -1,6 +1,8 @@
-import React from "react";
-// import "./style-footer.css";
 import packageJson from "../../../package.json";
+import Logo from "../../assets/logo_semfundo.png";
+import GithubIcon from "../../assets/icons/github.svg";
+import InstagramIcon from "../../assets/icons/instagram.svg";
+import LinkedInIcon from "../../assets/icons/linkedin.svg";
 
 import { Divider, Box, Flex, Image, Text, Link } from "@chakra-ui/react";
 
@@ -26,7 +28,7 @@ const Footer = () => {
       >
         <Box>
           <Image
-            src="/src/assets/logo_semfundo.png"
+            src={Logo}
             alt="Logo"
             margin="0 auto"
           />
@@ -44,7 +46,7 @@ const Footer = () => {
             gap="0.5rem"
           >
             <Image
-              src="src/assets/icons/github.svg"
+              src={GithubIcon}
               alt="Github"
               boxSize="40px"
             />
@@ -57,7 +59,7 @@ const Footer = () => {
             gap="0.5rem"
           >
             <Image
-              src="src/assets/icons/instagram.svg"
+              src={InstagramIcon}
               alt="Github"
               boxSize="40px"
             />
@@ -65,7 +67,7 @@ const Footer = () => {
           </Link>
           <Link href="#" display="flex" alignItems="center" gap="0.5rem">
             <Image
-              src="src/assets/icons/linkedin.svg"
+              src={LinkedInIcon}
               alt="Github"
               boxSize="40px"
             />
