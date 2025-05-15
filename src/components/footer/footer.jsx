@@ -26,7 +26,7 @@ const Footer = () => {
       >
         <Box>
           <Image
-            src="/src/assets/logo_semfundo.png"
+            src="src/assets/logo_semfundo.png"
             alt="Logo"
             margin="0 auto"
           />
@@ -58,7 +58,7 @@ const Footer = () => {
           >
             <Image
               src="src/assets/icons/instagram.svg"
-              alt="Github"
+              alt="Instagram"
               boxSize="40px"
             />
             <Text>Instagram</Text>
@@ -66,7 +66,7 @@ const Footer = () => {
           <Link href="#" display="flex" alignItems="center" gap="0.5rem">
             <Image
               src="src/assets/icons/linkedin.svg"
-              alt="Github"
+              alt="Linkedin"
               boxSize="40px"
             />
             <Text>LinkedIn</Text>
