@@ -15,7 +15,7 @@ const Header = () => {
         flexWrap="wrap"
         margin="0 auto"
       >
-        <Image src={Logo} alt="Logo" />
+        <Image src={Logo} alt="Logo" w={{base: "10rem", md: "15rem"}} />
         <Box display={{ base: "block", md: "none" }}>
           <AppMenu />
         </Box>

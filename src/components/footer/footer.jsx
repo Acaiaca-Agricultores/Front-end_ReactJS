@@ -1,5 +1,3 @@
-import React from "react";
-// import "./style-footer.css";
 import packageJson from "../../../package.json";
 import Logo from "../../assets/logo_semfundo.png";
 import GithubIcon from "../../assets/icons/github.svg";
