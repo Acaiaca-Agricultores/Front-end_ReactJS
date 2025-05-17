@@ -23,10 +23,6 @@ h2 {
   line-height: 140%;
 }
 
-span {
-  color: #839e6b;
-}
-
 body::-webkit-scrollbar {
   width: 12px;
 }

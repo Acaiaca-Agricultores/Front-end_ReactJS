@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Card,
   CardBody,
   CardHeader,
@@ -14,9 +13,13 @@ import {
 } from "@chakra-ui/react";
 
 import FolhaCheck from "../../assets/icons/folhaDeLouro.png";
+import IconSeed from "../../assets/icons/broto.png";
+import IconRoots from "../../assets/icons/raízes.png";
+import IconHarvest from "../../assets/icons/colheita.png";
 
 const cardData = [
   {
+    image: IconSeed,
     title: "Plano Semente",
     price: "R$89 / mês",
     benefits: [
@@ -26,6 +29,7 @@ const cardData = [
     ],
   },
   {
+    image: IconRoots,
     title: "Plano Raiz",
     price: "R$ 149 / mês",
     benefits: [
@@ -36,6 +40,7 @@ const cardData = [
     ],
   },
   {
+    image: IconHarvest,
     title: "Plano Colheita",
     price: "R$199 / mês",
     benefits: [
@@ -51,30 +56,88 @@ const cardData = [
 const AppSubs = () => {
   return (
     <Box
+      id="appsubs"
+      as="section"
+      role="region"
+      aria-label="Planos de assinatura e benefícios"
       display={"flex"}
       flexDirection={"column"}
       alignItems={"center"}
-      backgroundColor={"#839e5b"}
-      padding={"5rem"}
+      padding={{ base: "2rem", md: "5rem" }}
     >
-      <Text fontSize={{ base: "2rem", md: "3rem" }} color={"#FFFF"}>
+      <Text
+        as={"h1"}
+        fontSize={{ base: "2rem", md: "3rem" }}
+        tabIndex={0}
+        aria-label="Assinatura"
+      >
         Assinatura
       </Text>
-      <Text color={"#FFFF"} textAlign={"center"}>
+      <Text textAlign={"center"}>
         Vantagens da sua assinatura após o limite gratuito
       </Text>
       <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}>
         {cardData.map((card, index) => (
-          <GridItem key={index} width={"304px"} padding={"24px"}>
-            <Card border={"3px solid #52601A"} boxSize={"100%"}>
+          <GridItem key={index} gap={5} padding={"2rem"}>
+            <Card
+              border={
+                card.title === "Plano Semente"
+                  ? "2px solid #72CC5D"
+                  : card.title === "Plano Raiz"
+                  ? "2px solid #46A637"
+                  : card.title === "Plano Colheita"
+                  ? "2px solid #197F10"
+                  : undefined
+              }
+              boxSize={"100%"}
+              backgroundColor={"transparent"}
+            >
               <CardHeader>
                 <Box textAlign={"center"} padding={"2rem 0"}>
-                  <Heading fontSize={"1.5rem"}>{card.title}</Heading>
-                  <Heading fontSize={"1.3rem"}>{card.price}</Heading>
+                  <Image
+                    src={card.image}
+                    alt={`Ícone ilustrativo do ${card.title}`}
+                    margin="0 auto"
+                    boxSize="60px"
+                  />
+                  <Heading
+                    as="h2"
+                    fontSize={"2rem"}
+                    color={
+                      card.title === "Plano Semente"
+                        ? "#72CC5D"
+                        : card.title === "Plano Raiz"
+                        ? "#46A637"
+                        : card.title === "Plano Colheita"
+                        ? "#197F10"
+                        : undefined
+                    }
+                    tabIndex={0}
+                    aria-label={card.title}
+                    aria-level={2}
+                    role="heading"
+                  >
+                    {card.title}
+                  </Heading>
+                  <Heading
+                    fontSize={"1.3rem"}
+                    color={
+                      card.title === "Plano Semente"
+                        ? "#72CC5D"
+                        : card.title === "Plano Raiz"
+                        ? "#46A637"
+                        : card.title === "Plano Colheita"
+                        ? "#197F10"
+                        : undefined
+                    }
+                  >
+                    {card.price}
+                  </Heading>
                 </Box>
                 <CardBody padding={0}>
                   <UnorderedList
                     spacing={3}
+                    aria-label={`Benefícios do ${card.title}`}
                     sx={{
                       "& > li": {
                         display: "flex",
@@ -85,8 +148,12 @@ const AppSubs = () => {
                   >
                     {card.benefits.map((benefit, id) => (
                       <ListItem key={id}>
-                        <Image src={FolhaCheck} alt="check" boxSize="1.2em" />
-                        <Text color={"#52601A"}>{benefit}</Text>
+                        <Image
+                          src={FolhaCheck}
+                          alt="Ícone de confirmação"
+                          boxSize="1.2em"
+                        />
+                        <Text color={"#000000"}>{benefit}</Text>
                       </ListItem>
                     ))}
                   </UnorderedList>
@@ -96,22 +163,6 @@ const AppSubs = () => {
           </GridItem>
         ))}
       </Grid>
-      <Button
-        color={"white"}
-        background={"#52601A"}
-        borderRadius={"10px"}
-        fontFamily={"Onest"}
-        fontSize={"1.2rem"}
-        fontWeight={400}
-        lineHeight={"150%"}
-        w={{ base: "10rem", md: "13rem" }}
-        padding={"2rem"}
-        _hover={{
-          background: "#c0ab8e",
-        }}
-      >
-        Saiba Mais!
-      </Button>
     </Box>
   );
 };

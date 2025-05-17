@@ -18,6 +18,9 @@ import FolhaCheck from "../../assets/icons/folhaDeLouro.png";
 const AppModal = ({ activeModal, isOpen, onClose, MVVData }) => {
   if (activeModal === null) return null;
 
+  const headerId = "modal-title";
+  const descId = "modal-desc";
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -25,19 +28,26 @@ const AppModal = ({ activeModal, isOpen, onClose, MVVData }) => {
         display={"flex"}
         flexDirection={"column"}
         alignItems={"center"}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={headerId}
+        aria-describedby={descId}
       >
         <ModalHeader
+          id={headerId}
           fontFamily={"Onest"}
           fontSize={"2rem"}
           fontWeight={700}
           lineHeight={"150%"}
           color={"#52601A"}
+          tabIndex={0}
         >
           {MVVData[activeModal].title}
         </ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton aria-label="Fechar modal" />
         <ModalBody>
           <UnorderedList
+            id={descId}
             display={"flex"}
             flexDirection={"column"}
             gap={"1.2rem"}
@@ -52,7 +62,11 @@ const AppModal = ({ activeModal, isOpen, onClose, MVVData }) => {
           >
             {MVVData[activeModal].modalItems.map((item, idx) => (
               <ListItem key={idx}>
-                <Image src={FolhaCheck} alt="check" boxSize="1.2em" />
+                <Image
+                  src={FolhaCheck}
+                  alt="Ícone de confirmação"
+                  boxSize="1.2em"
+                />
                 <Text color={"#52601A"}>{item}</Text>
               </ListItem>
             ))}
@@ -73,6 +87,7 @@ const AppModal = ({ activeModal, isOpen, onClose, MVVData }) => {
             _hover={{
               background: "#c0ab8e",
             }}
+            aria-label="Fechar modal"
           >
             Fechar
           </Button>
