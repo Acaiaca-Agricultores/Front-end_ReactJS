@@ -110,7 +110,7 @@ const AppTechPlat = () => (
         <Image
           src={ImagemTecnologia}
           alt="Tela da plataforma digital Acaiacá mostrando funcionalidades para agricultores e consumidores"
-          boxSize="100%"
+          width="100%"
         />
       </Box>
       <Box {...BoxStyles} alignItems={{ base: "center", md: "flex-end" }}>
@@ -153,7 +153,7 @@ const AppTechPlat = () => (
         <Image
           src={ChatTela}
           alt="Tela do chat inteligente da plataforma Acaiacá"
-          boxSize="100%"
+          width="100%"
         />
       </Box>
       <Box

@@ -1,7 +1,7 @@
 import "../../global-styles.css";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-// import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { useState } from "react";
 import {
   Flex,
@@ -32,32 +32,31 @@ export function AppLogin() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    try {
-      const tokenResponse = await fetch("https://api.example.com/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+    const { email, password } = data;
+    const url = "http://localhost:3000/auth/login";
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    };
 
-      if (!tokenResponse.ok) {
-        throw new Error("Erro ao fazer login. Verifique suas credenciais.");
+    try {
+      const response = await fetch(url, requestOptions);
+      if (!response.ok) {
+        throw new Error(`Erro: ${response.status} - ${response.statusText}`);
       }
 
-      const responseData = await tokenResponse.json();
-      const userData = jwtDecode(responseData.token);
+      const responseData = await response.json();
+      const token = responseData.token;
+      localStorage.setItem("token", token);
 
-      localStorage.setItem("token", responseData.token);
-      localStorage.setItem("user", JSON.stringify(userData));
-
-      navigation("/");
+      navigation("/home");
     } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      setAlertMessage("Erro ao fazer login. Tente novamente.");
       setAlertType("error");
-      setAlertMessage(
-        error.message || "Erro ao fazer login. Verifique suas credenciais."
-      );
-      setTimeout(() => setAlertMessage(""), 3000);
     }
   };
 
@@ -152,11 +151,6 @@ export function AppLogin() {
                     value: 6,
                     message: "A senha deve ter pelo menos 6 caracteres",
                   },
-                  pattern: {
-                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/,
-                    message:
-                      "A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número",
-                  },
                 })}
               />
               <FormErrorMessage>
@@ -206,7 +200,7 @@ export function AppLogin() {
             <Alert
               status={alertType}
               position="absolute"
-              top="10vh"
+              top="12vh"
               left="50%"
               transform="translateX(-50%)"
               zIndex="999"
