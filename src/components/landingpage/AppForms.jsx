@@ -21,6 +21,7 @@ const AppForms = () => {
       spacing={{ base: 0, md: 10 }}
       padding={{ base: "2rem", md: "4.5rem 12.5rem" }}
       background={"#ECE1DA"}
+      gap={"2rem"}
     >
       <Box>
         <Image

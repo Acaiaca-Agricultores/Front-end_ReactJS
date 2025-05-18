@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import {
-  Button,
-  Box,
-  Flex,
-  Image,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-} from "@chakra-ui/react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Button, Box, Flex, Image } from "@chakra-ui/react";
 import {} from "@chakra-ui/react";
 import Logo from "../../assets/logo_semfundo.png";
 import AppMenu from "./AppMenu";
@@ -28,6 +20,7 @@ const Header = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,13 +41,16 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
+  const shouldRenderButtons =
+    location.pathname !== "/about" && location.pathname !== "/login";
+
   return (
     <Box
       as="header"
       padding="0 1rem"
       role="banner"
       background={
-        location.pathname === "/about"
+        location.pathname === "/about" || location.pathname === "/login"
           ? lastScrollY < 50
             ? "#52601a"
             : "rgba(82, 96, 26, 0.8)"
@@ -65,10 +61,14 @@ const Header = () => {
           : "rgba(82, 96, 26, 0.8)"
       }
       display="block"
-      position={{ base: "relative", md: "fixed" }}
-      top={{ base: "0", md: showHeader ? "0" : "-100px" }}
+      position={
+        location.pathname === "/login"
+          ? "relative"
+          : { base: "relative", md: "fixed" }
+      }
+      top={location.pathname === "/login" ? "0" : showHeader ? "0" : "-100%"}
       left="0"
-      width="100vw"
+      width="100%"
       zIndex="1000"
       transition="top 0.3s, background 0.3s"
     >
@@ -93,74 +93,76 @@ const Header = () => {
           aria-label="Navegação principal"
           display={{ base: "none", md: "flex" }}
           alignItems="center"
-          gap="6.25rem"
+          gap="2rem"
           fontSize={{ base: "0.8rem", md: "1.2rem" }}
-          color={"#ffffff"}
+          color="#ffffff"
           role="navigation"
         >
-          <Breadcrumb separator="" aria-label="Breadcrumb">
-            <BreadcrumbItem>
-              <BreadcrumbLink
-                href="/"
-                aria-current={location.pathname === "/" ? "page" : undefined}
-                _hover={{
-                  textDecoration: "none",
-                  color: location.pathname === "/about" ? "#e5d1b0" : "#83a11d",
-                }}
+          <Button
+            variant="link"
+            color="inherit"
+            onClick={() => navigate("/")}
+            aria-current={location.pathname === "/" ? "page" : undefined}
+            _hover={{
+              color:
+                location.pathname === "/about" || location.pathname === "/login"
+                  ? "#e5d1b0"
+                  : "#83a11d",
+            }}
+          >
+            Início
+          </Button>
+          {shouldRenderButtons && (
+            <>
+              <Button
+                variant="link"
+                color="inherit"
+                onClick={(e) => handleSmoothScroll(e, "apptecplat")}
+                aria-label="Ir para Plataforma"
+                _hover={{ color: "#83a11d" }}
               >
-                Inicio
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            {location.pathname !== "/about" && (
-              <>
-                <Breadcrumb separator="">
-                  <BreadcrumbItem>
-                    <BreadcrumbLink
-                      _hover={{ textDecoration: "none", color: "#83a11d" }}
-                      onClick={(e) => handleSmoothScroll(e, "apptecplat")}
-                      aria-label="Ir para Plataforma"
-                    >
-                      Plataforma
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink
-                      _hover={{ textDecoration: "none", color: "#83a11d" }}
-                      onClick={(e) => handleSmoothScroll(e, "appsubs")}
-                      aria-label="Ir para Assinatura"
-                    >
-                      Assinatura
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink
-                      href="/about"
-                      aria-current={
-                        location.pathname === "/about" ? "page" : undefined
-                      }
-                      _hover={{ textDecoration: "none", color: "#83a11d" }}
-                      aria-label="Sobre"
-                    >
-                      Sobre
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink
-                      href="/#appforms"
-                      _hover={{ textDecoration: "none", color: "#83a11d" }}
-                      onClick={(e) => handleSmoothScroll(e, "appforms")}
-                      aria-label="Fale Conosco"
-                    >
-                      Fale Conosco
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                </Breadcrumb>
-              </>
-            )}
-          </Breadcrumb>
+                Plataforma
+              </Button>
+              <Button
+                variant="link"
+                color="inherit"
+                onClick={(e) => handleSmoothScroll(e, "appsubs")}
+                aria-label="Ir para Assinatura"
+                _hover={{ color: "#83a11d" }}
+              >
+                Assinatura
+              </Button>
+            </>
+          )}
+          <Button
+            variant="link"
+            color="inherit"
+            onClick={() => navigate("/about")}
+            aria-label="Sobre"
+            _hover={{
+              color:
+                location.pathname === "/about" || location.pathname === "/login"
+                  ? "#e5d1b0"
+                  : "#83a11d",
+            }}
+          >
+            Sobre
+          </Button>
+          {shouldRenderButtons && (
+            <Button
+              variant="link"
+              color="inherit"
+              onClick={(e) => handleSmoothScroll(e, "appforms")}
+              aria-label="Fale Conosco"
+              _hover={{ color: "#83a11d" }}
+            >
+              Fale Conosco
+            </Button>
+          )}
         </Flex>
         <Box display={{ base: "none", md: "block" }}>
           <Button
+            onClick={() => navigate("/login")}
             width={"13rem"}
             color="#52601a"
             background="#ffffff"

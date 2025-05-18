@@ -1,7 +1,7 @@
 import { Button, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const handleSmoothScroll = (e, id) => {
   e.preventDefault();
@@ -12,8 +12,8 @@ const handleSmoothScroll = (e, id) => {
 };
 
 const AppMenu = () => {
-  const [lastScrollY, setLastScrollY] = useState(0);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,7 +42,7 @@ const AppMenu = () => {
       <MenuList>
         <MenuItem
           as="a"
-          href="/"
+          onClick={() => navigate("/")}
           _hover={{
             textDecoration: "none",
             color: location.pathname === "/about" ? "#e5d1b0" : "#83a11d",
@@ -50,8 +50,14 @@ const AppMenu = () => {
         >
           Inicio
         </MenuItem>
-        {location.pathname !== "/about" && (
+        {location.pathname !== "/login" && location.pathname !== "/about" && (
           <>
+            <MenuItem
+              onClick={() => navigate("/login")}
+              _hover={{ textDecoration: "none", color: "#83a11d" }}
+            >
+              login
+            </MenuItem>
             <MenuItem
               onClick={(e) => handleSmoothScroll(e, "apptecplat")}
               _hover={{ textDecoration: "none", color: "#83a11d" }}
@@ -66,7 +72,7 @@ const AppMenu = () => {
             </MenuItem>
             <MenuItem
               as="a"
-              href="/about"
+              onClick={() => navigate("/about")}
               _hover={{ textDecoration: "none", color: "#83a11d" }}
             >
               Sobre
