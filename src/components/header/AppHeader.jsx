@@ -42,7 +42,9 @@ const Header = () => {
   }, [lastScrollY]);
 
   const shouldRenderButtons =
-    location.pathname !== "/about" && location.pathname !== "/login";
+    location.pathname !== "/about" &&
+    location.pathname !== "/login" &&
+    location.pathname !== "/404";
 
   return (
     <Box
@@ -50,7 +52,9 @@ const Header = () => {
       padding="0 1rem"
       role="banner"
       background={
-        location.pathname === "/about" || location.pathname === "/login"
+        location.pathname === "/about" ||
+        location.pathname === "/login" ||
+        location.pathname === "/404"
           ? lastScrollY < 50
             ? "#52601a"
             : "rgba(82, 96, 26, 0.8)"
@@ -62,7 +66,7 @@ const Header = () => {
       }
       display="block"
       position={
-        location.pathname === "/login"
+        location.pathname === "/login" || location.pathname === "/404"
           ? "relative"
           : { base: "relative", md: "fixed" }
       }
@@ -104,10 +108,9 @@ const Header = () => {
             onClick={() => navigate("/")}
             aria-current={location.pathname === "/" ? "page" : undefined}
             _hover={{
-              color:
-                location.pathname === "/about" || location.pathname === "/login"
-                  ? "#e5d1b0"
-                  : "#83a11d",
+              color: ["/login", "/about", "/404"].includes(location.pathname)
+                ? "#e5d1b0"
+                : "#83a11d",
             }}
           >
             Início
@@ -140,10 +143,9 @@ const Header = () => {
             onClick={() => navigate("/about")}
             aria-label="Sobre"
             _hover={{
-              color:
-                location.pathname === "/about" || location.pathname === "/login"
-                  ? "#e5d1b0"
-                  : "#83a11d",
+              color: ["/login", "/about", "/404"].includes(location.pathname)
+                ? "#e5d1b0"
+                : "#83a11d",
             }}
           >
             Sobre

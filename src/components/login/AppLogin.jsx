@@ -1,7 +1,6 @@
 import "../../global-styles.css";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { jwtDecode } from "jwt-decode";
 import { useState } from "react";
 import {
   Flex,
@@ -21,7 +20,7 @@ import {
 
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
 
-export function AppLogin() {
+const AppLogin = () => {
   const navigation = useNavigate();
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("success");
@@ -215,4 +214,6 @@ export function AppLogin() {
       </Flex>
     </>
   );
-}
+};
+
+export default AppLogin;
