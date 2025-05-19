@@ -13,10 +13,14 @@ function App() {
 
   return (
     <>
-      <Header />
+      {location.pathname !== "/login" && location.pathname !== "/404" && (
+        <Header display="flex" />
+      )}
       <AppRouters />
       <AppButton />
-      {location.pathname !== "/login" && <Footer display="flex" />}
+      {location.pathname !== "/login" && location.pathname !== "/404" && (
+        <Footer display="flex" />
+      )}
     </>
   );
 }

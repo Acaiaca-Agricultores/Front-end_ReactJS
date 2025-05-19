@@ -64,34 +64,27 @@ const AppSubs = () => {
       flexDirection={"column"}
       alignItems={"center"}
       padding={{ base: "2rem", md: "5rem" }}
+      background={
+        "linear-gradient(0deg,rgba(0, 41, 0, 1) 0%, rgba(66, 156, 48, 1) 100%)"
+      }
     >
       <Text
         as={"h1"}
         fontSize={{ base: "2rem", md: "3rem" }}
         tabIndex={0}
         aria-label="Assinatura"
+        role="heading"
+        color={"#ffffff"}
       >
         Assinatura
       </Text>
-      <Text textAlign={"center"}>
+      <Text as={"p"} textAlign={"center"}>
         Vantagens da sua assinatura após o limite gratuito
       </Text>
       <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}>
         {cardData.map((card, index) => (
           <GridItem key={index} gap={5} padding={"2rem"}>
-            <Card
-              border={
-                card.title === "Plano Semente"
-                  ? "2px solid #72CC5D"
-                  : card.title === "Plano Raiz"
-                  ? "2px solid #46A637"
-                  : card.title === "Plano Colheita"
-                  ? "2px solid #197F10"
-                  : undefined
-              }
-              boxSize={"100%"}
-              backgroundColor={"transparent"}
-            >
+            <Card borderRadius={"1rem"} boxSize={"100%"}>
               <CardHeader>
                 <Box textAlign={"center"} padding={"2rem 0"}>
                   <Image

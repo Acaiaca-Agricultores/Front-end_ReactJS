@@ -12,7 +12,7 @@ const AppRouters = () => {
       <Route path="*" element={<Navigate to="/404" />} />
       <Route path="/404" element={<AppPage404 />} />
       <Route path="/" element={<LandingPageApp />} />
-      <Route path="/about" element={<AppAbout />} />
+      <Route path="/sobre" element={<AppAbout />} />
       <Route path="/login" element={<AppLogin />} />
       <Route path="/home" element={<AppHome />} />
     </Routes>

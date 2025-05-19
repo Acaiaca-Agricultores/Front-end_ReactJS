@@ -45,12 +45,12 @@ const AppMenu = () => {
           onClick={() => navigate("/")}
           _hover={{
             textDecoration: "none",
-            color: location.pathname === "/about" ? "#e5d1b0" : "#83a11d",
+            color: location.pathname === "/sobre" ? "#e5d1b0" : "#83a11d",
           }}
         >
           Inicio
         </MenuItem>
-        {location.pathname !== "/login" && location.pathname !== "/about" && (
+        {location.pathname !== "/login" && location.pathname !== "/sobre" && (
           <>
             <MenuItem
               onClick={() => navigate("/login")}
@@ -72,7 +72,7 @@ const AppMenu = () => {
             </MenuItem>
             <MenuItem
               as="a"
-              onClick={() => navigate("/about")}
+              onClick={() => navigate("/sobre")}
               _hover={{ textDecoration: "none", color: "#83a11d" }}
             >
               Sobre

@@ -3,19 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import {
-  Flex,
-  Center,
   Box,
   Text,
   Button,
   Input,
-  Image,
   ButtonGroup,
   FormControl,
   FormLabel,
   FormErrorMessage,
   Alert,
   AlertIcon,
+  Link,
 } from "@chakra-ui/react";
 
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
@@ -61,29 +59,35 @@ const AppLogin = () => {
 
   return (
     <>
-      <Flex
-        h={{ base: "auto", md: "100vh" }}
+      <Box
+        id="appforms"
+        as="section"
+        role="region"
+        aria-label="Formulário de contato"
+        backgroundImage={`url(${ImageAgricultor})`}
+        backgroundRepeat="no-repeat"
+        backgroundSize="cover"
+        objectFit={"cover"}
+        backgroundPosition="center"
         display={"flex"}
-        flexDirection={{ base: "column", md: "row" }}
+        flexDirection={"column"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        width="100vw"
+        height="100vh"
       >
-        <Center w="40%" display={{ base: "none", md: "block" }}>
-          <Image
-            src={ImageAgricultor}
-            alt="Imagem agricultor com frutas e vegetais"
-            aria-label="Imagem de um agricultor com um cesto de frutas e vegetais, representando a agricultura sustentável e a economia rural."
-            role="img"
-            objectFit="cover"
-            boxSize={"100%"}
-          />
-        </Center>
         <Box
           display="flex"
           flexDirection="column"
           alignItems="center"
           justifyContent="center"
-          padding={{ base: "2rem", md: "5rem" }}
+          padding={{ base: "2rem", md: "0 25rem" }}
           gap="2rem"
-          width={{ base: "100%", md: "60%" }}
+          width={"100vw"}
+          height={"100vh"}
+          background="rgba(0, 0, 0, 0.6)"
+          backdropFilter="blur(8px)"
+          color={"white"}
         >
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -96,14 +100,10 @@ const AppLogin = () => {
               alignItems: "center",
               gap: "2rem",
               width: "100%",
-              height: "100%",
               padding: "2rem",
-              margin: "2rem",
-              border: "1px solid #839E6B",
-              borderRadius: "10px",
             }}
           >
-            <Text as={"h1"} fontSize="2xl">
+            <Text as={"h1"} fontSize="2rem" color={"#ffffff"}>
               Login
             </Text>
             <FormControl isInvalid={errors.email} mb={4}>
@@ -112,9 +112,11 @@ const AppLogin = () => {
                 id="email"
                 type="email"
                 placeholder="Digite seu email"
+                _placeholder={{ color: "#b0b0b0" }}
                 border={"2px solid  #83a11d"}
                 aria-required="true"
                 autoComplete="email"
+                boxSize={"100%"}
                 _focus={{
                   borderColor: "#c0ab8e",
                   boxShadow: "0 0 0 1px #e5d1b0",
@@ -137,9 +139,11 @@ const AppLogin = () => {
                 id="password"
                 type="password"
                 placeholder="Digite sua senha"
+                _placeholder={{ color: "#b0b0b0" }}
                 border={"2px solid  #83a11d"}
                 aria-required="true"
                 autoComplete="email"
+                boxSize={"100%"}
                 _focus={{
                   borderColor: "#c0ab8e",
                   boxShadow: "0 0 0 1px #e5d1b0",
@@ -156,18 +160,22 @@ const AppLogin = () => {
                 {errors.password && errors.password.message}
               </FormErrorMessage>
             </FormControl>
+            <Box display={"flex"} justifyContent={"space-around"} w={"100%"}>
+              <Link>Cadastre-se</Link>
+              <Link>Esqueceu a senha?</Link>
+            </Box>
             <ButtonGroup w={"100%"} gap="1rem">
               <Button
                 onClick={() => navigation("/")}
                 w={"100%"}
-                color="#52601a"
+                color="#c0ab8e"
                 background="transparent"
-                border={"1px solid #52601a"}
+                border={"1px solid #c0ab8e"}
                 borderRadius="10px"
                 fontFamily="Onest"
                 padding="1.5rem"
                 _hover={{
-                  background: "#52601a",
+                  background: "#c0ab8e",
                   color: "#ffffff",
                 }}
                 aria-label="Fazer login"
@@ -205,13 +213,14 @@ const AppLogin = () => {
               zIndex="999"
               width="80%"
               maxWidth="400px"
+              color={"black"}
             >
               <AlertIcon />
               {alertMessage}
             </Alert>
           )}
         </Box>
-      </Flex>
+      </Box>
     </>
   );
 };

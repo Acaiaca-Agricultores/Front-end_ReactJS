@@ -16,14 +16,7 @@ const MVVData = [
     description:
       "Nossa missão é focada no Agricultor Familiar e na Comunidade Local que o cerca.",
     modalItems: [
-      "Protagonismo do agricultor familiar",
-      "Valorizamos quem planta com dedicação, dando visibilidade, voz e renda justa.",
-      "Comércio justo e transparente",
-      "Cultivar o futuro com cuidado e esperança",
-      "Alimentação saudável e acessível",
-      "Levamos comida de verdade a quem valoriza saúde, sabor e origem.",
-      "Educação e transformação social",
-      "Espalhamos conhecimento que fortalece o campo e inspira escolhas conscientes.",
+      "A nossa missão é dar visibilidade aos pequenos agricultores, valorizando o alimento feito com dedicação e carinho.",
     ],
   },
   {
@@ -35,16 +28,7 @@ const MVVData = [
     description:
       "Nossa visão é de um futuro onde a agricultura familiar é valorizada e respeitada.",
     modalItems: [
-      "Sustentabilidade no cultivo",
-      "Promovemos práticas agrícolas que respeitam a natureza e cuidam do futuro.",
-      "Protagonismo do agricultor familiar",
-      "Valorizamos quem planta com dedicação, dando visibilidade, voz e renda justa.",
-      "Comércio justo e transparente",
-      "Cultivar o futuro com cuidado e esperança",
-      "Alimentação saudável e acessível",
-      "Levamos comida de verdade a quem valoriza saúde, sabor e origem.",
-      "Educação e transformação social",
-      "Espalhamos conhecimento que fortalece o campo e inspira escolhas conscientes.",
+      "Queremos expandir nossa atuação e nos consolidar como a principal plataforma nacional de conexão entre pequenos agricultores e consumidores.",
     ],
   },
   {
@@ -56,9 +40,11 @@ const MVVData = [
     description:
       "Nossos valores são fundamentais para a construção de um futuro mais justo e sustentável.",
     modalItems: [
-      "Construir a principal plataforma de conexão direta entre agricultores familiares e consumidores no Brasil.",
-      "Promover uma nova economia do alimento — mais justa, transparente e afetiva.",
-      "Cada colheita gera renda digna, fortalece comunidades e inspira escolhas conscientes.",
+      "Sustentabilidade",
+      "Protagonismo do agricultor",
+      "Transparência no comércio",
+      "Empatia",
+      "Respeito",
     ],
   },
 ];
@@ -73,7 +59,7 @@ const MvvApp = ({ activeModal, isOpen, onClose, handleOpenModal }) => {
         templateColumns={{ base: "1fr", md: "repeat(6, 1fr)" }}
         gap={6}
         padding={{ base: "2rem", md: "5rem 10rem;" }}
-        background={"#fad4a1"}
+        background={"#FCEAD0"}
       >
         {MVVData.map((item, index) => (
           <GridItem
@@ -104,15 +90,15 @@ const MvvApp = ({ activeModal, isOpen, onClose, handleOpenModal }) => {
             <Text>{item.description}</Text>
             <Button
               onClick={() => handleOpenModal(index)}
-              color={"white"}
-              style={{ background: item.buttonColor }}
-              borderRadius={"10px"}
-              fontFamily={"Onest"}
-              fontSize={"1.2rem"}
+              color="white"
+              bg={item.buttonColor}
+              borderRadius="10px"
+              fontFamily="Onest"
+              fontSize="1.2rem"
               fontWeight={400}
-              lineHeight={"150%"}
+              lineHeight="150%"
               w={{ base: "10rem", md: "13rem" }}
-              padding={"1.5rem"}
+              p="1.5rem"
               _hover={{
                 bg: item.buttonColorHover,
                 color: "#000000",

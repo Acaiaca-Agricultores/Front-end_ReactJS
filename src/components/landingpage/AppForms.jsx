@@ -5,32 +5,39 @@ import {
   Input,
   Textarea,
   Button,
-  Image,
-  SimpleGrid,
+  Text,
 } from "@chakra-ui/react";
-import formImg from "../../assets/agricultor.jpg";
 
 const AppForms = () => {
   return (
-    <SimpleGrid
+    <Box
       id="appforms"
       as="section"
       role="region"
       aria-label="Formulário de contato"
-      columns={{ base: 1, md: 2 }}
-      spacing={{ base: 0, md: 10 }}
-      padding={{ base: "2rem", md: "4.5rem 12.5rem" }}
-      background={"#ECE1DA"}
-      gap={"2rem"}
+      backgroundImage={`url(${"https://images.unsplash.com/photo-1625246333195-78d9c38ad449?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8YWdyaWN1bHR1cmF8ZW58MHx8MHx8fDA%3D"})`}
+      backgroundSize="cover"
+      objectFit={"cover"}
+      backgroundPosition="center"
+      padding={"2rem"}
+      display={"flex"}
+      flexDirection={"column"}
+      alignItems={"center"}
+      justifyContent={"center"}
     >
-      <Box>
-        <Image
-          src={formImg}
-          alt="Pessoa agricultora sorrindo, ilustrando contato"
-          boxSize={"100%"}
-        />
-      </Box>
-      <Box border={"2px solid  #83a11d"} borderRadius="8px" p={6}>
+      <Box
+        border={"2px solid  #83a11d"}
+        borderRadius="8px"
+        p={6}
+        margin={"4rem"}
+        background="rgba(0, 0, 0, 0.5)"
+        backdropFilter="blur(8px)"
+        width={{ base: "100%", md: "50%" }}
+        color={"white"}
+      >
+        <Text as={"h1"} color={"#ffffff"} textAlign={"center"} fontSize="2xl">
+          Fomulário de Contato
+        </Text>
         <form role="form" aria-label="Formulário de contato">
           <FormControl id="nome" mb={4} isRequired>
             <FormLabel htmlFor="nome">Nome</FormLabel>
@@ -39,6 +46,7 @@ const AppForms = () => {
               id="nome"
               name="nome"
               placeholder="Seu nome"
+              _placeholder={{ color: "#b0b0b0" }}
               border={"2px solid  #83a11d"}
               aria-required="true"
               autoComplete="name"
@@ -55,6 +63,7 @@ const AppForms = () => {
               id="email"
               name="email"
               placeholder="Seu email"
+              _placeholder={{ color: "#b0b0b0" }}
               border={"2px solid  #83a11d"}
               aria-required="true"
               autoComplete="email"
@@ -70,6 +79,7 @@ const AppForms = () => {
               id="mensagem"
               name="mensagem"
               placeholder="Digite sua mensagem"
+              _placeholder={{ color: "#b0b0b0" }}
               rows={5}
               border={"2px solid  #83a11d"}
               aria-required="true"
@@ -98,7 +108,7 @@ const AppForms = () => {
           </Button>
         </form>
       </Box>
-    </SimpleGrid>
+    </Box>
   );
 };
 

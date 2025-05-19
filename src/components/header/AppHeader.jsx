@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Box, Flex, Image } from "@chakra-ui/react";
 import {} from "@chakra-ui/react";
@@ -42,7 +42,7 @@ const Header = () => {
   }, [lastScrollY]);
 
   const shouldRenderButtons =
-    location.pathname !== "/about" &&
+    location.pathname !== "/sobre" &&
     location.pathname !== "/login" &&
     location.pathname !== "/404";
 
@@ -52,7 +52,7 @@ const Header = () => {
       padding="0 1rem"
       role="banner"
       background={
-        location.pathname === "/about" ||
+        location.pathname === "/sobre" ||
         location.pathname === "/login" ||
         location.pathname === "/404"
           ? lastScrollY < 50
@@ -108,7 +108,7 @@ const Header = () => {
             onClick={() => navigate("/")}
             aria-current={location.pathname === "/" ? "page" : undefined}
             _hover={{
-              color: ["/login", "/about", "/404"].includes(location.pathname)
+              color: ["/login", "/sobre", "/404"].includes(location.pathname)
                 ? "#e5d1b0"
                 : "#83a11d",
             }}
@@ -140,10 +140,10 @@ const Header = () => {
           <Button
             variant="link"
             color="inherit"
-            onClick={() => navigate("/about")}
+            onClick={() => navigate("/sobre")}
             aria-label="Sobre"
             _hover={{
-              color: ["/login", "/about", "/404"].includes(location.pathname)
+              color: ["/login", "/sobre", "/404"].includes(location.pathname)
                 ? "#e5d1b0"
                 : "#83a11d",
             }}
