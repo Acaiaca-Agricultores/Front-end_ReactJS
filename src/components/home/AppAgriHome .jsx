@@ -1,6 +1,6 @@
 import { Box, Text } from "@chakra-ui/react";
 
-const AppHome = () => {
+const AppAgriHome = () => {
   return (
     <Box
       display="flex"
@@ -10,10 +10,10 @@ const AppHome = () => {
       backgroundColor="#f5f5f5"
     >
       <Text fontSize="2xl" fontWeight="bold" color="#52601a">
-        Login com sucesso
+        Login com sucesso, Agricultor
       </Text>
     </Box>
   );
 };
 
-export default AppHome;
+export default AppAgriHome;

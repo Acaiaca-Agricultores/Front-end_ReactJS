@@ -12,9 +12,9 @@ import {
   UnorderedList,
 } from "@chakra-ui/react";
 
-import FolhaCheck from "../../assets/icons/folhaDeLouro.png";
+import FolhaCheck from "../../assets/icons/folhacheck.png";
 import IconSeed from "../../assets/icons/broto.png";
-import IconRoots from "../../assets/icons/raízes.png";
+import IconRoots from "../../assets/icons/raizes.png";
 import IconHarvest from "../../assets/icons/colheita.png";
 
 const cardData = [
@@ -65,7 +65,7 @@ const AppSubs = () => {
       alignItems={"center"}
       padding={{ base: "2rem", md: "5rem" }}
       background={
-        "linear-gradient(0deg,rgba(0, 41, 0, 1) 0%, rgba(66, 156, 48, 1) 100%)"
+        "linear-gradient(180deg,rgba(124, 76, 70, 1) 0%, rgba(68, 38, 35, 1) 100%)"
       }
     >
       <Text
@@ -78,7 +78,7 @@ const AppSubs = () => {
       >
         Assinatura
       </Text>
-      <Text as={"p"} textAlign={"center"}>
+      <Text as={"p"} textAlign={"center"} color={"#ffffff"} fontSize={"1.2rem"}>
         Vantagens da sua assinatura após o limite gratuito
       </Text>
       <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}>
@@ -98,11 +98,11 @@ const AppSubs = () => {
                     fontSize={"2rem"}
                     color={
                       card.title === "Plano Semente"
-                        ? "#72CC5D"
+                        ? "#E6C7BA"
                         : card.title === "Plano Raiz"
-                        ? "#46A637"
+                        ? "#B5665E"
                         : card.title === "Plano Colheita"
-                        ? "#197F10"
+                        ? "#9C3531"
                         : undefined
                     }
                     tabIndex={0}
@@ -116,11 +116,11 @@ const AppSubs = () => {
                     fontSize={"1.3rem"}
                     color={
                       card.title === "Plano Semente"
-                        ? "#72CC5D"
+                        ? "#E6C7BA"
                         : card.title === "Plano Raiz"
-                        ? "#46A637"
+                        ? "#B5665E"
                         : card.title === "Plano Colheita"
-                        ? "#197F10"
+                        ? "#9C3531"
                         : undefined
                     }
                   >

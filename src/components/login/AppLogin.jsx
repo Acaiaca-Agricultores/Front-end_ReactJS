@@ -14,6 +14,7 @@ import {
   Alert,
   AlertIcon,
   Link,
+  Select,
 } from "@chakra-ui/react";
 
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
@@ -29,27 +30,34 @@ const AppLogin = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    const { email, password } = data;
+    const { email, password, role } = data;
     const url = "http://localhost:3000/auth/login";
     const requestOptions = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, role }),
     };
 
     try {
       const response = await fetch(url, requestOptions);
-      if (!response.ok) {
-        throw new Error(`Erro: ${response.status} - ${response.statusText}`);
-      }
-
       const responseData = await response.json();
+      if (!response.ok) {
+        throw new Error(
+          `Erro: ${response.status} - ${
+            responseData.message || response.statusText
+          }`
+        );
+      }
       const token = responseData.token;
       localStorage.setItem("token", token);
-
-      navigation("/home");
+      if (role === "agricultor") {
+        navigation("/HomeAgricultor");
+      }
+      if (role === "consumidor") {
+        navigation("/HomeConsumidor");
+      }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       setAlertMessage("Erro ao fazer login. Tente novamente.");
@@ -82,7 +90,6 @@ const AppLogin = () => {
           alignItems="center"
           justifyContent="center"
           padding={{ base: "2rem", md: "0 25rem" }}
-          gap="2rem"
           width={"100vw"}
           height={"100vh"}
           background="rgba(0, 0, 0, 0.6)"
@@ -98,8 +105,9 @@ const AppLogin = () => {
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              gap: "2rem",
+              gap: "3rem",
               width: "100%",
+              height: "100%",
               padding: "2rem",
             }}
           >
@@ -160,7 +168,37 @@ const AppLogin = () => {
                 {errors.password && errors.password.message}
               </FormErrorMessage>
             </FormControl>
-            <Box display={"flex"} justifyContent={"space-around"} w={"100%"}>
+            <FormControl isInvalid={errors.role} mb={4}>
+              <FormLabel htmlFor="role">Tipo de usuário</FormLabel>
+              <Select
+                placeholder="Selecione o tipo de usuário"
+                {...register("role", {
+                  required: "Selecione o tipo de usuário",
+                })}
+                id="select"
+                type="select"
+                border={"2px solid  #83a11d"}
+                aria-required="true"
+                color={"#b0b0b0"}
+                _focus={{
+                  borderColor: "#c0ab8e",
+                  boxShadow: "0 0 0 1px #e5d1b0",
+                }}
+              >
+                <option value="agricultor">Agricultor</option>
+                <option value="consumidor">Consumidor</option>
+              </Select>
+              <FormErrorMessage>
+                {errors.role && errors.role.message}
+              </FormErrorMessage>
+            </FormControl>
+            <Box
+              display={"flex"}
+              flexDirection={{ base: "column", md: "row" }}
+              alignItems={"center"}
+              justifyContent={"space-around"}
+              w={"100%"}
+            >
               <Link>Cadastre-se</Link>
               <Link>Esqueceu a senha?</Link>
             </Box>
@@ -207,7 +245,7 @@ const AppLogin = () => {
             <Alert
               status={alertType}
               position="absolute"
-              top="12vh"
+              top="0vh"
               left="50%"
               transform="translateX(-50%)"
               zIndex="999"
