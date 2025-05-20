@@ -16,6 +16,7 @@ import {
 import { Typewriter } from "react-simple-typewriter";
 import BannerGif from "../../assets/banner.gif";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const buttonStyles = {
   color: "white",
@@ -43,8 +44,8 @@ const textBigStyles = {
 };
 
 const AppAgricultor = () => {
+  const navigation = useNavigate();
   const [showVideo, setShowVideo] = useState(false);
-
   return (
     <Grid
       as="section"
@@ -109,6 +110,7 @@ const AppAgricultor = () => {
             {...buttonStyles}
             w="100%"
             aria-label="Cadastre-se na plataforma"
+            onClick={ ()=> navigation("/cadastro")}
           >
             Cadastre-se
           </Button>

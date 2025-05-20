@@ -13,12 +13,12 @@ function App() {
 
   return (
     <>
-      {location.pathname !== "/login" && location.pathname !== "/404" && (
+      {location.pathname !== "/login" && location.pathname !== "/404" && location.pathname !== "/cadastro" && (
         <Header display="flex" />
       )}
       <AppRouters />
       <AppButton />
-      {location.pathname !== "/login" && location.pathname !== "/404" && (
+      {location.pathname !== "/login" && location.pathname !== "/404" && location.pathname !== "/cadastro" && (
         <Footer display="flex" />
       )}
     </>

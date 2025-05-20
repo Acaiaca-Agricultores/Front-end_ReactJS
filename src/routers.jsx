@@ -6,6 +6,7 @@ import AppLogin from "./components/login/AppLogin.jsx";
 import AppAgriHome from "./components/home/AppAgriHome .jsx";
 import AppConsuHome from "./components/home/AppConsuHome.jsx";
 import AppPage404 from "./components/pagina 404/AppPage404.jsx";
+import AppCadastro from "./components/cadastro/AppCadastro.jsx";
 
 const AppRouters = () => {
   return (
@@ -15,6 +16,7 @@ const AppRouters = () => {
       <Route path="/" element={<LandingPageApp />} />
       <Route path="/sobre" element={<AppAbout />} />
       <Route path="/login" element={<AppLogin />} />
+      <Route path="/cadastro" element={<AppCadastro/>}/>
       <Route path="/HomeAgricultor" element={<AppAgriHome />} />
       <Route path="/HomeConsumidor" element={<AppConsuHome />} />
     </Routes>

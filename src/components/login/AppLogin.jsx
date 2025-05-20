@@ -199,8 +199,8 @@ const AppLogin = () => {
               justifyContent={"space-around"}
               w={"100%"}
             >
-              <Link>Cadastre-se</Link>
-              <Link>Esqueceu a senha?</Link>
+              <Link _hover={{color:"#c0ab8e"}} fontSize={{base : "1rem" , md:"1.2rem" }} href ="/cadastro" >Cadastre-se</Link>
+              <Link _hover={{color:"#c0ab8e"}} fontSize={{base : "1rem" , md:"1.2rem" }} >Esqueceu a senha?</Link>
             </Box>
             <ButtonGroup w={"100%"} gap="1rem">
               <Button
