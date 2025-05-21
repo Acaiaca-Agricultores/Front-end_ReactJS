@@ -11,17 +11,19 @@ const handleSmoothScroll = (e, id) => {
   }
 };
 
-const AppMenu = () => {
+const AppMenu = ({ setLastScrollY }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
-      setLastScrollY(window.scrollY);
+      if (setLastScrollY) {
+        setLastScrollY(window.scrollY);
+      }
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [setLastScrollY]);
 
   return (
     <Menu>

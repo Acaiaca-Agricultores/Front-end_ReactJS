@@ -11,9 +11,9 @@ import {
 
 import ImagemTecnologia from "../../assets/plataforma_acaica-front.png";
 import ChatTela from "../../assets/chat-tela.png";
-import IconDevice from "../../assets/icons/device.png";
-import IconChat from "../../assets/icons/chat.png";
-import ImageAIcai from "../../assets/AIcai.png";
+import IconDevice from "../../assets/icons/laptop.mp4";
+import IconChat from "../../assets/icons/chat-bot.mp4";
+import ImageAIcai from "../../assets/IAcai.png";
 
 const gridStyles = {
   columns: { base: 1, md: 2 },
@@ -67,7 +67,7 @@ const AppTechPlat = () => (
               aria-level={1}
               role="heading"
             >
-              Tecnologia
+              Simples e Acessível 
             </Heading>
           </CardHeader>
           <CardBody
@@ -99,7 +99,6 @@ const AppTechPlat = () => (
           </CardBody>
         </Card>
       </Box>
-
       <SimpleGrid
         as="section"
         role="region"
@@ -116,10 +115,14 @@ const AppTechPlat = () => (
         <Box {...BoxStyles} alignItems={{ base: "center", md: "flex-end" }}>
           <Card {...cardStyles}>
             <CardHeader {...cardHeaderStyles}>
-              <Image
+              <video
                 src={IconDevice}
-                alt="Ícone representando tecnologia de dispositivos"
-                boxSize="50px"
+                aria-label={`Ícone animado representando a plataforma`}
+                style={{ width: "80px", height: "80px" }}
+                muted
+                loop
+                autoPlay
+                playsInline
               />
               <Heading
                 as="h2"
@@ -142,7 +145,6 @@ const AppTechPlat = () => (
           </Card>
         </Box>
       </SimpleGrid>
-
       <SimpleGrid
         as="section"
         role="region"
@@ -163,10 +165,14 @@ const AppTechPlat = () => (
         >
           <Card {...cardStyles}>
             <CardHeader {...cardHeaderStyles}>
-              <Image
+              <video
                 src={IconChat}
-                alt="Ícone de chat representando assistente virtual"
-                boxSize="50px"
+                aria-label={`Ícone animado representando a plataforma`}
+                style={{ width: "80px", height: "80px" }}
+                muted
+                loop
+                autoPlay
+                playsInline
               />
               <Heading
                 as="h2"

@@ -8,7 +8,7 @@ import {
   Heading,
 } from "@chakra-ui/react";
 
-import FolhaCheck from "../../assets/icons/folhaDeLouro.png";
+import FolhaCheck from "../../assets/leaf.png";
 import ImagemODS2 from "../../assets/imagem-ods2.png";
 import ImagemODS8 from "../../assets/imagem-ods8.jpg";
 

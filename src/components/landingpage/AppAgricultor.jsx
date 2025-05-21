@@ -12,11 +12,14 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  Image,
 } from "@chakra-ui/react";
 import { Typewriter } from "react-simple-typewriter";
 import BannerGif from "../../assets/banner.gif";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import Logo from "../../assets/logo_semfundo.png";
 
 const buttonStyles = {
   color: "white",
@@ -81,6 +84,15 @@ const AppAgricultor = () => {
         position="relative"
       >
         <Box>
+          <Image
+            src={Logo}
+            alt="Logo da Plataforma Açaíaca"
+            width={{ base: "10rem", md: "80%" }}
+            role="img"
+            aria-label="Logo da Plataforma Açaíaca"
+          />
+        </Box>
+        <Box>
           <Text {...textBigStyles}>
             <Typewriter
               words={["Amor é algo que se planta", "E se rega todos os dias."]}
@@ -93,26 +105,35 @@ const AppAgricultor = () => {
             />
           </Text>
         </Box>
-
         <Box>
           <Text {...textSmallStyles}>Cada colheita é um gesto de cuidado.</Text>
           <Text {...textSmallStyles}>
             Cada compra, um apoio ao pequeno agricultor.
           </Text>
         </Box>
-
         <Box
           display="flex"
           gap="1rem"
           flexDirection={{ base: "column", sm: "row" }}
+          alignItems={"center"}
         >
           <Button
             {...buttonStyles}
             w="100%"
+            h={{ base: "3rem", md: "5rem" }}
             aria-label="Cadastre-se na plataforma"
-            onClick={ ()=> navigation("/cadastro")}
+            onClick={() => navigation("/cadastro")}
+            backgroundColor={"#83a11d"}
           >
-            Cadastre-se
+            <Typewriter
+              words={["Cadastre-se agora!"]}
+              loop={0}
+              cursor
+              cursorStyle="|"
+              typeSpeed={70}
+              deleteSpeed={50}
+              delaySpeed={1000}
+            />
           </Button>
           <Button
             {...buttonStyles}

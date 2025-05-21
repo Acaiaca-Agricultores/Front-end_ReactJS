@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Box, Flex, Image } from "@chakra-ui/react";
-import {} from "@chakra-ui/react";
-import Logo from "../../assets/logo_semfundo.png";
+import Logo from "../../assets/favicon.ico";
 import AppMenu from "./AppMenu";
 
 import "./style-header.css";
@@ -41,40 +40,40 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  const shouldRenderButtons =
-    location.pathname !== "/sobre" &&
-    location.pathname !== "/login" &&
-    location.pathname !== "/404";
+  const shouldRenderButtons = location.pathname !== "/login" && location.pathname !== "/404" && location.pathname !== "/cadastro";
+
+  const backToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <Box
       as="header"
-      padding="0 1rem"
+      padding={
+        location.pathname === "/sobre" || location.pathname === "/login" || location.pathname === "/cadastro"
+          ? "0px 2rem"
+          : lastScrollY > 100
+          ? "0px 2rem"
+          : "1.3rem"
+      }
       role="banner"
       background={
-        location.pathname === "/sobre" ||
-        location.pathname === "/login" ||
-        location.pathname === "/404"
-          ? lastScrollY < 50
-            ? "#52601a"
-            : "rgba(82, 96, 26, 0.8)"
-          : !showHeader
+        location.pathname === "/sobre" && lastScrollY > 50
           ? "rgba(82, 96, 26, 0.8)"
+          : location.pathname === "/sobre"
+          ? "#52601a"
           : lastScrollY < 50
           ? { base: "#52601a", md: "transparent" }
           : "rgba(82, 96, 26, 0.8)"
       }
       display="block"
-      position={
-        location.pathname === "/login" || location.pathname === "/404"
-          ? "relative"
-          : { base: "relative", md: "fixed" }
-      }
-      top={location.pathname === "/login" ? "0" : showHeader ? "0" : "-100%"}
-      left="0"
+      position={{ base: "relative", md: "fixed" }}
       width="100%"
       zIndex="1000"
-      transition="top 0.3s, background 0.3s"
+      transition="background 1s"
     >
       <Flex
         justifyContent="space-around"
@@ -85,9 +84,17 @@ const Header = () => {
         <Image
           src={Logo}
           alt="Logo da Plataforma Açaíaca"
-          width={{ base: "10rem", md: "14rem" }}
+          width="7rem"
+          padding={"0.5rem"}
           role="img"
           aria-label="Logo da Plataforma Açaíaca"
+          display={
+            ["/sobre", "/404", "/login", "/cadastro"].includes(
+              location.pathname
+            ) || lastScrollY > 100
+              ? "block"
+              : "none"
+          }
         />
         <Box display={{ base: "block", md: "none" }}>
           <AppMenu aria-label="Abrir menu de navegação" />
@@ -105,7 +112,8 @@ const Header = () => {
           <Button
             variant="link"
             color="inherit"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/") || backToTop()}
+            aria-label="Ir para a página inicial"
             aria-current={location.pathname === "/" ? "page" : undefined}
             _hover={{
               color: ["/login", "/sobre", "/404"].includes(location.pathname)
@@ -115,7 +123,7 @@ const Header = () => {
           >
             Início
           </Button>
-          {shouldRenderButtons && (
+          {location.pathname !== "/sobre" && shouldRenderButtons && (
             <>
               <Button
                 variant="link"
@@ -150,7 +158,7 @@ const Header = () => {
           >
             Sobre
           </Button>
-          {shouldRenderButtons && (
+          {location.pathname !== "/sobre" && shouldRenderButtons && (
             <Button
               variant="link"
               color="inherit"
@@ -164,7 +172,11 @@ const Header = () => {
         </Flex>
         <Box display={{ base: "none", md: "block" }}>
           <Button
-            onClick={() => navigate("/login")}
+            onClick={() =>
+              location.pathname === "/login"
+                ? navigate("/cadastro")
+                : navigate("/login")
+            }
             width={"13rem"}
             color="#52601a"
             background="#ffffff"
@@ -175,9 +187,11 @@ const Header = () => {
               background: "#c0ab8e",
               color: "#ffffff",
             }}
-            aria-label="Fazer login"
+            aria-label={
+              location.pathname === "/login" ? "Fazer cadastro" : "Fazer login"
+            }
           >
-            Login
+            {location.pathname === "/login" ? "Cadastre-se" : "Login"}
           </Button>
         </Box>
       </Flex>

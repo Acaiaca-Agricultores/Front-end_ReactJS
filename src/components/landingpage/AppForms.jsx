@@ -15,7 +15,7 @@ const AppForms = () => {
       as="section"
       role="region"
       aria-label="Formulário de contato"
-      backgroundImage={`url(${"https://images.unsplash.com/photo-1625246333195-78d9c38ad449?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8YWdyaWN1bHR1cmF8ZW58MHx8MHx8fDA%3D"})`}
+      backgroundImage={`url(${"https://images.unsplash.com/photo-1674212466654-fccc10a1b594?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"})`}
       backgroundSize="cover"
       objectFit={"cover"}
       backgroundPosition="center"
