@@ -166,7 +166,7 @@ const AppLogin = () => {
             </FormControl>
             <FormControl isInvalid={errors.password}>
               <FormLabel htmlFor="password">Senha</FormLabel>
-              <InputGroup boxSize={"100%"}>
+              <InputGroup>
                 <Input
                   id="password"
                   type={show ? "text" : "password"}
@@ -261,21 +261,14 @@ const AppLogin = () => {
                 {errors.role && errors.role.message}
               </FormErrorMessage>
             </FormControl>
-            <Box
-              display={"flex"}
-              flexDirection={{ base: "column", md: "row" }}
-              alignItems={"center"}
-              justifyContent={"space-around"}
-              w={"100%"}
-            >
+            <ButtonGroup w={"100%"} gap="1rem" alignItems={"center"}>
               <Link
                 _hover={{ color: "#c0ab8e" }}
-                fontSize={{ base: "1rem", md: "1.2rem" }}
+                fontSize="1rem"
+                width={"30%"}
               >
                 Esqueceu a senha?
               </Link>
-            </Box>
-            <ButtonGroup w={"100%"} gap="1rem">
               <Button
                 type="submit"
                 w={"100%"}

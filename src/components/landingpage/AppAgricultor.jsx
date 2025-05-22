@@ -20,10 +20,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Logo from "../../assets/logo_semfundo.png";
+import { color } from "framer-motion";
 
 const buttonStyles = {
   color: "white",
-  background: "#52601A",
+  background: "trasparent",
+  border: "2px solid #c0ab8e",
+  color: "#c0ab8e",
   borderRadius: "10px",
   fontFamily: "Onest",
   fontSize: "1.2rem",
@@ -33,6 +36,7 @@ const buttonStyles = {
   padding: "2rem",
   _hover: {
     background: "#c0ab8e",
+    color: "#000000",
   },
 };
 
@@ -90,6 +94,7 @@ const AppAgricultor = () => {
             width={{ base: "10rem", md: "80%" }}
             role="img"
             aria-label="Logo da Plataforma Açaíaca"
+            display={{ base: "none", md: "block" }}
           />
         </Box>
         <Box>
@@ -124,6 +129,8 @@ const AppAgricultor = () => {
             aria-label="Cadastre-se na plataforma"
             onClick={() => navigation("/cadastro")}
             backgroundColor={"#83a11d"}
+            border="none"
+            color={"ffffff"}
           >
             <Typewriter
               words={["Cadastre-se agora!"]}

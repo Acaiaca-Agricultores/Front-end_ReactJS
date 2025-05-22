@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Box, Flex, Image } from "@chakra-ui/react";
-import Logo from "../../assets/favicon.ico";
+import Logo from "../../assets/logo_semfundo.png";
 import AppMenu from "./AppMenu";
 
 import "./style-header.css";
 import "../../global-styles.css";
+
+const SCROLL_THRESHOLD = 50;
 
 const handleSmoothScroll = (e, id) => {
   e.preventDefault();
@@ -18,87 +20,93 @@ const handleSmoothScroll = (e, id) => {
 const Header = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY < 50) {
-        setShowHeader(true);
-        setLastScrollY(window.scrollY);
-        return;
-      }
-      if (window.scrollY > lastScrollY) {
-        setShowHeader(false);
-      } else {
-        setShowHeader(true);
-      }
-      setLastScrollY(window.scrollY);
-    };
+  const isAuthPage = useMemo(
+    () => ["/login", "/cadastro", "/404"].includes(location.pathname),
+    [location.pathname]
+  );
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  const isSobre = location.pathname === "/sobre";
+
+  const shouldRenderButtons = !isAuthPage && !isSobre;
+
+  const handleScroll = useCallback(() => {
+    const currentScrollY = window.scrollY;
+
+    if (currentScrollY < SCROLL_THRESHOLD) {
+      setShowHeader(true);
+    } else {
+      setShowHeader(currentScrollY < lastScrollY);
+    }
+
+    setLastScrollY(currentScrollY);
   }, [lastScrollY]);
 
-  const shouldRenderButtons = location.pathname !== "/login" && location.pathname !== "/404" && location.pathname !== "/cadastro";
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
-  const backToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
+  const goTo = (path) => navigate(path);
+
+  const headerPadding =
+    isSobre || isAuthPage || lastScrollY > 100 ? "0px 2rem" : "1.3rem";
+
+  const backgroundColor = isSobre
+    ? lastScrollY > SCROLL_THRESHOLD
+      ? "rgba(82, 96, 26, 0.8)"
+      : "#52601a"
+    : lastScrollY < SCROLL_THRESHOLD
+    ? { base: "#52601a", md: "transparent" }
+    : "rgba(82, 96, 26, 0.8)";
 
   return (
     <Box
       as="header"
-      padding={
-        location.pathname === "/sobre" || location.pathname === "/login" || location.pathname === "/cadastro"
-          ? "0px 2rem"
-          : lastScrollY > 100
-          ? "0px 2rem"
-          : "1.3rem"
-      }
-      role="banner"
-      background={
-        location.pathname === "/sobre" && lastScrollY > 50
-          ? "rgba(82, 96, 26, 0.8)"
-          : location.pathname === "/sobre"
-          ? "#52601a"
-          : lastScrollY < 50
-          ? { base: "#52601a", md: "transparent" }
-          : "rgba(82, 96, 26, 0.8)"
-      }
-      display="block"
+      padding={headerPadding}
+      background={backgroundColor}
       position={{ base: "relative", md: "fixed" }}
       width="100%"
-      zIndex="1000"
+      zIndex="10"
       transition="background 1s"
     >
       <Flex
-        justifyContent="space-around"
+        justifyContent="space-between"
         alignItems="center"
         flexWrap="wrap"
-        margin="auto"
+        px="1rem"
       >
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          width="100%"
+          display={{ base: "flex", md: "none" }}
+        >
+          <Image
+            src={Logo}
+            alt="Logo da Plataforma Açaíaca"
+            width="9rem"
+            role="img"
+            aria-label="Logo da Plataforma Açaíaca"
+          />
+          <AppMenu aria-label="Abrir menu de navegação" />
+        </Flex>
+
         <Image
           src={Logo}
           alt="Logo da Plataforma Açaíaca"
-          width="7rem"
-          padding={"0.5rem"}
+          width="12rem"
           role="img"
           aria-label="Logo da Plataforma Açaíaca"
-          display={
-            ["/sobre", "/404", "/login", "/cadastro"].includes(
-              location.pathname
-            ) || lastScrollY > 100
-              ? "block"
-              : "none"
-          }
+          display={{
+            base: "none",
+            md: isSobre || isAuthPage || lastScrollY > 100 ? "block" : "none",
+          }}
         />
-        <Box display={{ base: "block", md: "none" }}>
-          <AppMenu aria-label="Abrir menu de navegação" />
-        </Box>
+
         <Flex
           as="nav"
           aria-label="Navegação principal"
@@ -107,23 +115,21 @@ const Header = () => {
           gap="2rem"
           fontSize={{ base: "0.8rem", md: "1.2rem" }}
           color="#ffffff"
-          role="navigation"
         >
           <Button
             variant="link"
             color="inherit"
-            onClick={() => navigate("/") || backToTop()}
-            aria-label="Ir para a página inicial"
+            onClick={() => goTo("/")}
             aria-current={location.pathname === "/" ? "page" : undefined}
+            aria-label="Ir para a página inicial"
             _hover={{
-              color: ["/login", "/sobre", "/404"].includes(location.pathname)
-                ? "#e5d1b0"
-                : "#83a11d",
+              color: isSobre || isAuthPage ? "#e5d1b0" : "#83a11d",
             }}
           >
             Início
           </Button>
-          {location.pathname !== "/sobre" && shouldRenderButtons && (
+
+          {shouldRenderButtons && (
             <>
               <Button
                 variant="link"
@@ -145,20 +151,20 @@ const Header = () => {
               </Button>
             </>
           )}
+
           <Button
             variant="link"
             color="inherit"
-            onClick={() => navigate("/sobre")}
+            onClick={() => goTo("/sobre")}
             aria-label="Sobre"
             _hover={{
-              color: ["/login", "/sobre", "/404"].includes(location.pathname)
-                ? "#e5d1b0"
-                : "#83a11d",
+              color: isSobre || isAuthPage ? "#e5d1b0" : "#83a11d",
             }}
           >
             Sobre
           </Button>
-          {location.pathname !== "/sobre" && shouldRenderButtons && (
+
+          {shouldRenderButtons && (
             <Button
               variant="link"
               color="inherit"
@@ -174,10 +180,10 @@ const Header = () => {
           <Button
             onClick={() =>
               location.pathname === "/login"
-                ? navigate("/cadastro")
-                : navigate("/login")
+                ? goTo("/cadastro")
+                : goTo("/login")
             }
-            width={"13rem"}
+            width="13rem"
             color="#52601a"
             background="#ffffff"
             borderRadius="10px"

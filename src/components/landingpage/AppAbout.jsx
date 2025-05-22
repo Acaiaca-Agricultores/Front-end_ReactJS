@@ -1,15 +1,10 @@
 import "./styles-app.css";
 import { useState } from "react";
-import {
-  Box,
-  Heading,
-  Image,
-  SimpleGrid,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Heading, Image, SimpleGrid, useDisclosure } from "@chakra-ui/react";
 import AppMvv from "./AppMvv";
 import AppOds from "./AppOds";
-import ImageNos from "../../assets/sobrenós.jpg";
+import AppPerfil from "./AppPerfis";
+import video from "../../assets/video.mp4";
 
 const AppAbout = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -37,12 +32,18 @@ const AppAbout = () => {
           <Heading as="h1" tabIndex={0}>
             Sobre Nós - Acaiacá
           </Heading>
-          <Image
-            src={ImageNos}
-            alt="Imagem representando as pessoas que fazem parte do projeto Acaiacá"
-            boxSize={"100%"}
-            padding={"2rem"}
-            objectFit={"cover"}
+          <video
+            src={video}
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{
+              width: "100%",
+              objectFit: "cover",
+              display: "block",
+            }}
+            aria-label="Vídeo institucional da Acaiacá"
           />
         </SimpleGrid>
       </section>
@@ -53,6 +54,7 @@ const AppAbout = () => {
         onClose={onClose}
         handleOpenModal={handleOpenModal}
       />
+      <AppPerfil/>
       <AppOds />
     </main>
   );

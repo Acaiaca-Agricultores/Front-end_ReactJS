@@ -298,21 +298,6 @@ const AppCadastro = () => {
               {errors.role && errors.role.message}
             </FormErrorMessage>
           </FormControl>
-          <Box
-            display={"flex"}
-            flexDirection={{ base: "column", md: "row" }}
-            alignItems={"center"}
-            justifyContent={"space-around"}
-            w={"100%"}
-          >
-            <Text>
-              {" "}
-              Você ja tem uma conta?{" "}
-              <Link _hover={{ color: "#52601A" }} href="/login">
-                Fazer login
-              </Link>
-            </Text>
-          </Box>
           <ButtonGroup w={"100%"} gap="1rem">
             <Button
               type="submit"

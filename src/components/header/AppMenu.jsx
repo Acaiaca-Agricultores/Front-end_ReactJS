@@ -41,7 +41,7 @@ const AppMenu = ({ setLastScrollY }) => {
       >
         Menu
       </MenuButton>
-      <MenuList>
+      <MenuList zIndex={20}>
         <MenuItem
           as="a"
           onClick={() => navigate("/")}
@@ -52,41 +52,45 @@ const AppMenu = ({ setLastScrollY }) => {
         >
           Inicio
         </MenuItem>
-        {location.pathname !== "/login" && location.pathname !== "/sobre" && (
-          <>
-            <MenuItem
-              onClick={() => navigate("/login")}
-              _hover={{ textDecoration: "none", color: "#83a11d" }}
-            >
-              login
-            </MenuItem>
-            <MenuItem
-              onClick={(e) => handleSmoothScroll(e, "apptecplat")}
-              _hover={{ textDecoration: "none", color: "#83a11d" }}
-            >
-              Plataforma
-            </MenuItem>
-            <MenuItem
-              onClick={(e) => handleSmoothScroll(e, "appsubs")}
-              _hover={{ textDecoration: "none", color: "#83a11d" }}
-            >
-              Assinatura
-            </MenuItem>
-            <MenuItem
-              as="a"
-              onClick={() => navigate("/sobre")}
-              _hover={{ textDecoration: "none", color: "#83a11d" }}
-            >
-              Sobre
-            </MenuItem>
-            <MenuItem
-              onClick={(e) => handleSmoothScroll(e, "appforms")}
-              _hover={{ textDecoration: "none", color: "#83a11d" }}
-            >
-              Fale Conosco
-            </MenuItem>
-          </>
-        )}
+        <>
+          <MenuItem
+            onClick={() => navigate("/login")}
+            _hover={{ textDecoration: "none", color: "#83a11d" }}
+          >
+            Login
+          </MenuItem>
+          <MenuItem
+            onClick={() => navigate("/cadastro")}
+            _hover={{ textDecoration: "none", color: "#83a11d" }}
+          >
+            Cadastro
+          </MenuItem>
+          <MenuItem
+            onClick={(e) => handleSmoothScroll(e, "apptecplat")}
+            _hover={{ textDecoration: "none", color: "#83a11d" }}
+          >
+            Plataforma
+          </MenuItem>
+          <MenuItem
+            onClick={(e) => handleSmoothScroll(e, "appsubs")}
+            _hover={{ textDecoration: "none", color: "#83a11d" }}
+          >
+            Assinatura
+          </MenuItem>
+          <MenuItem
+            as="a"
+            onClick={() => navigate("/sobre")}
+            _hover={{ textDecoration: "none", color: "#83a11d" }}
+          >
+            Sobre
+          </MenuItem>
+          <MenuItem
+            onClick={(e) => handleSmoothScroll(e, "appforms")}
+            _hover={{ textDecoration: "none", color: "#83a11d" }}
+          >
+            Fale Conosco
+          </MenuItem>
+        </>
       </MenuList>
     </Menu>
   );
