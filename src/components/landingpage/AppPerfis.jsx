@@ -14,32 +14,60 @@ import {
 
 const dataCard = [
   {
+    image:
+      "https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60",
     title: "Nome do Desenvolvedor",
     description: "Descrição do desenvolvedor",
+    linkGithub: "linkGithub",
+    linkLinkedin: "linkLinkedin",
   },
   {
+    image:
+      "https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60",
     title: "Nome do Desenvolvedor",
     description: "Descrição do desenvolvedor",
+    linkGithub: "linkGithub",
+    linkLinkedin: "linkLinkedin",
   },
   {
+    image:
+      "https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60",
     title: "Nome do Desenvolvedor",
     description: "Descrição do desenvolvedor",
+    linkGithub: "linkGithub",
+    linkLinkedin: "linkLinkedin",
   },
   {
+    image:
+      "https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60",
     title: "Nome do Desenvolvedor",
     description: "Descrição do desenvolvedor",
+    linkGithub: "linkGithub",
+    linkLinkedin: "linkLinkedin",
   },
   {
+    image:
+      "https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60",
     title: "Nome do Desenvolvedor",
     description: "Descrição do desenvolvedor",
+    linkGithub: "linkGithub",
+    linkLinkedin: "linkLinkedin",
   },
   {
+    image:
+      "https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60",
     title: "Nome do Desenvolvedor",
     description: "Descrição do desenvolvedor",
+    linkGithub: "linkGithub",
+    linkLinkedin: "linkLinkedin",
   },
   {
+    image:
+      "https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60",
     title: "Nome do Desenvolvedor",
     description: "Descrição do desenvolvedor",
+    linkGithub: "linkGithub",
+    linkLinkedin: "linkLinkedin",
   },
 ];
 
@@ -65,7 +93,7 @@ const AppPerfis = () => {
               <Image
                 objectFit="cover"
                 boxSize="100%"
-                src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
+                src={item.image}
                 alt="Caffe Latte"
               />
               <Stack>
@@ -75,8 +103,8 @@ const AppPerfis = () => {
                 </CardBody>
                 <CardFooter>
                   <ButtonGroup>
-                    <Button>Github</Button>
-                    <Button>Linkedin</Button>
+                    <Button>{item.linkGithub}</Button>
+                    <Button>{item.linkGithub}</Button>
                   </ButtonGroup>
                 </CardFooter>
               </Stack>
