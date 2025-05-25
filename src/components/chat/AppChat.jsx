@@ -9,7 +9,7 @@ const AppChat = () => {
   const toggleChat = () => {
     setIsOpen(!isOpen);
     if (!isOpen) {
-      window.location.href = import.meta.env.CHAT_URL;
+      window.location.href = import.meta.env.VITE_CHAT_URL;
     }
   };
 
