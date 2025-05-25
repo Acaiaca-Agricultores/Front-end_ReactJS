@@ -21,7 +21,6 @@ import {
   RadioGroup,
   Stack,
 } from "@chakra-ui/react";
-// import VLibras from "@djpfs/react-vlibras";
 
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
 import IconHidden from "../../assets/icons/hidden.svg";
@@ -57,7 +56,7 @@ const AppLogin = () => {
       setAlertType("error");
       return;
     }
-    const url = "http://localhost:3000/auth/login";
+    const url = import.meta.env.LOGIN_API_URL;
     const requestOptions = {
       method: "POST",
       headers: {

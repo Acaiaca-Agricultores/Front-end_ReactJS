@@ -21,8 +21,8 @@ const ScrollToTopButton = () => {
     <IconButton
       icon={<ChevronUpIcon boxSize={6} />}
       position="fixed"
-      bottom="6rem"
-      right="2rem"
+      bottom="2rem"
+      left="2rem"
       background={"#c0ab8e"}
       color={"#000000"}
       aria-label="Voltar ao topo"
