@@ -20,13 +20,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Logo from "../../assets/logo_semfundo.png";
-import { color } from "framer-motion";
 
 const buttonStyles = {
   color: "white",
   background: "trasparent",
   border: "2px solid #c0ab8e",
-  color: "#c0ab8e",
   borderRadius: "10px",
   fontFamily: "Onest",
   fontSize: "1.2rem",
@@ -67,7 +65,7 @@ const AppAgricultor = () => {
       position="relative"
       overflow="hidden"
       objectFit="cover"
-      h={{ base: "auto", md: "100vh" }}
+      height={"100vh"}
     >
       <Box
         position="absolute"
@@ -75,12 +73,13 @@ const AppAgricultor = () => {
         background="rgba(0, 0, 0, 0.5)"
         backdropFilter="blur(8px)"
         zIndex="1"
+        justifyContent={"flex-end"}
       />
       <GridItem
         zIndex="2"
         display="flex"
         flexDirection="column"
-        justifyContent="center"
+        justifyContent={{ base: "flex-end", md: "center" }}
         gap="2rem"
         padding={{ base: "1.5rem", md: "4.5rem" }}
         color="white"
@@ -158,7 +157,6 @@ const AppAgricultor = () => {
         justifyContent="center"
         alignItems="center"
         padding={{ base: "1.5rem", md: "0 4.5rem 0 0" }}
-        minH={{ base: "250px", md: "auto" }}
         position="relative"
       >
         {!showVideo ? (

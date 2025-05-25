@@ -1,12 +1,9 @@
-// noinspection JSValidateTypes
-
 import React from "react";
 import {
   Box,
   FormControl,
   FormLabel,
   Input,
-  Link,
   Text,
   Button,
   ButtonGroup,
@@ -16,9 +13,18 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  Image,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverBody,
+  PopoverArrow,
+  PopoverCloseButton,
 } from "@chakra-ui/react";
 
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
+import IconInfo from "../../assets/icons/info.png";
+
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
@@ -269,15 +275,41 @@ const AppCadastro = () => {
               >
                 <Radio
                   value="agricultor"
+                  display="flex"
+                  alignItems="center"
+                  gap={"1rem"}
                   _checked={{
                     bg: "#83a11d",
                     borderColor: "#83a11d",
                     color: "white",
                   }}
                 >
-                  <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
-                    Agricultor
-                  </Text>
+                  <Box display={"flex"} alignItems="center" gap={"1rem"}>
+                    <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
+                      Agricultor
+                    </Text>
+                    <Popover>
+                      <PopoverTrigger>
+                        <Image
+                          src={IconInfo}
+                          alt="Ícone animado representando informação"
+                          width={"1.5rem"}
+                          height={"1.5rem"}
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <PopoverArrow />
+                        <PopoverCloseButton />
+                        <PopoverBody>
+                          <Text color={"#000000"} fontSize={"1rem"}>
+                            Agricultor é a pessoa que cultiva a terra e produz
+                            alimentos, este perfil é voltado para quem deseja
+                            vender seus produtos agrícolas.
+                          </Text>
+                        </PopoverBody>
+                      </PopoverContent>
+                    </Popover>
+                  </Box>
                 </Radio>
                 <Radio
                   fontSize={{ base: "1rem", md: "1.2rem" }}
@@ -288,9 +320,33 @@ const AppCadastro = () => {
                     color: "white",
                   }}
                 >
-                  <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
-                    Consumidor
-                  </Text>
+                  {" "}
+                  <Box display={"flex"} alignItems="center" gap={"1rem"}>
+                    <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
+                      Consumidor
+                    </Text>
+                    <Popover>
+                      <PopoverTrigger>
+                        <Image
+                          src={IconInfo}
+                          alt="Ícone animado representando informação"
+                          width={"1.5rem"}
+                          height={"1.5rem"}
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <PopoverArrow />
+                        <PopoverCloseButton />
+                        <PopoverBody>
+                          <Text color={"#000000"} fontSize={"1rem"}>
+                            Consumidor é a pessoa que compra produtos agrícolas,
+                            este perfil é voltado para quem deseja comprar
+                            produtos frescos e saudáveis.
+                          </Text>
+                        </PopoverBody>
+                      </PopoverContent>
+                    </Popover>
+                  </Box>
                 </Radio>
               </Stack>
             </RadioGroup>

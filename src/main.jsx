@@ -2,18 +2,21 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter, useLocation } from "react-router-dom";
-//  import VLibras from '@djpfs/react-vlibras';
+import VLibras from "@djpfs/react-vlibras";
 
 import Header from "./components/header/AppHeader.jsx";
 import Footer from "./components/footer/AppFooter.jsx";
 import AppRouters from "./routers.jsx";
 import AppButton from "./components/landingpage/AppButton.jsx";
+import AppChat from "./components/chat/AppChat.jsx";
 
 function App() {
   const location = useLocation();
 
   return (
     <>
+      <VLibras />
+      <AppChat />
       {location.pathname !== "/404" && <Header display="flex" />}
       <AppRouters />
       <AppButton />

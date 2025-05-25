@@ -3,46 +3,29 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Box, Flex, Image } from "@chakra-ui/react";
 import Logo from "../../assets/logo_semfundo.png";
 import AppMenu from "./AppMenu";
-
 import "./style-header.css";
 import "../../global-styles.css";
 
-const SCROLL_THRESHOLD = 50;
-
-const handleSmoothScroll = (e, id) => {
-  e.preventDefault();
-  const section = document.getElementById(id);
-  if (section) {
-    section.scrollIntoView({ behavior: "smooth" });
-  }
-};
+const scroll = () => (window.innerWidth < 768 ? 300 : 600);
 
 const Header = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-
   const location = useLocation();
-  const navigate = useNavigate();
+  const navigation = useNavigate();
 
   const isAuthPage = useMemo(
     () => ["/login", "/cadastro", "/404"].includes(location.pathname),
     [location.pathname]
   );
-
   const isSobre = location.pathname === "/sobre";
-
   const shouldRenderButtons = !isAuthPage && !isSobre;
 
   const handleScroll = useCallback(() => {
-    const currentScrollY = window.scrollY;
-
-    if (currentScrollY < SCROLL_THRESHOLD) {
-      setShowHeader(true);
-    } else {
-      setShowHeader(currentScrollY < lastScrollY);
-    }
-
-    setLastScrollY(currentScrollY);
+    const scrollY = window.scrollY;
+    const threshold = scroll();
+    setShowHeader(scrollY < threshold || scrollY < lastScrollY);
+    setLastScrollY(scrollY);
   }, [lastScrollY]);
 
   useEffect(() => {
@@ -50,81 +33,63 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
-  const goTo = (path) => navigate(path);
+  const scrollTo = (e, id) => {
+    e.preventDefault();
+    const section = document.getElementById(id);
+    if (section) section.scrollIntoView({ behavior: "smooth" });
+  };
 
-  const headerPadding =
-    isSobre || isAuthPage || lastScrollY > 100 ? "0px 2rem" : "1.3rem";
-
-  const backgroundColor = isSobre
-    ? lastScrollY > SCROLL_THRESHOLD
-      ? "rgba(82, 96, 26, 0.8)"
-      : "#52601a"
-    : lastScrollY < SCROLL_THRESHOLD
-    ? { base: "#52601a", md: "transparent" }
-    : "rgba(82, 96, 26, 0.8)";
+  const bgColor =
+    lastScrollY === 0
+      ? "transparent"
+      : lastScrollY < scroll()
+      ? "transparent"
+      : "rgba(82, 96, 26, 0.8)";
 
   return (
     <Box
       as="header"
-      padding={headerPadding}
-      background={backgroundColor}
-      position={{ base: "relative", md: "fixed" }}
+      padding={{ base: "1rem", md: "0 2rem" }}
+      background={bgColor}
+      position={{ base: "absolute", md: "fixed" }}
       width="100%"
       zIndex="10"
       transition="background 1s"
     >
-      <Flex
-        justifyContent="space-between"
-        alignItems="center"
-        flexWrap="wrap"
-        px="1rem"
-      >
+      <Flex justify="space-between" align="center" wrap="wrap" px="1rem">
         <Flex
-          alignItems="center"
-          justifyContent="space-between"
-          width="100%"
+          w="100%"
           display={{ base: "flex", md: "none" }}
+          align="center"
+          justify="space-between"
         >
-          <Image
-            src={Logo}
-            alt="Logo da Plataforma Açaíaca"
-            width="9rem"
-            role="img"
-            aria-label="Logo da Plataforma Açaíaca"
-          />
-          <AppMenu aria-label="Abrir menu de navegação" />
+          <Image src={Logo} alt="Logo" w="9rem" p="0.5rem" />
+          <AppMenu />
         </Flex>
-
         <Image
           src={Logo}
-          alt="Logo da Plataforma Açaíaca"
-          width="12rem"
-          role="img"
-          aria-label="Logo da Plataforma Açaíaca"
-          display={{
-            base: "none",
-            md: isSobre || isAuthPage || lastScrollY > 100 ? "block" : "none",
-          }}
+          alt="Logo"
+          w="10rem"
+          opacity={isSobre || isAuthPage || lastScrollY > scroll() ? 1 : 0}
+          transition="opacity 0.5s"
+          p="0.5rem"
+          display={{ base: "none", md: "block" }}
         />
-
         <Flex
           as="nav"
-          aria-label="Navegação principal"
           display={{ base: "none", md: "flex" }}
-          alignItems="center"
+          align="center"
           gap="2rem"
           fontSize={{ base: "0.8rem", md: "1.2rem" }}
-          color="#ffffff"
+          color="#fff"
         >
           <Button
             variant="link"
             color="inherit"
-            onClick={() => goTo("/")}
-            aria-current={location.pathname === "/" ? "page" : undefined}
-            aria-label="Ir para a página inicial"
-            _hover={{
-              color: isSobre || isAuthPage ? "#e5d1b0" : "#83a11d",
-            }}
+            onClick={() =>
+              window.scrollTo({ top: 0, behavior: "smooth" }) || navigation("/")
+            }
+            _hover={{ color: "#83a11d" }}
           >
             Início
           </Button>
@@ -134,8 +99,7 @@ const Header = () => {
               <Button
                 variant="link"
                 color="inherit"
-                onClick={(e) => handleSmoothScroll(e, "apptecplat")}
-                aria-label="Ir para Plataforma"
+                onClick={(e) => scrollTo(e, "apptecplat")}
                 _hover={{ color: "#83a11d" }}
               >
                 Plataforma
@@ -143,8 +107,7 @@ const Header = () => {
               <Button
                 variant="link"
                 color="inherit"
-                onClick={(e) => handleSmoothScroll(e, "appsubs")}
-                aria-label="Ir para Assinatura"
+                onClick={(e) => scrollTo(e, "appsubs")}
                 _hover={{ color: "#83a11d" }}
               >
                 Assinatura
@@ -155,11 +118,8 @@ const Header = () => {
           <Button
             variant="link"
             color="inherit"
-            onClick={() => goTo("/sobre")}
-            aria-label="Sobre"
-            _hover={{
-              color: isSobre || isAuthPage ? "#e5d1b0" : "#83a11d",
-            }}
+            onClick={() => navigation("/sobre")}
+            _hover={{ color: "#83a11d" }}
           >
             Sobre
           </Button>
@@ -168,34 +128,28 @@ const Header = () => {
             <Button
               variant="link"
               color="inherit"
-              onClick={(e) => handleSmoothScroll(e, "appforms")}
-              aria-label="Fale Conosco"
+              onClick={(e) => scrollTo(e, "appforms")}
               _hover={{ color: "#83a11d" }}
             >
               Fale Conosco
             </Button>
           )}
         </Flex>
+
         <Box display={{ base: "none", md: "block" }}>
           <Button
             onClick={() =>
-              location.pathname === "/login"
-                ? goTo("/cadastro")
-                : goTo("/login")
+              navigation(
+                location.pathname === "/login" ? "/cadastro" : "/login"
+              )
             }
-            width="13rem"
+            w="13rem"
             color="#52601a"
-            background="#ffffff"
+            bg="#fff"
             borderRadius="10px"
             fontFamily="Onest"
-            padding="1.5rem"
-            _hover={{
-              background: "#c0ab8e",
-              color: "#ffffff",
-            }}
-            aria-label={
-              location.pathname === "/login" ? "Fazer cadastro" : "Fazer login"
-            }
+            p="1.5rem"
+            _hover={{ bg: "#c0ab8e", color: "#fff" }}
           >
             {location.pathname === "/login" ? "Cadastre-se" : "Login"}
           </Button>

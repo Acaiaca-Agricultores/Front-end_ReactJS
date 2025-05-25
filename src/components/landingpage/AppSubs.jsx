@@ -10,14 +10,33 @@ import {
   ListItem,
   Text,
   UnorderedList,
+  Button,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { Typewriter } from "react-simple-typewriter";
+import { useNavigate } from "react-router-dom";
 
 import IconSeed from "../../assets/icons/growing-seed.mp4";
 import IconRoots from "../../assets/icons/tree.mp4";
 import IconHarvest from "../../assets/icons/vegetable.mp4";
 import IconCheck from "../../assets/icons/check.png";
 import IconCancel from "../../assets/icons/cancel.png";
+
+const buttonStyles = {
+  color: "white",
+  background: "#83a11d",
+  borderRadius: "10px",
+  fontFamily: "Onest",
+  fontSize: "1.2rem",
+  fontWeight: 400,
+  lineHeight: "150%",
+  w: { base: "10rem", md: "13rem" },
+  padding: "2rem",
+  _hover: {
+    background: "#c0ab8e",
+    color: "#000000",
+  },
+};
 
 const cardData = [
   {
@@ -93,6 +112,7 @@ const cardData = [
 
 const AppSubs = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
+  const navigation = useNavigate();
 
   return (
     <Box
@@ -213,7 +233,9 @@ const AppSubs = () => {
                     {card.price}
                   </Heading>
                 </Box>
-                <CardBody padding={card.title === "Plano Raiz" ? "2.8rem" : "2rem"}>
+                <CardBody
+                  padding={card.title === "Plano Raiz" ? "2.8rem" : "2rem"}
+                >
                   <UnorderedList
                     spacing={3}
                     aria-label={`Benefícios do ${card.title}`}
@@ -242,6 +264,28 @@ const AppSubs = () => {
           </GridItem>
         ))}
       </Grid>
+      <Box width={{ base: "100%", md: "50%" }}>
+        <Button
+          {...buttonStyles}
+          w="100%"
+          h={{ base: "3rem", md: "5rem" }}
+          aria-label="Cadastre-se na plataforma"
+          onClick={() => navigation("/cadastro")}
+          marginTop={{ base: "2rem", md: "3rem" }}
+        >
+          <Typewriter
+            words={["Cadastre-se já!"]}
+            //bold no texto
+            fontWeight={800}
+            loop={0}
+            cursor
+            cursorStyle="|"
+            typeSpeed={70}
+            deleteSpeed={50}
+            delaySpeed={1000}
+          />
+        </Button>
+      </Box>
     </Box>
   );
 };

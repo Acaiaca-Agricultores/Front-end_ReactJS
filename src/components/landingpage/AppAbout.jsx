@@ -1,62 +1,114 @@
 import "./styles-app.css";
 import { useState } from "react";
-import { Heading, Image, SimpleGrid, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  useDisclosure,
+  Button,
+  Text,
+  Flex,
+  Center,
+} from "@chakra-ui/react";
 import AppMvv from "./AppMvv";
 import AppOds from "./AppOds";
 import AppPerfil from "./AppPerfis";
-import video from "../../assets/video.mp4";
+import ImagePlataforma from "../../assets/plataforma.png";
+import { Typewriter } from "react-simple-typewriter";
+import { useNavigate } from "react-router-dom";
 
 const AppAbout = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [activeModal, setActiveModal] = useState(null);
+  const navigation = useNavigate();
 
   const handleOpenModal = (index) => {
     setActiveModal(index);
     onOpen();
   };
+
   return (
-    <main
-      aria-label="Seção Sobre Nós"
-      style={{ paddingTop: "0", paddingTop: "100px" }}
-    >
-      <section aria-label="Apresentação da equipe Acaiacá">
-        <SimpleGrid
-          as="div"
-          columns={{ base: 1, md: 2 }}
-          spacing={{ base: 10, md: 2 }}
-          padding={"2rem"}
-          justifyItems={"center"}
-          justifyContent={"center"}
-          alignItems={"center"}
+    <>
+      <Box>
+        <Flex
+          as="section"
+          role="region"
+          aria-label="Seção principal para agricultores"
+          gap={6}
+          backgroundImage={`url(${ImagePlataforma})`}
+          backgroundSize="cover"
+          backgroundPosition="center"
+          backgroundRepeat="no-repeat"
+          position="relative"
+          overflow="hidden"
+          objectFit="cover"
+          h={{ base: "auto", md: "80vh" }}
         >
-          <Heading as="h1" tabIndex={0}>
-            Sobre Nós - Acaiacá
-          </Heading>
-          <video
-            src={video}
-            autoPlay
-            loop
-            muted
-            playsInline
-            style={{
-              width: "100%",
-              objectFit: "cover",
-              display: "block",
-            }}
-            aria-label="Vídeo institucional da Acaiacá"
+          <Box
+            position="absolute"
+            inset="0"
+            background="rgba(0, 0, 0, 0.5)"
+            backdropFilter="blur(8px)"
+            zIndex="1"
           />
-        </SimpleGrid>
-      </section>
-      <AppMvv
-        activeModal={activeModal}
-        isOpen={isOpen}
-        onOpen={onOpen}
-        onClose={onClose}
-        handleOpenModal={handleOpenModal}
-      />
-      <AppPerfil/>
-      <AppOds />
-    </main>
+          <Center
+            zIndex="2"
+            gap="2rem"
+            padding={{ base: "1.5rem", md: "4.5rem" }}
+            color="white"
+            width={"100vw"}
+            height={"80vh"}
+            position="relative"
+            flexDirection={"column"}
+          >
+            <Box>
+              <Text fontSize={{ base: "2rem", md: "3rem" }} fontWeight="bold">
+                <Typewriter
+                  words={[
+                    "Sobre a Projeto Acaiacá",
+                    "Não tenha medo de plantar!",
+                  ]}
+                  loop={0}
+                  cursor
+                  cursorStyle="_"
+                  typeSpeed={70}
+                  deleteSpeed={50}
+                  delaySpeed={1000}
+                />
+              </Text>
+            </Box>
+            <Box
+              display="flex"
+              gap="1rem"
+              flexDirection={{ base: "column", sm: "row" }}
+              alignItems={"center"}
+            >
+              <Button
+                onClick={() => navigation("/cadastro")}
+                width={"20rem"}
+                height={{ base: "3rem", md: "5rem" }}
+                aria-label="Cadastre-se na plataforma"
+                backgroundColor={"#83a11d"}
+                border="none"
+                color={"ffffff"}
+                _hover={{ bg: "#c0ab8e", color: "black" }}
+              >
+                Cadastre-se agora!
+              </Button>
+            </Box>
+          </Center>
+        </Flex>
+
+        <AppMvv
+          activeModal={activeModal}
+          isOpen={isOpen}
+          onOpen={onOpen}
+          onClose={onClose}
+          handleOpenModal={handleOpenModal}
+        />
+        <AppPerfil />
+        <AppOds />
+      </Box>
+    </>
   );
 };
+
 export default AppAbout;

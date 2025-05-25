@@ -262,11 +262,7 @@ const AppLogin = () => {
               </FormErrorMessage>
             </FormControl>
             <ButtonGroup w={"100%"} gap="1rem" alignItems={"center"}>
-              <Link
-                _hover={{ color: "#c0ab8e" }}
-                fontSize="1rem"
-                width={"30%"}
-              >
+              <Link _hover={{ color: "#c0ab8e" }} fontSize="1rem" width={"30%"}>
                 Esqueceu a senha?
               </Link>
               <Button
