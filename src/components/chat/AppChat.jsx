@@ -102,7 +102,7 @@ const AppChat = () => {
               />
             </div>
             <iframe
-              src="https://iacai-1.onrender.com/"
+              src="teste"
               title="Chatbot"
               style={{ width: "100%", height: "100%", border: "none" }}
               allow="microphone;"
