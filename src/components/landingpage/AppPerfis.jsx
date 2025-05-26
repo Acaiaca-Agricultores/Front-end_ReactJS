@@ -13,66 +13,32 @@ import {
 
 import GitImage from "../../assets/icons/github.png";
 import LinkedinImage from "../../assets/icons/linkedin.png";
-import AlissonImagem from "../../assets/alisson.png";
-import IsaacImagem from "../../assets/isaac.png";
-import JulliaImagem from "../../assets/jullia.png";
-import ManuelImagem from "../../assets/manuel.png";
-import MayanImagem from "../../assets/mayan.png";
-import RamonImagem from "../../assets/ramon.png";
-import YasminImagem from "../../assets/yasmin.png";
+
+import AlissonImagem from "../../assets/InserirUmTitulo/alisson.png";
+import IsaacImagem from "../../assets/InserirUmTitulo/isaac.png";
+import JulliaImagem from "../../assets/InserirUmTitulo/jullia.png";
+import ManuelImagem from "../../assets/InserirUmTitulo/manuel.png";
+import MayanImagem from "../../assets/InserirUmTitulo/mayan.png";
+import RamonImagem from "../../assets/InserirUmTitulo/ramon.png";
+import YasminImagem from "../../assets/InserirUmTitulo/yasmin.png";
 import BackgroundImage from "../../assets/background-perfil.jpg";
 
-const dataCard = [
-  {
-    image: AlissonImagem,
-    title: "Alisson Sebastian Vieira Sartori ",
-    description: "Desenvolvedor Full-Stack",
-    linkGithub: "https://github.com/alissonsartori",
-    linkLinkedin: "https://www.linkedin.com/in/alisson-sebastian-sartori/",
-  },
-  {
-    image: IsaacImagem,
-    title: "Isaac Rodrigues Pereira",
-    description: "Desenvolvedor Front-end",
-    linkGithub: "https://github.com/IsaacPow",
-    linkLinkedin: "https://www.linkedin.com/in/isaac-rodrigues25/",
-  },
-  {
-    image: JulliaImagem,
-    title: "Jullia Kathelyn dos Santos Correia",
-    description: "SCRUM Master e Desenvolvedora Full Stack  ",
-    linkGithub: "https://github.com/julliakathelyn",
-    linkLinkedin: "https://www.linkedin.com/in/jullia-kathelyn/",
-  },
-  {
-    image: ManuelImagem,
-    title: "Manoel Pires Cobra",
-    description: "UI/UX Designer",
-    linkGithub: "linkGithub",
-    linkLinkedin: "https://www.linkedin.com/in/manoel-cobra-a190b4253/",
-  },
-  {
-    image: MayanImagem,
-    title: "Mayan Santos do Nascimento",
-    description: "Producter Owner",
-    linkGithub: "https://github.com/MayanGit",
-    linkLinkedin: "https://www.linkedin.com/in/mayan-santos27/",
-  },
-  {
-    image: RamonImagem,
-    title: "Victor Ramon Dias e Silva",
-    description: "Desenvolvedor Front-end",
-    linkGithub: "https://github.com/vctramon",
-    linkLinkedin: "https://www.linkedin.com/in/victor-ramon-vr/",
-  },
-  {
-    image: YasminImagem,
-    title: "Yasmin Araujo Santos",
-    description: "Desenvolvedora Back-end",
-    linkGithub: "https://github.com/yaslopesyweb",
-    linkLinkedin: "https://www.linkedin.com/in/yasmin-lopes-devsecops/",
-  },
-];
+import dataCardRaw from "../services/dataCard.json";
+
+const imageMap = {
+  AlissonImagem,
+  IsaacImagem,
+  JulliaImagem,
+  ManuelImagem,
+  MayanImagem,
+  RamonImagem,
+  YasminImagem,
+};
+
+const dataCard = dataCardRaw.map((item) => ({
+  ...item,
+  image: imageMap[item.image],
+}));
 
 const AppPerfis = () => {
   return (

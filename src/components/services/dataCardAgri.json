@@ -1,0 +1,52 @@
+{
+  "agricultores": [
+    {
+      "nome": "João Silva",
+      "localizacao": "Sítio São José, Juazeiro do Norte - CE",
+      "produtos": ["Tomate", "Alface", "Cenoura", "Coentro"],
+      "imagem": "https://exemplo.com/imagens/joao_silva.jpg"
+    },
+    {
+      "nome": "Maria Oliveira",
+      "localizacao": "Chácara Boa Vista, Campinas - SP",
+      "produtos": ["Morango", "Uva", "Mel", "Leite"],
+      "imagem": "https://exemplo.com/imagens/maria_oliveira.jpg"
+    },
+    {
+      "nome": "Carlos Pereira",
+      "localizacao": "Fazenda Esperança, Uberlândia - MG",
+      "produtos": ["Milho", "Feijão", "Abóbora", "Quiabo"],
+      "imagem": "https://exemplo.com/imagens/carlos_pereira.jpg"
+    },
+    {
+      "nome": "Ana Souza",
+      "localizacao": "Sítio Bela Vista, Petrolina - PE",
+      "produtos": ["Manga", "Banana", "Limão", "Coco"],
+      "imagem": "https://exemplo.com/imagens/ana_souza.jpg"
+    },
+    {
+      "nome": "Rafael Lima",
+      "localizacao": "Fazenda Recanto Verde, Dourados - MS",
+      "produtos": ["Soja", "Milho", "Trigo", "Girassol"],
+      "imagem": "https://exemplo.com/imagens/rafael_lima.jpg"
+    },
+    {
+      "nome": "Luciana Martins",
+      "localizacao": "Chácara Vale do Sol, Nova Friburgo - RJ",
+      "produtos": ["Alface", "Rúcula", "Manjericão", "Tomilho"],
+      "imagem": "https://exemplo.com/imagens/luciana_martins.jpg"
+    },
+    {
+      "nome": "Pedro Almeida",
+      "localizacao": "Fazenda Santa Clara, Barreiras - BA",
+      "produtos": ["Café", "Cacau", "Pimenta", "Maracujá"],
+      "imagem": "https://exemplo.com/imagens/pedro_almeida.jpg"
+    },
+    {
+      "nome": "Fernanda Costa",
+      "localizacao": "Sítio das Flores, Bento Gonçalves - RS",
+      "produtos": ["Uva", "Maçã", "Pêssego", "Geleias"],
+      "imagem": "https://exemplo.com/imagens/fernanda_costa.jpg"
+    }
+  ]
+}
