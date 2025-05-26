@@ -59,7 +59,6 @@ const MvvApp = ({ activeModal, isOpen, onClose, handleOpenModal }) => {
         spacing={10}
         padding={{ base: "2rem", md: "5rem 10rem;" }}
         background={"#FCEAD0"}
-        d
         display={"flex"}
         alignItems={"center"}
         flexDirection={{ base: "column", md: "row" }}

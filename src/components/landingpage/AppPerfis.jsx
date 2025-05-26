@@ -14,13 +14,13 @@ import {
 import GitImage from "../../assets/icons/github.png";
 import LinkedinImage from "../../assets/icons/linkedin.png";
 
-import AlissonImagem from "../../assets/InserirUmTitulo/alisson.png";
-import IsaacImagem from "../../assets/InserirUmTitulo/isaac.png";
-import JulliaImagem from "../../assets/InserirUmTitulo/jullia.png";
-import ManuelImagem from "../../assets/InserirUmTitulo/manuel.png";
-import MayanImagem from "../../assets/InserirUmTitulo/mayan.png";
-import RamonImagem from "../../assets/InserirUmTitulo/ramon.png";
-import YasminImagem from "../../assets/InserirUmTitulo/yasmin.png";
+import AlissonImagem from "../../assets/fotosPerfis/alisson.png";
+import IsaacImagem from "../../assets/fotosPerfis/isaac.png";
+import JulliaImagem from "../../assets/fotosPerfis/jullia.png";
+import ManuelImagem from "../../assets/fotosPerfis/manuel.png";
+import MayanImagem from "../../assets/fotosPerfis/mayan.png";
+import RamonImagem from "../../assets/fotosPerfis/ramon.png";
+import YasminImagem from "../../assets/fotosPerfis/yasmin.png";
 import BackgroundImage from "../../assets/background-perfil.jpg";
 
 import dataCardRaw from "../services/dataCard.json";

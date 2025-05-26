@@ -1,0 +1,102 @@
+[
+  {
+    "image": "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=600&auto=format&fit=crop&q=60",
+    "title": "Cenoura",
+    "type": "Legume",
+    "description": "A cenoura é rica em betacaroteno e excelente para a saúde dos olhos.",
+    "role": "Agricultora",
+    "localizacao": "Paraná",
+    "avaliacao": 4.6,
+    "price": "$2.00/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1580910051073-6ffad253c1b7?w=600&auto=format&fit=crop&q=60",
+    "title": "Brócolis",
+    "type": "Legume",
+    "description": "O brócolis é rico em fibras e vitaminas, ideal para dietas saudáveis.",
+    "role": "Produtor",
+    "localizacao": "Santa Catarina",
+    "avaliacao": 4.8,
+    "price": "$4.00/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1582515073490-39981397c445?w=600&auto=format&fit=crop&q=60",
+    "title": "Batata",
+    "type": "Legume",
+    "description": "A batata é versátil e fonte de energia, muito usada na culinária mundial.",
+    "role": "Agricultor",
+    "localizacao": "Minas Gerais",
+    "avaliacao": 4.5,
+    "price": "$1.80/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1615485296465-9e7e5cf3cc64?w=600&auto=format&fit=crop&q=60",
+    "title": "Abobrinha",
+    "type": "Legume",
+    "description": "A abobrinha é leve e ótima para grelhados e refogados.",
+    "role": "Produtora",
+    "localizacao": "São Paulo",
+    "avaliacao": 4.3,
+    "price": "$2.20/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1572441710534-209d200cebd8?w=600&auto=format&fit=crop&q=60",
+    "title": "Berinjela",
+    "type": "Legume",
+    "description": "A berinjela ajuda a controlar o colesterol e é rica em antioxidantes.",
+    "role": "Agricultor",
+    "localizacao": "Bahia",
+    "avaliacao": 4.4,
+    "price": "$3.00/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1612182060430-db6601b013a2?w=600&auto=format&fit=crop&q=60",
+    "title": "Tomate",
+    "type": "Legume",
+    "description": "O tomate é uma ótima fonte de licopeno, ideal para saladas e molhos.",
+    "role": "Produtor",
+    "localizacao": "Pernambuco",
+    "avaliacao": 4.7,
+    "price": "$2.80/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1601315576601-f5c61a962a4e?w=600&auto=format&fit=crop&q=60",
+    "title": "Pimentão",
+    "type": "Legume",
+    "description": "Colorido e saboroso, o pimentão é fonte de vitamina C e ótimo para refogados.",
+    "role": "Agricultora",
+    "localizacao": "Ceará",
+    "avaliacao": 4.2,
+    "price": "$3.10/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1582281298057-3e99e1c130a9?w=600&auto=format&fit=crop&q=60",
+    "title": "Pepino",
+    "type": "Legume",
+    "description": "Refrescante e hidratante, o pepino é ideal para saladas.",
+    "role": "Agricultor",
+    "localizacao": "Rio de Janeiro",
+    "avaliacao": 4.1,
+    "price": "$1.90/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1603052875722-31b2ff3c9a2a?w=600&auto=format&fit=crop&q=60",
+    "title": "Alho-poró",
+    "type": "Legume",
+    "description": "O alho-poró dá um toque especial a sopas e caldos, com sabor suave.",
+    "role": "Produtora",
+    "localizacao": "Rio Grande do Sul",
+    "avaliacao": 4.6,
+    "price": "$5.00/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1582510665809-7f3bb83b41f1?w=600&auto=format&fit=crop&q=60",
+    "title": "Cebola",
+    "type": "Legume",
+    "description": "Base essencial na culinária, a cebola é rica em antioxidantes.",
+    "role": "Produtor",
+    "localizacao": "Goiás",
+    "avaliacao": 4.5,
+    "price": "$2.40/kg"
+  }
+]

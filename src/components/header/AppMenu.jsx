@@ -1,19 +1,26 @@
 import { Button, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-
-const handleSmoothScroll = (e, id) => {
-  e.preventDefault();
-  const section = document.getElementById(id);
-  if (section) {
-    section.scrollIntoView({ behavior: "smooth" });
-  }
-};
+import { useEffect, useMemo } from "react";
 
 const AppMenu = ({ setLastScrollY }) => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const isLoggedIn = Boolean(localStorage.getItem("token"));
+  const isAuthPage = useMemo(
+    () => ["/login", "/cadastro", "/404"].includes(location.pathname),
+    [location.pathname]
+  );
+  const isSobre = location.pathname === "/sobre";
+
+  const shouldRenderButtons = !isAuthPage && !isSobre && !isLoggedIn;
+
+  const scrollTo = (e, id) => {
+    e.preventDefault();
+    const section = document.getElementById(id);
+    if (section) section.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,55 +49,52 @@ const AppMenu = ({ setLastScrollY }) => {
         Menu
       </MenuButton>
       <MenuList zIndex={20}>
+        {isLoggedIn && (
+          <MenuItem
+            onClick={() => navigate("/home")}
+            _hover={{ textDecoration: "none", color: "#83a11d" }}
+          >
+            Home
+          </MenuItem>
+        )}
         <MenuItem
-          as="a"
-          onClick={() => navigate("/")}
-          _hover={{
-            textDecoration: "none",
-            color: location.pathname === "/sobre" ? "#e5d1b0" : "#83a11d",
-          }}
+          onClick={() =>
+            window.scrollTo({ top: 0, behavior: "smooth" }) || navigate("/")
+          }
+          _hover={{ textDecoration: "none", color: "#83a11d" }}
         >
-          Inicio
+          Início
         </MenuItem>
-        <>
+        {shouldRenderButtons && (
+          <>
+            <MenuItem
+              onClick={(e) => scrollTo(e, "apptecplat")}
+              _hover={{ textDecoration: "none", color: "#83a11d" }}
+            >
+              Plataforma
+            </MenuItem>
+            <MenuItem
+              onClick={(e) => scrollTo(e, "appsubs")}
+              _hover={{ textDecoration: "none", color: "#83a11d" }}
+            >
+              Assinatura
+            </MenuItem>
+          </>
+        )}
+        <MenuItem
+          onClick={() => navigate("/sobre")}
+          _hover={{ textDecoration: "none", color: "#83a11d" }}
+        >
+          Sobre
+        </MenuItem>
+        {shouldRenderButtons && (
           <MenuItem
-            onClick={() => navigate("/login")}
-            _hover={{ textDecoration: "none", color: "#83a11d" }}
-          >
-            Login
-          </MenuItem>
-          <MenuItem
-            onClick={() => navigate("/cadastro")}
-            _hover={{ textDecoration: "none", color: "#83a11d" }}
-          >
-            Cadastro
-          </MenuItem>
-          <MenuItem
-            onClick={(e) => handleSmoothScroll(e, "apptecplat")}
-            _hover={{ textDecoration: "none", color: "#83a11d" }}
-          >
-            Plataforma
-          </MenuItem>
-          <MenuItem
-            onClick={(e) => handleSmoothScroll(e, "appsubs")}
-            _hover={{ textDecoration: "none", color: "#83a11d" }}
-          >
-            Assinatura
-          </MenuItem>
-          <MenuItem
-            as="a"
-            onClick={() => navigate("/sobre")}
-            _hover={{ textDecoration: "none", color: "#83a11d" }}
-          >
-            Sobre
-          </MenuItem>
-          <MenuItem
-            onClick={(e) => handleSmoothScroll(e, "appforms")}
+            onClick={(e) => scrollTo(e, "appforms")}
             _hover={{ textDecoration: "none", color: "#83a11d" }}
           >
             Fale Conosco
           </MenuItem>
-        </>
+        )}
       </MenuList>
     </Menu>
   );

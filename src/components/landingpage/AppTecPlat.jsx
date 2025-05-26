@@ -18,7 +18,6 @@ import IconChat2 from "../../assets/icons/chat.png";
 import IconFamily from "../../assets/icons/family.png";
 import IconVoice from "../../assets/icons/voice-command.png";
 import ImagePlataforma from "../../assets/plataforma.png";
-import MockupIAcai from "../../assets/mockup-acaiaca.png";
 
 const dataCardSec = [
   {

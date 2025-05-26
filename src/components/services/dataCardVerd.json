@@ -1,0 +1,52 @@
+[
+  {
+    "image": "https://images.unsplash.com/photo-1609180845050-469d8c3c52a9?w=600&auto=format&fit=crop&q=60",
+    "title": "Alface",
+    "type": "Verdura",
+    "description": "A alface é uma folha verde rica em fibras e ideal para saladas leves e saudáveis.",
+    "role": "Agricultora",
+    "localizacao": "Minas Gerais",
+    "avaliacao": 4.6,
+    "price": "$1.50/unidade"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1582515073490-d5d4b23af9b4?w=600&auto=format&fit=crop&q=60",
+    "title": "Couve",
+    "type": "Verdura",
+    "description": "A couve é uma folha escura e nutritiva, ótima para sucos verdes e refogados.",
+    "role": "Produtor",
+    "localizacao": "Bahia",
+    "avaliacao": 4.7,
+    "price": "$2.00/maço"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1605470208393-e2f3ad1d80f4?w=600&auto=format&fit=crop&q=60",
+    "title": "Espinafre",
+    "type": "Verdura",
+    "description": "O espinafre é uma verdura rica em ferro e vitaminas, ideal para sopas e omeletes.",
+    "role": "Agricultor",
+    "localizacao": "São Paulo",
+    "avaliacao": 4.5,
+    "price": "$2.20/maço"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1584270354949-1d5d269ec202?w=600&auto=format&fit=crop&q=60",
+    "title": "Agrião",
+    "type": "Verdura",
+    "description": "O agrião tem sabor levemente picante, muito usado em saladas e sanduíches.",
+    "role": "Agricultora",
+    "localizacao": "Paraná",
+    "avaliacao": 4.4,
+    "price": "$2.00/maço"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1611074848955-0c5bcb6a2258?w=600&auto=format&fit=crop&q=60",
+    "title": "Rúcula",
+    "type": "Verdura",
+    "description": "A rúcula possui um sabor marcante e é rica em antioxidantes e minerais.",
+    "role": "Produtor",
+    "localizacao": "Pernambuco",
+    "avaliacao": 4.6,
+    "price": "$2.30/maço"
+  }
+]

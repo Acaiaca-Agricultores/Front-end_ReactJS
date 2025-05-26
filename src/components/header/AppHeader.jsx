@@ -1,25 +1,38 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button, Box, Flex, Image } from "@chakra-ui/react";
+import {
+  Button,
+  Box,
+  Flex,
+  Image,
+  Menu,
+  MenuList,
+  MenuItem,
+  MenuButton,
+  Divider,
+} from "@chakra-ui/react";
 import Logo from "../../assets/logo_semfundo.png";
+import ImageAccount from "../../assets/icons/user.svg";
 import AppMenu from "./AppMenu";
 import "./style-header.css";
 import "../../global-styles.css";
 
-const scroll = () => (window.innerWidth < 768 ? 300 : 600);
+const scroll = () =>
+  window.innerWidth < 768 ? 300 : location.pathname === "/home" ? 100 : 600;
 
 const Header = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const location = useLocation();
   const navigation = useNavigate();
-
+  const isLoggedIn = Boolean(localStorage.getItem("token"));
   const isAuthPage = useMemo(
     () => ["/login", "/cadastro", "/404"].includes(location.pathname),
     [location.pathname]
   );
   const isSobre = location.pathname === "/sobre";
-  const shouldRenderButtons = !isAuthPage && !isSobre;
+
+  const shouldRenderButtons = !isAuthPage && !isSobre && !isLoggedIn;
 
   const handleScroll = useCallback(() => {
     const scrollY = window.scrollY;
@@ -32,6 +45,24 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
+
+  useEffect(() => {
+    const checkTokenExpiration = () => {
+      const tokenExpireTime = localStorage.getItem("tokenExpireTime");
+      if (tokenExpireTime && Date.now() > parseInt(tokenExpireTime, 10)) {
+        setShowAlert(true);
+        setTimeout(() => {
+          setShowAlert(false);
+          localStorage.removeItem("token");
+          localStorage.removeItem("tokenExpireTime");
+          navigation("/");
+        }, 5000);
+      }
+    };
+
+    const interval = setInterval(checkTokenExpiration, 1000 * 60);
+    return () => clearInterval(interval);
+  }, [navigation]);
 
   const scrollTo = (e, id) => {
     e.preventDefault();
@@ -58,21 +89,28 @@ const Header = () => {
     >
       <Flex justify="space-between" align="center" wrap="wrap" px="1rem">
         <Flex
-          w="100%"
+          width="100%"
           display={{ base: "flex", md: "none" }}
           align="center"
           justify="space-between"
         >
-          <Image src={Logo} alt="Logo" w="9rem" p="0.5rem" />
+          <Image src={Logo} alt="Logo" w="9rem" padding="0.5rem" />
           <AppMenu />
         </Flex>
         <Image
           src={Logo}
           alt="Logo"
           w="10rem"
-          opacity={isSobre || isAuthPage || lastScrollY > scroll() ? 1 : 0}
+          opacity={
+            location.pathname === "/home" ||
+            isSobre ||
+            isAuthPage ||
+            lastScrollY > scroll()
+              ? 1
+              : 0
+          }
           transition="opacity 0.5s"
-          p="0.5rem"
+          padding="0.5rem"
           display={{ base: "none", md: "block" }}
         />
         <Flex
@@ -83,6 +121,16 @@ const Header = () => {
           fontSize={{ base: "0.8rem", md: "1.2rem" }}
           color="#fff"
         >
+          {isLoggedIn && (
+            <Button
+              variant="link"
+              color="inherit"
+              onClick={() => navigation("/home")}
+              _hover={{ color: "#83a11d" }}
+            >
+              Home
+            </Button>
+          )}
           <Button
             variant="link"
             color="inherit"
@@ -93,7 +141,6 @@ const Header = () => {
           >
             Início
           </Button>
-
           {shouldRenderButtons && (
             <>
               <Button
@@ -137,22 +184,58 @@ const Header = () => {
         </Flex>
 
         <Box display={{ base: "none", md: "block" }}>
-          <Button
-            onClick={() =>
-              navigation(
-                location.pathname === "/login" ? "/cadastro" : "/login"
-              )
-            }
-            w="13rem"
-            color="#52601a"
-            bg="#fff"
-            borderRadius="10px"
-            fontFamily="Onest"
-            p="1.5rem"
-            _hover={{ bg: "#c0ab8e", color: "#fff" }}
-          >
-            {location.pathname === "/login" ? "Cadastre-se" : "Login"}
-          </Button>
+          {!isLoggedIn && location.pathname !== "/home" && (
+            <Button
+              onClick={() =>
+                navigation(
+                  location.pathname === "/login" ? "/cadastro" : "/login"
+                )
+              }
+              w="13rem"
+              color="#52601a"
+              bg="#fff"
+              borderRadius="10px"
+              fontFamily="Onest"
+              p="1.5rem"
+              _hover={{ bg: "#c0ab8e", color: "#fff" }}
+            >
+              {location.pathname === "/login" ? "Cadastre-se" : "Login"}
+            </Button>
+          )}
+          <Menu>
+            {isLoggedIn && (
+              <>
+                <MenuButton variant="link" color="inherit" as={Button}>
+                  <Image
+                    src={ImageAccount}
+                    alt="User Account"
+                    w="2.5rem"
+                    h="2.5rem"
+                    _hover={{ cursor: "pointer" }}
+                  />
+                </MenuButton>
+                <MenuList
+                  background="rgba(137, 134, 134, 0.2)"
+                  backdropFilter="blur(10px)"
+                  color="#FFFFFF"
+                  border="none"
+                  fontFamily="Onest"
+                >
+                  <MenuItem background="transparent">Configurações</MenuItem>
+                  <Divider />
+                  <MenuItem
+                    background="transparent"
+                    onClick={() => {
+                      localStorage.removeItem("token");
+                      navigation("/");
+                    }}
+                  >
+                    Sair
+                  </MenuItem>
+                </MenuList>
+              </>
+            )}
+          </Menu>
         </Box>
       </Flex>
     </Box>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   FormControl,
@@ -20,6 +20,8 @@ import {
   PopoverBody,
   PopoverArrow,
   PopoverCloseButton,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
 
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
@@ -72,11 +74,15 @@ const AppCadastro = () => {
         );
       }
       const token = responseData.token;
+      const userName = responseData.name || responseData.username || data.username;
       localStorage.setItem("token", token);
+      localStorage.setItem("userName", userName);
+      localStorage.setItem("userRole", role);
+      setAlertMessage("Cadastro realizado com sucesso!");
       if (role === "agricultor") {
-        navigation("/HomeAgricultor");
+        navigation("/home");
       } else if (role === "consumidor") {
-        navigation("/HomeConsumidor");
+        navigation("/home");
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
@@ -84,6 +90,21 @@ const AppCadastro = () => {
       setAlertType("error");
     }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const userRole = localStorage.getItem("userRole");
+      if (userRole === "agricultor") {
+        navigation("/home");
+      } else if (userRole === "consumidor") {
+        navigation("/home");
+      } else {
+        navigation("/");
+      }
+    }
+  }, [navigation]);
+
   return (
     <Box
       id="appforms"

@@ -3,11 +3,9 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LandingPageApp from "./components/landingpage/app.jsx";
 import AppAbout from "./components/landingpage/AppAbout.jsx";
 import AppLogin from "./components/login/AppLogin.jsx";
-import AppAgriHome from "./components/home/AppAgriHome .jsx";
 import AppConsuHome from "./components/home/AppConsuHome.jsx";
 import AppPage404 from "./components/pagina 404/AppPage404.jsx";
 import AppCadastro from "./components/cadastro/AppCadastro.jsx";
-import AppCarrossel from "./components/carrossel/AppCarrossel.jsx";
 
 const AppRouters = () => {
   return (
@@ -18,9 +16,7 @@ const AppRouters = () => {
       <Route path="/sobre" element={<AppAbout />} />
       <Route path="/login" element={<AppLogin />} />
       <Route path="/cadastro" element={<AppCadastro />} />
-      <Route path="/HomeAgricultor" element={<AppAgriHome />} />
-      <Route path="/Home" element={<AppConsuHome />} />
-      <Route path="/Carrossel" element={<AppCarrossel />} />
+      <Route path="/home" element={<AppConsuHome />} />
     </Routes>
   );
 };

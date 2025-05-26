@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../../global-styles.css";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -39,6 +39,18 @@ const AppLogin = () => {
     formState: { errors },
   } = useForm();
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const userRole = localStorage.getItem("userRole");
+      if (userRole === "agricultor") {
+        navigation("/Home");
+      } else if (userRole === "consumidor") {
+        navigation("/Home");
+      }
+    }
+  }, [navigation]);
+
   const onSubmit = async (data) => {
     const { email, password, role } = data;
     if (role === "consumidor" && value === "agricultor") {
@@ -56,7 +68,7 @@ const AppLogin = () => {
       setAlertType("error");
       return;
     }
-    const url = import.meta.env.LOGIN_API_URL;
+    const url = import.meta.env.VITE_LOGIN_API_URL;
     const requestOptions = {
       method: "POST",
       headers: {
@@ -67,21 +79,29 @@ const AppLogin = () => {
 
     try {
       const response = await fetch(url, requestOptions);
-      const responseData = await response.json();
+
       if (!response.ok) {
-        throw new Error(
-          `Erro: ${response.status} - ${
-            responseData.message || response.statusText
-          }`
+        const errorText = await response.text();
+        setAlertMessage(
+          `Erro: ${response.status} - ${errorText || response.statusText}`
         );
+        setAlertType("error");
+        return;
       }
+
+      const responseData = await response.json();
       const token = responseData.token;
+      const userName = responseData.username || "Usuário";
       localStorage.setItem("token", token);
+      localStorage.setItem("userRole", role);
+      localStorage.setItem("userName", userName);
+      setAlertMessage("Login realizado com sucesso!");
+      setAlertType("success");
       if (role === "agricultor") {
-        navigation("/HomeAgricultor");
+        navigation("/Home");
       }
       if (role === "consumidor") {
-        navigation("/HomeConsumidor");
+        navigation("/Home");
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
