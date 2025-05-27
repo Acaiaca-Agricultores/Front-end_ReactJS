@@ -26,76 +26,94 @@ const AppCarrossel = ({ data, title }) => {
 
   const buttonStyles = {
     color: "white",
-    background: "trasparent",
-    border: "2px solid #c0ab8e",
-    borderRadius: "10px",
+    background: "#83a11d",
+    borderRadius: "8px",
     fontFamily: "Onest",
-    fontSize: "1.2rem",
-    fontWeight: 400,
+    fontSize: "1.1rem",
+    fontWeight: 500,
     lineHeight: "150%",
-    w: { base: "10rem", md: "13rem" },
-    padding: "2rem",
+    w: { base: "100%" },
+    padding: { base: "0.75rem 1.5rem", md: "1rem 2rem" },
     _hover: {
       background: "#c0ab8e",
       color: "#000000",
+      transform: "translateY(-2px)",
+      boxShadow: "lg",
     },
+    transition:
+      "background 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
   };
 
   return (
     <>
-      <Heading padding={"2rem 0"}>{title}</Heading>
-      <Carousel responsive={responsive} margin="2rem">
+      <Heading padding={"2rem 0 1rem 0"}>{title}</Heading>
+      <Carousel
+        responsive={responsive}
+        infinite={true}
+        autoPlay={false}
+        keyBoardControl={true}
+        containerClass="carousel-container"
+        itemClass="carousel-item-padding-40-px"
+        removeArrowOnDeviceType={["tablet", "mobile"]}
+        dotListClass="custom-dot-list-style"
+      >
         {data.map((item, index) => (
           <Card
             key={index}
-            width={{ base: "100%", md: "35rem", lg: "25rem" }}
+            width={{
+              base: "calc(100% - 20px)",
+              md: "calc(100% - 30px)",
+              lg: "calc(100% - 40px)",
+            }}
             height={"100%"}
             display="flex"
             flexDirection="column"
-            justifyContent="space-between"
             alignItems="stretch"
-            borderRadius="12px"
-            border="3px solid #52601A"
-            boxShadow="md"
-            padding={[2, 3, 4]}
+            borderRadius="16px"
+            overflow="hidden"
+            margin="0 10px"
+            boxShadow="none"
           >
             <CardBody
               flex="1 1 auto"
               display="flex"
               flexDirection="column"
               justifyContent="flex-start"
+              padding={{ base: 3, md: 4 }}
             >
               <Image
-                border="3px solid #E5D1B0"
                 width="100%"
-                height={["10rem", "14rem", "18rem"]}
+                height={{ base: "150px", md: "180px", lg: "200px" }}
                 objectFit="cover"
                 src={item.image}
                 alt={item.title}
-                borderRadius="lg"
-                mb={3}
+                borderRadius="md"
+                mb={4}
               />
-              <Stack mt="2" spacing="2" flex="1 1 auto">
-                <Heading size="lg">{item.title}</Heading>
-                <Text color="black" noOfLines={2}>
+              <Stack spacing="3" flex="1 1 auto">
+                <Heading size="md" noOfLines={2}>
+                  {item.title}
+                </Heading>
+                <Text color="gray.600" fontSize="sm" noOfLines={3}>
                   {item.description}
                 </Text>
-                <Text color="#52601A" fontSize="2xl">
+                <Text
+                  color="#52601A"
+                  fontSize="xl"
+                  fontWeight="medium"
+                  mt="auto"
+                  pt="2"
+                >
                   {item.price}
                 </Text>
               </Stack>
             </CardBody>
-            <Divider />
-            <CardFooter>
+            <Divider borderColor="gray.200" />
+            <CardFooter padding={{ base: 3, md: 4 }}>
               <ButtonGroup spacing="2" width="100%">
                 <Button
                   {...buttonStyles}
-                  width="100%"
-                  height={{ base: "3rem", md: "4rem" }}
-                  aria-label="Cadastre-se na plataforma"
-                  backgroundColor={"#83a11d"}
-                  border="none"
-                  color={"ffffff"}
+                  aria-label={`Saiba mais sobre ${item.title}`}
                 >
                   Saiba Mais
                 </Button>

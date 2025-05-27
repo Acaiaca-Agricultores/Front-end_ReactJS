@@ -7,7 +7,6 @@ import {
   CardBody,
   CardFooter,
   Image,
-  Stack,
   Link,
 } from "@chakra-ui/react";
 
@@ -35,10 +34,13 @@ const imageMap = {
   YasminImagem,
 };
 
-const dataCard = dataCardRaw.map((item) => ({
-  ...item,
-  image: imageMap[item.image],
-}));
+const dataCard = Array.isArray(dataCardRaw)
+  ? dataCardRaw.map((item) => ({
+      ...item,
+      image: imageMap[item.image] || BackgroundImage,
+      id: item.id || item.title.replace(/\s+/g, "-").toLowerCase(),
+    }))
+  : [];
 
 const AppPerfis = () => {
   return (
@@ -49,16 +51,21 @@ const AppPerfis = () => {
       backgroundImage={`url(${BackgroundImage})`}
       backgroundSize="cover"
       backgroundPosition="center"
+      backgroundAttachment="fixed"
       backgroundRepeat="no-repeat"
       position="relative"
       width="100%"
+      minHeight="100vh"
+      py={{ base: "2rem", md: "4rem" }}
     >
       <Heading
+        id="perfis-section-title"
         color={"white"}
         tabIndex={0}
-        padding="2rem"
+        pb={{ base: "1rem", md: "2rem" }}
+        pt={{ base: "1rem", md: "0" }}
         zIndex={2}
-        fontSize={{ base: "1.5rem", md: "2.5rem" }}
+        fontSize={{ base: "2xl", md: "4xl" }}
         textAlign="center"
       >
         Pessoas que fazem a Acaiacá
@@ -66,98 +73,122 @@ const AppPerfis = () => {
       <Box
         position="absolute"
         inset="0"
-        background="rgba(0, 0, 0, 0.3)"
-        backdropFilter="blur(2px)"
+        background="rgba(0, 0, 0, 0.4)"
+        backdropFilter="blur(3px)"
         zIndex="1"
       />
 
       <SimpleGrid
         zIndex={2}
-        id="index"
         as="section"
         role="region"
-        aria-labelledby="mvv-section-title"
-        columns={{ base: 1, md: 2 }}
-        spacing={6}
-        padding={{ base: "1rem", md: "2rem 5rem" }}
-        width="90%"
+        aria-labelledby="perfis-section-title"
+        columns={{ base: 1, lg: 2 }}
+        spacing={{ base: 4, md: 6 }}
+        paddingX={{ base: "1rem", md: "2rem" }}
+        width="100%"
         maxWidth="1200px"
       >
-        {dataCard.map((item, index) => (
+        {dataCard.map((item) => (
           <Card
-            zIndex={2}
-            role="region"
-            maxW="100%"
-            key={index}
-            display="flex"
-            flexDirection="column"
-            justifyContent="space-between"
-            borderRadius="lg"
+            key={item.id}
+            direction={{ base: "column", md: "row" }}
             overflow="hidden"
-            boxShadow="md"
-            minWidth="280px"
+            variant="outline"
+            bg="whiteAlpha.800"
+            borderColor="whiteAlpha.300"
+            borderRadius="xl"
+            boxShadow="lg"
+            width="100%"
+            transition="transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out"
+            _hover={{
+              transform: "translateY(-4px)",
+              boxShadow: "xl",
+            }}
           >
-            <SimpleGrid columns={{ base: 1, sm: 2 }} height="100%">
-              <Box>
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  objectFit="cover"
-                  borderRadius="10px"
-                  width="100%"
-                  height="auto"
-                />
-              </Box>
-              <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent="space-between"
-                padding="1rem"
-              >
-                <CardBody padding="0">
-                  <Text
-                    fontWeight="bold"
-                    fontSize={{ base: "1rem", md: "1.2rem" }}
-                    noOfLines={2}
-                  >
-                    {item.title}
-                  </Text>
-                  <Text
-                    color="gray.600"
-                    fontSize={{ base: "0.9rem", md: "1rem" }}
-                    noOfLines={2}
-                  >
-                    {item.description}
-                  </Text>
-                </CardBody>
+            <Image
+              src={item.image}
+              alt={`Foto de ${item.title}`}
+              objectFit="cover"
+              width={{ base: "100%", md: "180px", lg: "200px" }}
+              height={{ base: "200px", md: "auto" }}
+              alignSelf={{ base: "center", md: "stretch" }}
+              borderTopLeftRadius={{ base: "xl", md: "xl" }}
+              borderBottomLeftRadius={{ base: "0", md: "xl" }}
+              borderTopRightRadius={{ base: "xl", md: "0" }}
+              borderBottomRightRadius={{ base: "0", md: "0" }}
+            />
 
-                <CardFooter
-                  padding="0"
-                  marginTop="1rem"
-                  display="flex"
-                  justifyContent="space-around"
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="space-between"
+              p={{ base: 4, md: 5 }}
+              flex="1"
+            >
+              <CardBody p={0}>
+                <Heading
+                  as="h3"
+                  size="md"
+                  fontWeight="semibold"
+                  mb={1}
+                  noOfLines={2}
                 >
-                  <Link href={item.linkGithub} target="_blank">
-                    <Image
-                      src={GitImage}
-                      alt="GitHub"
-                      boxSize="2rem"
-                      cursor="pointer"
-                      _hover={{ transform: "scale(1.1)", transition: "0.2s" }}
-                    />
-                  </Link>
-                  <Link href={item.linkLinkedin} target="_blank">
-                    <Image
-                      src={LinkedinImage}
-                      alt="LinkedIn"
-                      boxSize="2rem"
-                      cursor="pointer"
-                      _hover={{ transform: "scale(1.1)", transition: "0.2s" }}
-                    />
-                  </Link>
-                </CardFooter>
-              </Box>
-            </SimpleGrid>
+                  {item.title}
+                </Heading>
+                <Text
+                  color="gray.700"
+                  fontSize={{ base: "sm", md: "md" }}
+                  noOfLines={3}
+                  minHeight={{ base: "3.2em", md: "3.6em" }}
+                  mb={4}
+                >
+                  {item.description}
+                </Text>
+              </CardBody>
+
+              <CardFooter
+                p={0}
+                display="flex"
+                justifyContent="flex-start"
+                gap={5}
+              >
+                <Link
+                  href={item.linkGithub}
+                  isExternal
+                  aria-label={`${item.title}'s Github`}
+                >
+                  <Image
+                    src={GitImage}
+                    alt="GitHub"
+                    boxSize="28px"
+                    opacity={0.7}
+                    _hover={{
+                      opacity: 1,
+                      transform: "scale(1.15)",
+                      transition: "all 0.2s",
+                    }}
+                  />
+                </Link>
+                <Link
+                  href={item.linkLinkedin}
+                  isExternal
+                  aria-label={`${item.title}'s LinkedIn`}
+                >
+                  <Image
+                    src={LinkedinImage}
+                    alt="LinkedIn"
+                    boxSize="28px"
+                    opacity={0.7}
+                    _hover={{
+                      opacity: 1,
+                      transform: "scale(1.15)",
+                      transition: "all 0.2s",
+                    }}
+                  />
+                </Link>
+              </CardFooter>
+            </Box>
           </Card>
         ))}
       </SimpleGrid>

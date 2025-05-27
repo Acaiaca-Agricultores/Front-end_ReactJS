@@ -16,8 +16,9 @@ import {
   Flex,
   Text,
   Link,
+  IconButton,
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+import { SearchIcon, HamburgerIcon } from "@chakra-ui/icons"; // Added HamburgerIcon
 import { Typewriter } from "react-simple-typewriter";
 import AppCarrossel from "../carrossel/AppCarrossel";
 import dataFruits from "../services/dataCardFruits.json";
@@ -34,6 +35,14 @@ const AppAgriHome = () => {
   const [ordemPreco, setOrdemPreco] = useState("");
 
   const navigation = useNavigate();
+
+  const categories = [
+    { label: "Todas", value: "Todos" },
+    { label: "Agricultores", value: "Agricultores" },
+    { label: "Frutas", value: "Frutas" },
+    { label: "Verduras", value: "Verduras" },
+    { label: "Legumes", value: "Legumes" },
+  ];
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -85,10 +94,8 @@ const AppAgriHome = () => {
       default:
         data = [];
     }
-    // Ordenação por preço (apenas para Frutas, Legumes, Verduras)
     if (ordemPreco && categoriaSelecionada !== "Agricultores") {
       data = [...data].sort((a, b) => {
-        // Remove caracteres não numéricos e converte para float
         const precoA = parseFloat(
           (a.price || "").replace(/[^0-9,.-]+/g, "").replace(",", ".")
         );
@@ -106,7 +113,7 @@ const AppAgriHome = () => {
 
   return (
     <>
-      <Box>
+      <Box backgroundColor={"#f0f0f0"}>
         <Flex
           as="section"
           role="region"
@@ -161,9 +168,63 @@ const AppAgriHome = () => {
           templateRows="auto auto repeat(3, 1fr)"
           templateColumns={{ base: "1fr", md: "repeat(5, 1fr)" }}
           gap={4}
-          paddingTop={{ base: "2rem", md: "2rem 0" }}
-          padding={"2rem 0"}
+          padding={{ base: "2rem", md: "2rem 0" }}
         >
+          <GridItem
+            colSpan={4}
+            display={{ base: "block", md: "none" }}
+            mb={4}
+            paddingLeft={{ base: "0", md: "2rem" }}
+            paddingRight={{ base: "0", md: "2rem" }}
+          >
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                aria-label="Categorias"
+                icon={<HamburgerIcon />}
+                variant="outline"
+                color="#83a11d"
+                border={"2px solid #83a11d"}
+                width="100%"
+              />
+              <MenuList zIndex={3} width={"348px;"}>
+                <MenuItem
+                  isDisabled
+                  color="#83a11d"
+                  fontWeight="bold"
+                  fontSize="1.1rem"
+                  borderBottom="2px solid #83a11d"
+                  mb={1}
+                >
+                  Categorias
+                </MenuItem>
+                {categories.map((cat) => (
+                  <MenuItem
+                    key={cat.value}
+                    onClick={() => {
+                      setCategoriaSelecionada(cat.value);
+                      setOrdemPreco("");
+                    }}
+                    bg={
+                      categoriaSelecionada === cat.value
+                        ? "green.50"
+                        : "transparent"
+                    }
+                    color={
+                      categoriaSelecionada === cat.value ? "#83a11d" : "inherit"
+                    }
+                    fontWeight={
+                      categoriaSelecionada === cat.value ? "bold" : "normal"
+                    }
+                    _hover={{ bg: "gray.100", color: "#83a11d" }}
+                  >
+                    {cat.label}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
+          </GridItem>
+
           <GridItem
             colSpan={1}
             rowSpan={{ base: 1, md: 5 }}
@@ -191,13 +252,7 @@ const AppAgriHome = () => {
               >
                 Categorias
               </ListItem>
-              {[
-                { label: "Todas", value: "Todos" },
-                { label: "Agricultores", value: "Agricultores" },
-                { label: "Frutas", value: "Frutas" },
-                { label: "Verduras", value: "Verduras" },
-                { label: "Legumes", value: "Legumes" },
-              ].map((cat) => (
+              {categories.map((cat) => (
                 <ListItem
                   key={cat.value}
                   onClick={() => {
@@ -232,7 +287,8 @@ const AppAgriHome = () => {
             alignItems={"center"}
             width={"100%"}
             colStart={{ base: 1, md: 2 }}
-            colSpan={{ base: 1, md: 4 }}
+            colSpan={{ base: 4, md: 4 }}
+            mt={{ base: 4, md: 0 }}
           >
             <Menu>
               <MenuButton
@@ -273,7 +329,6 @@ const AppAgriHome = () => {
               </InputRightAddon>
             </InputGroup>
           </GridItem>
-
           {categoriaSelecionada === "Todos" ||
           categoriaSelecionada === "Frutas" ? (
             <GridItem colSpan={4}>

@@ -12,51 +12,52 @@ const Footer = () => {
       as="footer"
       role="contentinfo"
       aria-label="Rodapé da página"
-      background="#52601a"
-      color="white"
-      padding="2rem"
-      display={{ base: "block", md: "flex" }}
-      flexDirection="column"
-      justifyContent={"space-between"}
-      alignItems="center"
+      bg="#52601a"
+      color="#ffffff"
+      paddingY={{ base: "1.5rem", md: "1rem" }}
+      paddingX={{ base: "1rem", md: "2rem" }}
     >
       <Flex
         direction={{ base: "column", md: "row" }}
         justifyContent="space-between"
         alignItems="center"
-        gap={{ base: "3rem", md: "10rem" }}
         maxWidth="1200px"
         margin="0 auto"
+        pb="1.5rem"
       >
-        <Box>
-          <Image src={Logo} alt="Logo da Plataforma Acaiaca" margin="0 auto" />
+        <Box width={{ base: "100px", md: "150px" }}>
+          <Image
+            src={Logo}
+            alt="Logo da Plataforma Acaiaca"
+            width="100%"
+            height="auto"
+          />
         </Box>
 
         <Flex
           as="nav"
           aria-label="Redes sociais"
-          direction={{ base: "column", md: "row" }}
           alignItems="center"
-          gap="1.5rem"
+          gap={{ base: "1rem", md: "1.5rem" }}
         >
           <Link
             href="https://github.com/Acaiaca-Agricultores"
             display="flex"
             alignItems="center"
-            gap="0.5rem"
+            gap="0.3rem"
             _hover={{ textDecoration: "none", color: "#c0ab8e" }}
             aria-label="Acesse nosso Github"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Image src={GithubIcon} alt="Ícone do Github" boxSize="40px" />
-            <Text>Github</Text>
+            <Image src={GithubIcon} alt="Ícone do Github" boxSize="30px" />
+            <Text fontSize="sm">Github</Text>
           </Link>
           <Link
             href="https://www.instagram.com/acaiaca.plataforma/"
             display="flex"
             alignItems="center"
-            gap="0.5rem"
+            gap="0.3rem"
             _hover={{ textDecoration: "none", color: "#c0ab8e" }}
             aria-label="Acesse nosso Instagram"
             target="_blank"
@@ -65,50 +66,79 @@ const Footer = () => {
             <Image
               src={InstagramIcon}
               alt="Ícone do Instagram"
-              boxSize="40px"
+              boxSize="30px"
             />
-            <Text>Instagram</Text>
+            <Text fontSize="sm">Instagram</Text>
           </Link>
           <Link
             href="#"
             display="flex"
             alignItems="center"
-            gap="0.5rem"
+            gap="0.3rem"
             _hover={{ textDecoration: "none", color: "#c0ab8e" }}
             aria-label="Acesse nosso LinkedIn"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Image src={LinkedInIcon} alt="Ícone do LinkedIn" boxSize="40px" />
-            <Text>LinkedIn</Text>
+            <Image src={LinkedInIcon} alt="Ícone do LinkedIn" boxSize="30px" />
+            <Text fontSize="sm">LinkedIn</Text>
           </Link>
         </Flex>
       </Flex>
 
-      <Divider marginY="1.5rem" borderColor="whiteAlpha.600" />
+      <Divider borderColor="whiteAlpha.400" marginY="1rem" />
 
       <Flex
         direction={{ base: "column", md: "row" }}
         justifyContent="space-between"
         alignItems="center"
         textAlign={{ base: "center", md: "left" }}
-        gap="1rem"
-        fontSize="0.9rem"
+        gap="0.75rem"
+        fontSize="xs"
+        maxWidth="1200px"
+        margin="0 auto"
       >
-        <Text>&copy; 2025 Acaiaca. Todos os direitos reservados.</Text>
-        <Flex gap="1rem" direction={{ base: "column", md: "row" }}>
-          <Link href="#" aria-label="Política de Privacidade">
+        <Text>
+          &copy; {new Date().getFullYear()} Acaiaca. Todos os direitos
+          reservados.
+        </Text>
+        <Flex
+          gap="1rem"
+          direction={{ base: "column", md: "row" }}
+          textAlign="center"
+        >
+          <Link
+            href="#"
+            aria-label="Política de Privacidade"
+            _hover={{ color: "#c0ab8e" }}
+          >
             Política de Privacidade
           </Link>
-          <Link href="#" aria-label="Termos e Condições">
+          <Link
+            href="#"
+            aria-label="Termos e Condições"
+            _hover={{ color: "#c0ab8e" }}
+          >
             Termos e Condições
           </Link>
-          <Link href="#" aria-label="Política de Cookies">
+          <Link
+            href="#"
+            aria-label="Política de Cookies"
+            _hover={{ color: "#c0ab8e" }}
+          >
             Política de Cookies
           </Link>
         </Flex>
       </Flex>
-      <pre aria-label="Versão do sistema">{`v${packageJson.version}`}</pre>
+      <Flex justifyContent="center" mt="0.75rem">
+        <Text
+          fontSize="xx-small"
+          color="gray.500"
+          aria-label={`Versão do sistema ${packageJson.version}`}
+        >
+          v{packageJson.version}
+        </Text>
+      </Flex>
     </Box>
   );
 };

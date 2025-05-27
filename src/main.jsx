@@ -15,7 +15,6 @@ function App() {
 
   return (
     <>
-      <VLibras />
       <AppChat />
       {location.pathname !== "/404" && <Header display="flex" />}
       <AppRouters />
@@ -31,6 +30,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
       <ChakraProvider>
         <BrowserRouter>
+          <VLibras />
           <App />
         </BrowserRouter>
       </ChakraProvider>

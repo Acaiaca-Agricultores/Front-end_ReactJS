@@ -23,6 +23,7 @@ const scroll = () =>
 const Header = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [showAlert, setShowAlert] = useState(false);
   const location = useLocation();
   const navigation = useNavigate();
   const isLoggedIn = Boolean(localStorage.getItem("token"));
@@ -32,7 +33,14 @@ const Header = () => {
   );
   const isSobre = location.pathname === "/sobre";
 
-  const shouldRenderButtons = !isAuthPage && !isSobre && !isLoggedIn;
+  const shouldRenderButtons =
+    !isAuthPage && !isSobre && location.pathname === "/";
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("tokenExpireTime");
+    navigation("/");
+  };
 
   const handleScroll = useCallback(() => {
     const scrollY = window.scrollY;
@@ -184,7 +192,7 @@ const Header = () => {
         </Flex>
 
         <Box display={{ base: "none", md: "block" }}>
-          {!isLoggedIn && location.pathname !== "/home" && (
+          {!isLoggedIn && location.pathname !== "/home" && !isAuthPage && (
             <Button
               onClick={() =>
                 navigation(
@@ -205,30 +213,66 @@ const Header = () => {
           <Menu>
             {isLoggedIn && (
               <>
-                <MenuButton variant="link" color="inherit" as={Button}>
+                <MenuButton
+                  as={Button}
+                  variant="link"
+                  color="inherit"
+                  p={0}
+                  borderRadius="full"
+                  _focus={{ boxShadow: "none" }}
+                  _hover={{ opacity: 0.9 }}
+                  aria-label="User menu"
+                >
                   <Image
                     src={ImageAccount}
                     alt="User Account"
                     w="2.5rem"
                     h="2.5rem"
-                    _hover={{ cursor: "pointer" }}
+                    borderRadius="full"
+                    objectFit="cover"
                   />
                 </MenuButton>
                 <MenuList
                   background="rgba(137, 134, 134, 0.2)"
                   backdropFilter="blur(10px)"
                   color="#FFFFFF"
-                  border="none"
+                  border="1px solid rgba(255, 255, 255, 0.1)"
+                  borderRadius="lg"
                   fontFamily="Onest"
+                  boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
+                  p="0.5rem"
+                  minW="180px"
                 >
-                  <MenuItem background="transparent">Configurações</MenuItem>
-                  <Divider />
                   <MenuItem
                     background="transparent"
-                    onClick={() => {
-                      localStorage.removeItem("token");
-                      navigation("/");
+                    _hover={{ bg: "rgba(255, 255, 255, 0.08)" }}
+                    _focus={{
+                      bg: "rgba(255, 255, 255, 0.08)",
+                      boxShadow: "none",
                     }}
+                    borderRadius="md"
+                    px="0.8rem"
+                    py="0.6rem"
+                    aria-label="Configurações"
+                  >
+                    Configurações
+                  </MenuItem>
+                  <Divider borderColor="rgba(255, 255, 255, 0.2)" my="0.5rem" />
+                  <MenuItem
+                    background="transparent"
+                    _hover={{
+                      bg: "rgba(255, 255, 255, 0.08)",
+                      color: "#FFDDDD",
+                    }}
+                    _focus={{
+                      bg: "rgba(255, 255, 255, 0.08)",
+                      boxShadow: "none",
+                    }}
+                    borderRadius="md"
+                    px="0.8rem"
+                    py="0.6rem"
+                    onClick={handleLogout}
+                    aria-label="Sair"
                   >
                     Sair
                   </MenuItem>
