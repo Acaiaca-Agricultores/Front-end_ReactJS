@@ -1,16 +1,38 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import Header from "./components/header/header.jsx";
-import Footer from "./components/footer/footer.jsx";
-import App from "./components/landingpage/app.jsx";
 import { ChakraProvider } from "@chakra-ui/react";
+import { BrowserRouter, useLocation } from "react-router-dom";
+import VLibras from "@djpfs/react-vlibras";
+
+import Header from "./components/header/AppHeader.jsx";
+import Footer from "./components/footer/AppFooter.jsx";
+import AppRouters from "./routers.jsx";
+import AppButton from "./components/landingpage/AppButton.jsx";
+import AppChat from "./components/chat/AppChat.jsx";
+
+function App() {
+  const location = useLocation();
+
+  return (
+    <>
+      <AppChat />
+      {location.pathname !== "/404" && <Header display="flex" />}
+      <AppRouters />
+      <AppButton />
+      {location.pathname !== "/login" &&
+        location.pathname !== "/404" &&
+        location.pathname !== "/cadastro" && <Footer display="flex" />}
+    </>
+  );
+}
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ChakraProvider>
-      <Header />
-      <App />
-      <Footer />
-    </ChakraProvider>
+      <ChakraProvider>
+        <BrowserRouter>
+          <VLibras />
+          <App />
+        </BrowserRouter>
+      </ChakraProvider>
   </StrictMode>
 );

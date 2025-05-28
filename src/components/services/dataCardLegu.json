@@ -1,0 +1,102 @@
+[
+  {
+    "image": "https://images.unsplash.com/photo-1582515073490-39981397c445?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "title": "Cenoura",
+    "type": "Legume",
+    "description": "A cenoura é rica em betacaroteno e excelente para a saúde dos olhos.",
+    "role": "Agricultora",
+    "localizacao": "Paraná",
+    "avaliacao": 4.6,
+    "price": "R$2.00/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1617297076326-16f10b8ab6d2?q=80&w=1917&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "title": "Brócolis",
+    "type": "Legume",
+    "description": "O brócolis é rico em fibras e vitaminas, ideal para dietas saudáveis.",
+    "role": "Produtor",
+    "localizacao": "Santa Catarina",
+    "avaliacao": 4.8,
+    "price": "R$4.00/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1686544303805-54c175c60d8f?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "title": "Batata",
+    "type": "Legume",
+    "description": "A batata é versátil e fonte de energia, muito usada na culinária mundial.",
+    "role": "Agricultor",
+    "localizacao": "Minas Gerais",
+    "avaliacao": 4.5,
+    "price": "R$1.80/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1596887342565-9ab7941a7b73?q=80&w=2016&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "title": "Abobrinha",
+    "type": "Legume",
+    "description": "A abobrinha é leve e ótima para grelhados e refogados.",
+    "role": "Produtora",
+    "localizacao": "São Paulo",
+    "avaliacao": 4.3,
+    "price": "R$2.20/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1639428134238-b548770d4b77?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "title": "Berinjela",
+    "type": "Legume",
+    "description": "A berinjela ajuda a controlar o colesterol e é rica em antioxidantes.",
+    "role": "Agricultor",
+    "localizacao": "Bahia",
+    "avaliacao": 4.4,
+    "price": "R$3.00/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1592924625601-63601e1bca95?q=80&w=1933&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "title": "Tomate",
+    "type": "Legume",
+    "description": "O tomate é uma ótima fonte de licopeno, ideal para saladas e molhos.",
+    "role": "Produtor",
+    "localizacao": "Pernambuco",
+    "avaliacao": 4.7,
+    "price": "R$2.80/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1601648764658-cf37e8c89b70?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "title": "Pimentão",
+    "type": "Legume",
+    "description": "Colorido e saboroso, o pimentão é fonte de vitamina C e ótimo para refogados.",
+    "role": "Agricultora",
+    "localizacao": "Ceará",
+    "avaliacao": 4.2,
+    "price": "R$3.10/kg"
+  },
+  {
+    "image": "https://images.unsplash.com/photo-1737945203617-f4fceb8ef475?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "title": "Pepino",
+    "type": "Legume",
+    "description": "Refrescante e hidratante, o pepino é ideal para saladas.",
+    "role": "Agricultor",
+    "localizacao": "Rio de Janeiro",
+    "avaliacao": 4.1,
+    "price": "R$1.90/kg"
+  },
+  {
+    "image": "https://plus.unsplash.com/premium_photo-1678382203744-058782818d27?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YWxobyUyMHBvciVDMyVCM3xlbnwwfHwwfHx8MA%3D%3D",
+    "title": "Alho-poró",
+    "type": "Legume",
+    "description": "O alho-poró dá um toque especial a sopas e caldos, com sabor suave.",
+    "role": "Produtora",
+    "localizacao": "Rio Grande do Sul",
+    "avaliacao": 4.6,
+    "price": "R$5.00/kg"
+  },
+  {
+    "image": "https://plus.unsplash.com/premium_photo-1675731118551-79b3da05a5d4?q=80&w=2127&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "title": "Cebola",
+    "type": "Legume",
+    "description": "Base essencial na culinária, a cebola é rica em antioxidantes.",
+    "role": "Produtor",
+    "localizacao": "Goiás",
+    "avaliacao": 4.5,
+    "price": "R$2.40/kg"
+  }
+]

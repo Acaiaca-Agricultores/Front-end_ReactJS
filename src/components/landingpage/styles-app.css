@@ -23,16 +23,12 @@ h2 {
   line-height: 140%;
 }
 
-span {
-  color: #839e6b;
-}
-
 body::-webkit-scrollbar {
   width: 12px;
 }
 
 body::-webkit-scrollbar-thumb {
-  background-color: #839e6b;
+  background-color: #83a11d;
   border-radius: 20px;
   border: 2px solid white;
 }
