@@ -15,10 +15,6 @@ import Logo from "../../assets/logo_semfundo.png";
 import ImageAccount from "../../assets/icons/user.svg";
 import AppMenu from "./AppMenu";
 import "./style-header.css";
-import "../../global-styles.css";
-
-const scroll = () =>
-  window.innerWidth < 768 ? 300 : location.pathname === "/home" ? 100 : 600;
 
 const Header = () => {
   const [showHeader, setShowHeader] = useState(true);
@@ -27,14 +23,24 @@ const Header = () => {
   const location = useLocation();
   const navigation = useNavigate();
   const isLoggedIn = Boolean(localStorage.getItem("token"));
+
+  const getScrollThreshold = useCallback(() => {
+    if (location.pathname === "/home") {
+      return 100;
+    }
+    return window.innerWidth < 768 ? 300 : 600;
+  }, [location.pathname]);
+
   const isAuthPage = useMemo(
     () => ["/login", "/cadastro", "/404"].includes(location.pathname),
     [location.pathname]
   );
   const isSobre = location.pathname === "/sobre";
+  const isConfigPage = location.pathname === "/configurações";
+  const isHomePage = location.pathname === "/home";
 
   const shouldRenderButtons =
-    !isAuthPage && !isSobre && location.pathname === "/";
+    !isAuthPage && !isSobre && !isConfigPage && location.pathname === "/";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -44,10 +50,10 @@ const Header = () => {
 
   const handleScroll = useCallback(() => {
     const scrollY = window.scrollY;
-    const threshold = scroll();
+    const threshold = getScrollThreshold();
     setShowHeader(scrollY < threshold || scrollY < lastScrollY);
     setLastScrollY(scrollY);
-  }, [lastScrollY]);
+  }, [lastScrollY, getScrollThreshold]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -78,12 +84,12 @@ const Header = () => {
     if (section) section.scrollIntoView({ behavior: "smooth" });
   };
 
-  const bgColor =
-    lastScrollY === 0
-      ? "transparent"
-      : lastScrollY < scroll()
+  const bgColor = useMemo(() => {
+    if (lastScrollY === 0) return "transparent";
+    return lastScrollY < getScrollThreshold()
       ? "transparent"
       : "rgba(82, 96, 26, 0.8)";
+  }, [lastScrollY, getScrollThreshold]);
 
   return (
     <Box
@@ -110,10 +116,11 @@ const Header = () => {
           alt="Logo"
           w="10rem"
           opacity={
-            location.pathname === "/home" ||
+            isHomePage ||
             isSobre ||
+            isConfigPage ||
             isAuthPage ||
-            lastScrollY > scroll()
+            lastScrollY > getScrollThreshold()
               ? 1
               : 0
           }
@@ -192,7 +199,7 @@ const Header = () => {
         </Flex>
 
         <Box display={{ base: "none", md: "block" }}>
-          {!isLoggedIn && location.pathname !== "/home" && !isAuthPage && (
+          {!isLoggedIn && (
             <Button
               onClick={() =>
                 navigation(
@@ -244,6 +251,7 @@ const Header = () => {
                   minW="180px"
                 >
                   <MenuItem
+                    onClick={() => navigation("/configurações")}
                     background="transparent"
                     _hover={{ bg: "rgba(255, 255, 255, 0.08)" }}
                     _focus={{

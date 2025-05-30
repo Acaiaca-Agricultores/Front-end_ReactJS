@@ -6,6 +6,7 @@ import AppLogin from "./components/login/AppLogin.jsx";
 import AppConsuHome from "./components/home/AppConsuHome.jsx";
 import AppPage404 from "./components/pagina 404/AppPage404.jsx";
 import AppCadastro from "./components/cadastro/AppCadastro.jsx";
+import AppConfig from "./components/configuração/AppConfig.jsx";
 
 const AppRouters = () => {
   return (
@@ -17,6 +18,7 @@ const AppRouters = () => {
       <Route path="/login" element={<AppLogin />} />
       <Route path="/cadastro" element={<AppCadastro />} />
       <Route path="/home" element={<AppConsuHome />} />
+      <Route path="/configurações" element={<AppConfig />} />
     </Routes>
   );
 };

@@ -18,7 +18,7 @@ import {
   Link,
   IconButton,
 } from "@chakra-ui/react";
-import { SearchIcon, HamburgerIcon } from "@chakra-ui/icons"; // Added HamburgerIcon
+import { SearchIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { Typewriter } from "react-simple-typewriter";
 import AppCarrossel from "../carrossel/AppCarrossel";
 import dataFruits from "../services/dataCardFruits.json";
@@ -33,6 +33,7 @@ const AppAgriHome = () => {
   const [userName, setUserName] = useState("");
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
   const [ordemPreco, setOrdemPreco] = useState("");
+  const [termoDePesquisa, setTermoDePesquisa] = useState("");
 
   const navigation = useNavigate();
 
@@ -58,6 +59,14 @@ const AppAgriHome = () => {
     }
   }, []);
 
+  const normalizeString = (str) => {
+    if (typeof str !== "string") return "";
+    return str
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\\u0300-\\u036f]/g, "");
+  };
+
   const getCategoriaData = () => {
     let data;
     switch (categoriaSelecionada) {
@@ -71,6 +80,7 @@ const AppAgriHome = () => {
             description: item.localizacao,
             price: item.produtos ? item.produtos.join(", ") : "",
             image: item.imagem,
+            _isAgricultor: true,
           })),
         ];
         break;
@@ -89,11 +99,22 @@ const AppAgriHome = () => {
           description: item.localizacao,
           price: item.produtos ? item.produtos.join(", ") : "",
           image: item.imagem,
+          _isAgricultor: true,
         }));
         break;
       default:
         data = [];
     }
+
+    if (termoDePesquisa.trim() !== "") {
+      const termoNormalizado = normalizeString(termoDePesquisa);
+      data = data.filter((item) => {
+        const title = typeof item.title === "string" ? item.title : "";
+        const tituloNormalizado = normalizeString(title);
+        return tituloNormalizado.includes(termoNormalizado);
+      });
+    }
+
     if (ordemPreco && categoriaSelecionada !== "Agricultores") {
       data = [...data].sort((a, b) => {
         const precoA = parseFloat(
@@ -109,6 +130,10 @@ const AppAgriHome = () => {
       });
     }
     return data;
+  };
+
+  const handleChangePesquisa = (event) => {
+    setTermoDePesquisa(event.target.value);
   };
 
   return (
@@ -207,7 +232,7 @@ const AppAgriHome = () => {
                     }}
                     bg={
                       categoriaSelecionada === cat.value
-                        ? "green.50"
+                        ? "#c0ab8e"
                         : "transparent"
                     }
                     color={
@@ -216,7 +241,7 @@ const AppAgriHome = () => {
                     fontWeight={
                       categoriaSelecionada === cat.value ? "bold" : "normal"
                     }
-                    _hover={{ bg: "gray.100", color: "#83a11d" }}
+                    _hover={{ bg: "gray.300", color: "#83a11d" }}
                   >
                     {cat.label}
                   </MenuItem>
@@ -262,14 +287,14 @@ const AppAgriHome = () => {
                   cursor="pointer"
                   p="0.5rem 0.75rem"
                   borderRadius="md"
-                  _hover={{ bg: "gray.100", color: "#83a11d" }}
+                  _hover={{ bg: "gray.300", color: "#2C3609" }}
                   bg={
                     categoriaSelecionada === cat.value
-                      ? "green.50"
+                      ? "#EDD1AF"
                       : "transparent"
                   }
                   color={
-                    categoriaSelecionada === cat.value ? "#83a11d" : "inherit"
+                    categoriaSelecionada === cat.value ? "#2C3609" : "inherit"
                   }
                   fontWeight={
                     categoriaSelecionada === cat.value ? "bold" : "normal"
@@ -308,7 +333,6 @@ const AppAgriHome = () => {
                 <MenuItem onClick={() => setOrdemPreco("decrescente")}>
                   Preço Decrescente
                 </MenuItem>
-                <MenuItem onClick={() => setOrdemPreco("")}>Nenhuma</MenuItem>
               </MenuList>
             </Menu>
             <InputGroup style={{ flexGrow: 1 }}>
@@ -323,6 +347,8 @@ const AppAgriHome = () => {
                   borderColor: "#c0ab8e",
                   boxShadow: "0 0 0 1px #e5d1b0",
                 }}
+                value={termoDePesquisa}
+                onChange={handleChangePesquisa}
               />
               <InputRightAddon background={"#83a11d"} cursor="pointer">
                 <SearchIcon color="white" />
@@ -378,12 +404,13 @@ const AppAgriHome = () => {
           categoriaSelecionada === "Agricultores" ? (
             <GridItem colSpan={4}>
               <AppCarrossel
-                data={dataAgricultores.agricultores.map((item) => ({
-                  title: item.nome,
-                  description: item.localizacao,
-                  price: item.produtos ? item.produtos.join(", ") : "",
-                  image: item.imagem,
-                }))}
+                data={
+                  categoriaSelecionada === "Agricultores"
+                    ? getCategoriaData()
+                    : getCategoriaData().filter(
+                        (item) => item._isAgricultor === true
+                      )
+                }
                 title="Agricultores"
               />
             </GridItem>
