@@ -3,6 +3,7 @@ import "../../global-styles.css";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import axios from "axios";
 import {
   Box,
   Text,
@@ -12,14 +13,13 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  Alert,
-  AlertIcon,
   Link,
   InputRightElement,
   InputGroup,
   Radio,
   RadioGroup,
   Stack,
+  useToast,
 } from "@chakra-ui/react";
 
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
@@ -27,12 +27,12 @@ import IconHidden from "../../assets/icons/hidden.svg";
 import IconVisible from "../../assets/icons/show.png";
 
 const AppLogin = () => {
+  const toast = useToast();
   const [value, setValue] = React.useState("agricultor");
   const [show, setShow] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const handleClick = () => setShow(!show);
   const navigation = useNavigate();
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState("success");
   const {
     register,
     handleSubmit,
@@ -53,60 +53,102 @@ const AppLogin = () => {
 
   const onSubmit = async (data) => {
     const { email, password, role } = data;
+    setIsLoading(true);
+
     if (role === "consumidor" && value === "agricultor") {
-      setAlertMessage(
-        "Você selecionou o perfil errado. Por favor, escolha 'Agricultor'."
-      );
-      setAlertType("error");
+      toast({
+        title: "Erro",
+        description:
+          "Você selecionou o perfil errado. Por favor, escolha 'Agricultor'.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setIsLoading(false);
       return;
     }
 
     if (role === "agricultor" && value === "consumidor") {
-      setAlertMessage(
-        "Você selecionou o perfil errado. Por favor, escolha 'Consumidor'."
-      );
-      setAlertType("error");
+      toast({
+        title: "Erro",
+        description:
+          "Você selecionou o perfil errado. Por favor, escolha 'Consumidor'.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setIsLoading(false);
       return;
     }
+
     const url = import.meta.env.VITE_LOGIN_API_URL;
-    const requestOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password, role }),
-    };
 
     try {
-      const response = await fetch(url, requestOptions);
+      const response = await axios.post(
+        url,
+        { email, password, role },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        setAlertMessage(
-          `Erro: ${response.status} - ${errorText || response.statusText}`
-        );
-        setAlertType("error");
-        return;
-      }
-
-      const responseData = await response.json();
+      const responseData = response.data;
       const token = responseData.token;
       const userName = responseData.username || "Usuário";
+      const userId =
+        responseData.user?.id ||
+        responseData.id ||
+        responseData._id ||
+        responseData.userId;
+
       localStorage.setItem("token", token);
       localStorage.setItem("userRole", role);
       localStorage.setItem("userName", userName);
-      setAlertMessage("Login realizado com sucesso!");
-      setAlertType("success");
+      if (userId) {
+        localStorage.setItem("userId", userId);
+      }
+
+      toast({
+        title: "Sucesso",
+        description: "Login realizado com sucesso!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
       if (role === "agricultor") {
-        navigation("/Home");
+        navigation("/perfil");
       }
       if (role === "consumidor") {
         navigation("/Home");
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      setAlertMessage("Erro ao fazer login. Tente novamente.");
-      setAlertType("error");
+      let errorMessage =
+        "Erro ao tentar fazer login. Tente novamente mais tarde.";
+      if (error.response) {
+        errorMessage = `Erro: ${error.response.status} - ${
+          error.response.data?.message ||
+          error.response.data?.msg ||
+          error.response.statusText ||
+          "Erro desconhecido da API"
+        }`;
+      } else if (error.request) {
+        errorMessage =
+          "Não foi possível conectar ao servidor. Verifique sua conexão.";
+      }
+
+      toast({
+        title: "Erro",
+        description: errorMessage,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -297,7 +339,7 @@ const AppLogin = () => {
                   color: "#ffffff",
                 }}
                 aria-label="Fazer login"
-                isLoading={false}
+                isLoading={isLoading}
                 loadingText="Fazendo login..."
                 spinnerPlacement="end"
               >
@@ -305,22 +347,6 @@ const AppLogin = () => {
               </Button>
             </ButtonGroup>
           </form>
-          {alertMessage && (
-            <Alert
-              status={alertType}
-              position="absolute"
-              top="0vh"
-              left="50%"
-              transform="translateX(-50%)"
-              zIndex="999"
-              width="80%"
-              maxWidth="400px"
-              color={"black"}
-            >
-              <AlertIcon />
-              {alertMessage}
-            </Alert>
-          )}
         </Box>
       </Box>
     </>

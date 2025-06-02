@@ -22,20 +22,21 @@ import {
   PopoverBody,
   PopoverArrow,
   PopoverCloseButton,
-  Alert,
-  AlertIcon,
   SimpleGrid,
 } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
 import IconInfo from "../../assets/icons/info.png";
+import IconHidden from "../../assets/icons/hidden.svg";
+import IconVisible from "../../assets/icons/show.png";
 import AppStepper, { steps, useAppStepperControls } from "./AppStepper";
+import axios from "axios";
 
 const AppCadastro = () => {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState("success");
   const navigation = useNavigate();
+  const toast = useToast();
 
   const { activeStep, goToNext, goToPrevious } = useAppStepperControls();
 
@@ -56,6 +57,7 @@ const AppCadastro = () => {
       propertyName: "",
       state: "",
       city: "",
+      phone: "",
     },
     mode: "onTouched",
   });
@@ -65,14 +67,19 @@ const AppCadastro = () => {
     if (activeStep === 0) {
       fieldsToValidate = ["username", "email", "password", "confirmPassword"];
     } else if (activeStep === 1) {
-      fieldsToValidate = ["propertyName", "state", "city"];
+      fieldsToValidate = ["propertyName", "state", "city", "phone"];
     }
 
     if (fieldsToValidate.length > 0) {
       const result = await trigger(fieldsToValidate);
       if (!result) {
-        setAlertMessage("Por favor, preencha todos os campos obrigatórios.");
-        setAlertType("error");
+        toast({
+          title: "Erro de validação",
+          description: "Por favor, preencha todos os campos obrigatórios.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
         return;
       }
     }
@@ -89,6 +96,7 @@ const AppCadastro = () => {
       propertyName,
       state,
       city,
+      phone,
     } = data;
 
     const url = import.meta.env.VITE_REGISTER_API_URL;
@@ -97,48 +105,53 @@ const AppCadastro = () => {
       username,
       email,
       password,
-      password_confirmation: confirmPassword,
+      confirmpassword: confirmPassword,
       role,
       propertyName,
       state,
       city,
-    };
-
-    const requestOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
+      phoneNumber: phone,
     };
 
     try {
-      const response = await fetch(url, requestOptions);
-      const responseData = await response.json();
-      if (!response.ok) {
-        console.error("Server response:", responseData);
-        throw new Error(
-          `Erro: ${response.status} - ${
-            responseData.message || response.statusText
-          }`
-        );
-      }
-      const token = responseData.token;
-      const userName =
-        responseData.name || responseData.username || data.username;
+      const response = await axios.post(url, payload, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const responseData = response.data;
+      const { token, name, id } = responseData;
       localStorage.setItem("token", token);
-      localStorage.setItem("userName", userName);
+      localStorage.setItem("userName", name || username);
+      localStorage.setItem("userEmail", email);
       localStorage.setItem("userRole", role);
-      setAlertMessage("Cadastro realizado com sucesso!");
+      localStorage.setItem("userId", id);
+
+      toast({
+        title: "Cadastro realizado!",
+        description: "Seu cadastro foi realizado com sucesso.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
       if (role === "agricultor") {
-        navigation("/home");
+        navigation("/perfil");
       } else if (role === "consumidor") {
-        navigation("/home");
+        navigation("/perfil");
       }
     } catch (error) {
       console.error("Erro ao fazer cadastro:", error);
-      setAlertMessage("Erro ao fazer cadastro. Tente novamente.");
-      setAlertType("error");
+      toast({
+        title: "Erro no cadastro",
+        description:
+          error.response?.data?.msg ||
+          JSON.stringify(error.response?.data) ||
+          error.message ||
+          "Erro ao fazer cadastro. Tente novamente.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -147,14 +160,35 @@ const AppCadastro = () => {
     if (token) {
       const userRole = localStorage.getItem("userRole");
       if (userRole === "agricultor") {
-        navigation("/");
+        toast({
+          title: "Bem-vindo!",
+          description: "Você já está logado.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        navigation("/perfil");
       } else if (userRole === "consumidor") {
-        navigation("/");
+        toast({
+          title: "Bem-vindo!",
+          description: "Você já está logado.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        navigation("/perfil");
       } else {
+        toast({
+          title: "Erro de autenticação",
+          description: "Não foi possível identificar seu tipo de usuário.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
         navigation("/");
       }
     }
-  }, [navigation]);
+  }, [navigation, toast]);
 
   return (
     <Box
@@ -292,10 +326,20 @@ const AppCadastro = () => {
                       <Button
                         h="100%"
                         onClick={handleClick}
-                        background="#83a11d"
+                        background="transparent"
                         boxSize={"100%"}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        _hover={{
+                          background: "transparent",
+                        }}
                       >
-                        {show ? "Hide" : "Show"}
+                        <img
+                          src={show ? IconVisible : IconHidden}
+                          alt={show ? "Ocultar senha" : "Mostrar senha"}
+                          style={{ width: "1.5rem", height: "1.5rem" }}
+                        />
                       </Button>
                     </InputRightElement>
                   </InputGroup>
@@ -332,10 +376,20 @@ const AppCadastro = () => {
                       <Button
                         h="100%"
                         onClick={handleClick}
-                        background="#83a11d"
+                        background="transparent"
                         boxSize={"100%"}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        _hover={{
+                          background: "transparent",
+                        }}
                       >
-                        {show ? "Hide" : "Show"}
+                        <img
+                          src={show ? IconVisible : IconHidden}
+                          alt={show ? "Ocultar senha" : "Mostrar senha"}
+                          style={{ width: "1.5rem", height: "1.5rem" }}
+                        />
                       </Button>
                     </InputRightElement>
                   </InputGroup>
@@ -412,6 +466,33 @@ const AppCadastro = () => {
                   />
                   <FormErrorMessage>
                     {errors.city && errors.city.message}
+                  </FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={errors.phone}>
+                  <FormLabel>Telefone</FormLabel>
+                  <Input
+                    type="tel"
+                    placeholder="Ex: (XX) XXXXX-XXXX"
+                    _placeholder={{ color: "#b0b0b0" }}
+                    border={"2px solid  #83a11d"}
+                    aria-required="true"
+                    width={"100%"}
+                    height={"3rem"}
+                    _focus={{
+                      borderColor: "#c0ab8e",
+                      boxShadow: "0 0 0 1px #e5d1b0",
+                    }}
+                    {...register("phone", {
+                      required: "Telefone é obrigatório",
+                      pattern: {
+                        value: /^\(\d{2}\)?[\s-]?\d{4,5}-?\d{4}$/,
+                        message:
+                          "Formato de telefone inválido. Use (XX) XXXXX-XXXX ou (XX) XXXX-XXXX",
+                      },
+                    })}
+                  />
+                  <FormErrorMessage>
+                    {errors.phone && errors.phone.message}
                   </FormErrorMessage>
                 </FormControl>
               </>
@@ -584,23 +665,6 @@ const AppCadastro = () => {
             </ButtonGroup>
           </form>
         </SimpleGrid>
-
-        {alertMessage && (
-          <Alert
-            status={alertType}
-            position="absolute"
-            top="0vh"
-            left="50%"
-            transform="translateX(-50%)"
-            zIndex="999"
-            width="80%"
-            maxWidth="400px"
-            color={"black"}
-          >
-            <AlertIcon />
-            {alertMessage}
-          </Alert>
-        )}
       </Box>
     </Box>
   );

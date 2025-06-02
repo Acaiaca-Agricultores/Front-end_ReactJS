@@ -17,6 +17,7 @@ import {
   Text,
   Link,
   IconButton,
+  Spinner,
 } from "@chakra-ui/react";
 import { SearchIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { Typewriter } from "react-simple-typewriter";
@@ -31,9 +32,11 @@ import { useNavigate } from "react-router-dom";
 
 const AppAgriHome = () => {
   const [userName, setUserName] = useState("");
+  const [userId, setUserId] = useState("");
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
   const [ordemPreco, setOrdemPreco] = useState("");
   const [termoDePesquisa, setTermoDePesquisa] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const navigation = useNavigate();
 
@@ -49,13 +52,19 @@ const AppAgriHome = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigation("/login");
+    } else {
+      setTimeout(() => setIsLoading(false), 1000);
     }
   }, [navigation]);
 
   useEffect(() => {
     const storedName = localStorage.getItem("userName");
+    const storedUserId = localStorage.getItem("userId");
     if (storedName) {
       setUserName(storedName);
+    }
+    if (storedUserId) {
+      setUserId(storedUserId);
     }
   }, []);
 
@@ -135,6 +144,14 @@ const AppAgriHome = () => {
   const handleChangePesquisa = (event) => {
     setTermoDePesquisa(event.target.value);
   };
+
+  if (isLoading) {
+    return (
+      <Center height="100vh">
+        <Spinner size="xl" color="green.500" />
+      </Center>
+    );
+  }
 
   return (
     <>

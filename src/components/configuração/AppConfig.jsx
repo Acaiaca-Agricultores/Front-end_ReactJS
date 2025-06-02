@@ -6,8 +6,20 @@ import {
   Image,
   Flex,
   Divider,
+  Button,
+  useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { Typewriter } from "react-simple-typewriter";
 
 import ImagemFeira from "../../assets/feira.jpg";
@@ -15,9 +27,22 @@ import IconPassword from "../../assets/icons/atualizar-senha.svg";
 import IconPlan from "../../assets/icons/alterar-plano.svg";
 import IconProfile from "../../assets/icons/editar-conta.svg";
 import IconDetails from "../../assets/icons/editar-foto.svg";
+import IconDelete from "../../assets/icons/delete.png";
+
+const buttonStyles = {
+  backgroundColor: "transparent",
+  color: "#973a34",
+  _hover: {
+    backgroundColor: "#973a34",
+    color: "#ffffff",
+  },
+};
 
 const AppConfig = () => {
   const [userName, setUserName] = useState("");
+  const toast = useToast();
+  const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     const storedName = localStorage.getItem("userName");
@@ -25,6 +50,72 @@ const AppConfig = () => {
       setUserName(storedName);
     }
   }, []);
+
+  const handleDeleteAccount = async () => {
+    onOpen();
+  };
+
+  const executeDelete = async () => {
+    onClose();
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+
+    if (!token || !userId) {
+      toast({
+        title: "Erro de autenticação",
+        description:
+          "Token ou ID do usuário não encontrado. Faça login novamente.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    try {
+      await axios.delete(`http://localhost:3000/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast({
+        title: "Conta deletada com sucesso!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("userName");
+      localStorage.removeItem("role");
+      setUserName("");
+
+      navigate("/login");
+    } catch (err) {
+      console.error(
+        "Erro ao deletar conta:",
+        err.response?.data?.msg || err.message
+      );
+      toast({
+        title: "Erro ao deletar conta.",
+        description: err.response?.data?.msg || "Tente novamente mais tarde.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      if (err.response?.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("role");
+        setUserName("");
+        navigate("/login");
+      }
+    }
+  };
 
   return (
     <>
@@ -80,12 +171,7 @@ const AppConfig = () => {
       >
         <Heading padding={10}>Detalhes da Conta</Heading>
         <Center flexDirection="column" gap={10} mt={4}>
-          <Box
-            display={"flex"}
-            alignItems="center"
-            gap={2}
-            cursor="pointer"
-          >
+          <Box display={"flex"} alignItems="center" gap={2} cursor="pointer">
             <Image width={"3rem"} src={IconPassword} alt="Atualizar Senha" />
             <Text>Atualizar Senha</Text>
           </Box>
@@ -106,8 +192,42 @@ const AppConfig = () => {
             <Image width={"3rem"} src={IconDetails} alt="Editar Detalhes" />
             <Text>Editar Foto do Perfil</Text>
           </Box>
+          <Divider />
+
+          <Box display={"flex"} alignItems="center" gap={2}>
+            <Image width={"3rem"} src={IconDelete} alt="Deletar Conta" />
+            <Button
+              {...buttonStyles}
+              onClick={handleDeleteAccount}
+              colorScheme="red"
+            >
+              Deletar Conta
+            </Button>
+          </Box>
         </Center>
       </Box>
+
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirmar Exclusão de Conta</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>
+              Tem certeza que deseja deletar sua conta? Esta ação não pode ser
+              desfeita.
+            </Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button colorScheme="red" onClick={executeDelete}>
+              Deletar Conta
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 };
