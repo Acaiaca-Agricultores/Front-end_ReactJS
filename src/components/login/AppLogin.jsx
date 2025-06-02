@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "../../global-styles.css";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 import axios from "axios";
 import {
@@ -37,6 +37,7 @@ const AppLogin = () => {
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm();
 
   useEffect(() => {
@@ -122,7 +123,7 @@ const AppLogin = () => {
         navigation("/perfil");
       }
       if (role === "consumidor") {
-        navigation("/Home");
+        navigation("/home");
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
@@ -277,47 +278,56 @@ const AppLogin = () => {
             </FormControl>
             <FormControl isInvalid={errors.role}>
               <FormLabel htmlFor="role">Tipo de usuário</FormLabel>
-              <RadioGroup
-                {...register("role", {
-                  required: "Selecione o tipo de usuário",
-                })}
-                onChange={(val) => setValue(val)}
-                value={value}
-              >
-                <Stack
-                  direction="row"
-                  spacing={5}
-                  width={"100%"}
-                  display={"flex"}
-                  justifyContent={"space-around"}
-                >
-                  <Radio
-                    value="agricultor"
-                    _checked={{
-                      bg: "#83a11d",
-                      borderColor: "#83a11d",
-                      color: "white",
+              <Controller
+                name="role"
+                control={control}
+                rules={{ required: "Selecione o tipo de usuário" }}
+                defaultValue={value}
+                render={({ field }) => (
+                  <RadioGroup
+                    {...field}
+                    onChange={(val) => {
+                      setValue(val);
+                      field.onChange(val);
                     }}
+                    value={value}
                   >
-                    <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
-                      Agricultor
-                    </Text>
-                  </Radio>
-                  <Radio
-                    fontSize={{ base: "1rem", md: "1.2rem" }}
-                    value="consumidor"
-                    _checked={{
-                      bg: "#83a11d",
-                      borderColor: "#83a11d",
-                      color: "white",
-                    }}
-                  >
-                    <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
-                      Consumidor
-                    </Text>
-                  </Radio>
-                </Stack>
-              </RadioGroup>
+                    <Stack
+                      direction="row"
+                      spacing={5}
+                      width={"100%"}
+                      display={"flex"}
+                      justifyContent={"space-around"}
+                    >
+                      <Radio
+                        value="agricultor"
+                        _checked={{
+                          bg: "#83a11d",
+                          borderColor: "#83a11d",
+                          color: "white",
+                        }}
+                      >
+                        <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
+                          Agricultor
+                        </Text>
+                      </Radio>
+                      <Radio
+                        fontSize={{ base: "1rem", md: "1.2rem" }}
+                        value="consumidor"
+                        _checked={{
+                          bg: "#83a11d",
+                          borderColor: "#83a11d",
+                          color: "white",
+                        }}
+                      >
+                        <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
+                          Consumidor
+                        </Text>
+                      </Radio>
+                    </Stack>
+                  </RadioGroup>
+                )}
+              />
               <FormErrorMessage>
                 {errors.role && errors.role.message}
               </FormErrorMessage>

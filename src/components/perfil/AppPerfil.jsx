@@ -78,9 +78,16 @@ const ProfileDetailItem = ({
   );
 };
 
+const getProfileImageUrl = (imgPath) => {
+  if (!imgPath) return "";
+  if (imgPath.startsWith("http")) return imgPath;
+  return `http://localhost:3000${imgPath}`;
+};
+
 function FarmerProfile() {
   const [userData, setUserData] = useState(null);
   const [userName, setUserName] = useState("");
+  const [role, setRole] = useState("");
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -88,7 +95,9 @@ function FarmerProfile() {
     cityName: "",
     stateName: "",
     phoneNumber: "",
+    imageProfile: "",
   });
+  const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -118,6 +127,7 @@ function FarmerProfile() {
       });
       const farmerData = response.data.user;
       setUserData(farmerData);
+      setRole(farmerData.role || "");
       setFormData({
         username: farmerData.username || "",
         email: farmerData.email || "",
@@ -125,12 +135,35 @@ function FarmerProfile() {
         cityName: farmerData.cityName || "",
         stateName: farmerData.stateName || "",
         phoneNumber: farmerData.phoneNumber || "",
+        imageProfile: farmerData.imageProfile || "",
       });
       if (farmerData.username) {
         setUserName(farmerData.username);
         localStorage.setItem("username", farmerData.username);
       }
     } catch (err) {
+      if (
+        err.response &&
+        (err.response.status === 401 ||
+          err.response.data?.msg?.toLowerCase().includes("token") ||
+          err.response.data?.message?.toLowerCase().includes("token"))
+      ) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("username");
+        localStorage.removeItem("role");
+        toast({
+          title: "Sessão expirada",
+          description: "Sua sessão expirou. Faça login novamente.",
+          status: "warning",
+          duration: 4000,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
+        return;
+      }
       console.error(
         "Erro ao buscar dados do usuário:",
         err.response?.data?.msg || err.message
@@ -139,12 +172,6 @@ function FarmerProfile() {
         err.response?.data?.msg ||
           "Falha ao carregar dados do perfil. Tente novamente."
       );
-      if (err.response?.status === 401) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("username");
-        localStorage.removeItem("role");
-      }
     } finally {
       setIsLoading(false);
     }
@@ -159,6 +186,13 @@ function FarmerProfile() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedImage(e.target.files[0]);
+      setFormData((prev) => ({ ...prev, imageProfile: e.target.files[0] }));
+    }
+  };
+
   const handleEditToggle = () => {
     if (isEditing && userData) {
       setFormData({
@@ -168,6 +202,7 @@ function FarmerProfile() {
         cityName: userData.cityName || "",
         stateName: userData.stateName || "",
         phoneNumber: userData.phoneNumber || "",
+        imageProfile: userData.imageProfile || "",
       });
     }
     setIsEditing(!isEditing);
@@ -229,6 +264,7 @@ function FarmerProfile() {
         cityName: updatedUser.cityName || "",
         stateName: updatedUser.stateName || "",
         phoneNumber: updatedUser.phoneNumber || "",
+        imageProfile: updatedUser.imageProfile || "",
       });
       if (updatedUser.username) {
         setUserName(updatedUser.username);
@@ -242,6 +278,28 @@ function FarmerProfile() {
       });
       setIsEditing(false);
     } catch (err) {
+      if (
+        err.response &&
+        (err.response.status === 401 ||
+          err.response.data?.msg?.toLowerCase().includes("token") ||
+          err.response.data?.message?.toLowerCase().includes("token"))
+      ) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("username");
+        localStorage.removeItem("role");
+        toast({
+          title: "Sessão expirada",
+          description: "Sua sessão expirou. Faça login novamente.",
+          status: "warning",
+          duration: 4000,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
+        return;
+      }
       setError(
         err.response?.data?.msg ||
           "Falha ao atualizar o perfil. Tente novamente."
@@ -260,10 +318,118 @@ function FarmerProfile() {
     }
   };
 
+  const handleEdit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+
+    if (!token || !userId) {
+      toast({
+        title: "Erro de Autenticação",
+        description:
+          "Token ou ID do usuário não encontrado. Faça login novamente.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    const form = new FormData();
+    form.append("username", formData.username);
+    form.append("email", formData.email);
+    form.append("propertyName", formData.propertyName);
+    form.append("cityName", formData.cityName);
+    form.append("stateName", formData.stateName);
+    form.append("phoneNumber", formData.phoneNumber);
+    if (selectedImage) {
+      form.append("profileImage", selectedImage);
+    }
+
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/user/${userId}/edit`,
+        form,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      const updatedUser = response.data.user;
+      setUserData(updatedUser);
+      setFormData({
+        username: updatedUser.username || "",
+        email: updatedUser.email || "",
+        propertyName: updatedUser.propertyName || "",
+        cityName: updatedUser.cityName || "",
+        stateName: updatedUser.stateName || "",
+        phoneNumber: updatedUser.phoneNumber || "",
+        imageProfile: updatedUser.imageProfile || "",
+      });
+      setSelectedImage(null);
+      if (updatedUser.username) {
+        setUserName(updatedUser.username);
+        localStorage.setItem("username", updatedUser.username);
+      }
+      toast({
+        title: "Perfil atualizado com sucesso!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      setIsEditing(false);
+    } catch (err) {
+      if (
+        err.response &&
+        (err.response.status === 401 ||
+          err.response.data?.msg?.toLowerCase().includes("token") ||
+          err.response.data?.message?.toLowerCase().includes("token"))
+      ) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("username");
+        localStorage.removeItem("role");
+        toast({
+          title: "Sessão expirada",
+          description: "Sua sessão expirou. Faça login novamente.",
+          status: "warning",
+          duration: 4000,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
+        return;
+      }
+      setError(
+        err.response?.data?.msg ||
+          "Falha ao atualizar o perfil. Tente novamente."
+      );
+      toast({
+        title: "Erro ao Atualizar",
+        description:
+          err.response?.data?.msg ||
+          "Falha ao atualizar o perfil. Tente novamente.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const fileInputRef = React.useRef();
+
   if (isLoading) {
     return (
       <Flex justify="center" align="center" height="100vh" bg="gray.50">
-        <Spinner size="xl" color="green.500" />
+        {/* Spinner removido conforme solicitado */}
       </Flex>
     );
   }
@@ -307,6 +473,9 @@ function FarmerProfile() {
     );
   }
 
+  // Defina o nome do perfil dinamicamente
+  const profileTitle = role === "consumidor" ? "Perfil do Consumidor" : "Perfil do Agricultor";
+
   return (
     <>
       <Flex
@@ -334,19 +503,14 @@ function FarmerProfile() {
         <VStack spacing={4} zIndex="2" px={4} mt={{ base: 0, md: 100 }}>
           <Avatar
             name={userData.username}
-            src={
-              userData.avatarUrl ||
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                userData.username || "A"
-              )}&background=2D8555&color=fff&size=128`
-            }
-            size="2xl"
+            src={getProfileImageUrl(userData.imageProfile)}
+            boxSize={{ base: "200px", md: "300px" }}
             border="4px solid white"
             boxShadow="lg"
           />
           <Heading as="h1" size="xl" fontWeight="bold">
             <Typewriter
-              words={[`Olá, ${userName || "Agricultor"}!`]}
+              words={[`Olá, ${userName || (role === "consumidor" ? "Consumidor" : "Agricultor")}!`]}
               loop={1}
               cursor
               cursorStyle="_"
@@ -374,9 +538,9 @@ function FarmerProfile() {
         zIndex="3"
         position="relative"
       >
-        <Flex justifyContent="space-between" alignItems="center" mb={6}>
+        <Flex justifyContent="center" alignItems="center" mb={6}>
           <Heading as="h2" size="lg" color="green.700">
-            Perfil do Agricultor 🌱
+            {profileTitle}
           </Heading>
           <Tooltip
             label={isEditing ? "Cancelar Edição" : "Editar Perfil"}
@@ -401,7 +565,7 @@ function FarmerProfile() {
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={isEditing ? handleEdit : handleSubmit}>
           <VStack spacing={4} align="stretch">
             <ProfileDetailItem
               icon={AtSignIcon}
@@ -463,6 +627,49 @@ function FarmerProfile() {
               handleInputChange={handleInputChange}
               placeholder="Seu estado"
             />
+            {isEditing && (
+              <FormControl mb={4}>
+                <FormLabel>Foto de Perfil</FormLabel>
+                <Box display="flex" flexDirection="column" alignItems="center">
+                  <Avatar
+                    size="xl"
+                    src={
+                      selectedImage
+                        ? URL.createObjectURL(selectedImage)
+                        : getProfileImageUrl(userData.imageProfile)
+                    }
+                    cursor="pointer"
+                    onClick={() =>
+                      fileInputRef.current && fileInputRef.current.click()
+                    }
+                    _hover={{ opacity: 0.8, boxShadow: "0 0 0 2px #38A169" }}
+                  />
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    display="none"
+                  />
+                  {selectedImage && (
+                    <Button
+                      mt={2}
+                      colorScheme="red"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedImage(null);
+                        setFormData((prev) => ({
+                          ...prev,
+                          imageProfile: userData.imageProfile || "",
+                        }));
+                      }}
+                    >
+                      Remover foto selecionada
+                    </Button>
+                  )}
+                </Box>
+              </FormControl>
+            )}
           </VStack>
           {isEditing && (
             <Button

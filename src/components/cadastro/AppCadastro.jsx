@@ -37,9 +37,8 @@ const AppCadastro = () => {
   const handleClick = () => setShow(!show);
   const navigation = useNavigate();
   const toast = useToast();
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { activeStep, goToNext, goToPrevious } = useAppStepperControls();
-
   const {
     register,
     handleSubmit,
@@ -87,6 +86,7 @@ const AppCadastro = () => {
   };
 
   const onSubmit = async (data) => {
+    setIsSubmitting(true);
     const {
       username,
       email,
@@ -152,6 +152,8 @@ const AppCadastro = () => {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -176,7 +178,7 @@ const AppCadastro = () => {
           duration: 3000,
           isClosable: true,
         });
-        navigation("/perfil");
+        navigation("/home");
       } else {
         toast({
           title: "Erro de autenticação",
@@ -655,7 +657,7 @@ const AppCadastro = () => {
                     color: "#ffffff",
                   }}
                   aria-label="Fazer cadastro"
-                  isLoading={false}
+                  isLoading={isSubmitting}
                   loadingText="Fazendo cadastro..."
                   spinnerPlacement="end"
                 >

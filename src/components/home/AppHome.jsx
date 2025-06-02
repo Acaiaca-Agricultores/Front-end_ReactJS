@@ -17,18 +17,17 @@ import {
   Text,
   Link,
   IconButton,
-  Spinner,
 } from "@chakra-ui/react";
 import { SearchIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { Typewriter } from "react-simple-typewriter";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AppCarrossel from "../carrossel/AppCarrossel";
 import dataFruits from "../services/dataCardFruits.json";
 import dataLegumes from "../services/dataCardLegu.json";
 import dataVerduras from "../services/dataCardVerd.json";
 import dataAgricultores from "../services/dataCardAgri.json";
 import ImagemFeira from "../../assets/feira.jpg";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const AppAgriHome = () => {
   const [userName, setUserName] = useState("");
@@ -36,8 +35,6 @@ const AppAgriHome = () => {
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
   const [ordemPreco, setOrdemPreco] = useState("");
   const [termoDePesquisa, setTermoDePesquisa] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-
   const navigation = useNavigate();
 
   const categories = [
@@ -47,15 +44,6 @@ const AppAgriHome = () => {
     { label: "Verduras", value: "Verduras" },
     { label: "Legumes", value: "Legumes" },
   ];
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigation("/login");
-    } else {
-      setTimeout(() => setIsLoading(false), 1000);
-    }
-  }, [navigation]);
 
   useEffect(() => {
     const storedName = localStorage.getItem("userName");
@@ -144,14 +132,6 @@ const AppAgriHome = () => {
   const handleChangePesquisa = (event) => {
     setTermoDePesquisa(event.target.value);
   };
-
-  if (isLoading) {
-    return (
-      <Center height="100vh">
-        <Spinner size="xl" color="green.500" />
-      </Center>
-    );
-  }
 
   return (
     <>

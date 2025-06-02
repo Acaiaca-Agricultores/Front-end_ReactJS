@@ -23,22 +23,12 @@ import axios from "axios";
 import { Typewriter } from "react-simple-typewriter";
 
 import ImagemFeira from "../../assets/feira.jpg";
-import IconPassword from "../../assets/icons/atualizar-senha.svg";
 import IconPlan from "../../assets/icons/alterar-plano.svg";
 import IconProfile from "../../assets/icons/editar-conta.svg";
-import IconDetails from "../../assets/icons/editar-foto.svg";
 import IconDelete from "../../assets/icons/delete.png";
 
-const buttonStyles = {
-  backgroundColor: "transparent",
-  color: "#973a34",
-  _hover: {
-    backgroundColor: "#973a34",
-    color: "#ffffff",
-  },
-};
-
 const AppConfig = () => {
+  const navigation = useNavigate();
   const [userName, setUserName] = useState("");
   const toast = useToast();
   const navigate = useNavigate();
@@ -171,11 +161,6 @@ const AppConfig = () => {
       >
         <Heading padding={10}>Detalhes da Conta</Heading>
         <Center flexDirection="column" gap={10} mt={4}>
-          <Box display={"flex"} alignItems="center" gap={2} cursor="pointer">
-            <Image width={"3rem"} src={IconPassword} alt="Atualizar Senha" />
-            <Text>Atualizar Senha</Text>
-          </Box>
-          <Divider />
           <Box display={"flex"} alignItems="center" gap={2}>
             <Image width={"3rem"} src={IconPlan} alt="Alterar Plano" />
             <Text>Alterar Plano</Text>
@@ -184,22 +169,27 @@ const AppConfig = () => {
 
           <Box display={"flex"} alignItems="center" gap={2}>
             <Image width={"3rem"} src={IconProfile} alt="Editar Perfil" />
-            <Text>Editar Perfil</Text>
-          </Box>
-          <Divider />
-
-          <Box display={"flex"} alignItems="center" gap={2}>
-            <Image width={"3rem"} src={IconDetails} alt="Editar Detalhes" />
-            <Text>Editar Foto do Perfil</Text>
+            <Button
+              onClick={() => navigation("/perfil")}
+              background={"transparent"}
+              color={"#000000"}
+            >
+              Editar Conta
+            </Button>
           </Box>
           <Divider />
 
           <Box display={"flex"} alignItems="center" gap={2}>
             <Image width={"3rem"} src={IconDelete} alt="Deletar Conta" />
             <Button
-              {...buttonStyles}
+              backgroundColor="transparent"
+              color="#973a34"
               onClick={handleDeleteAccount}
               colorScheme="red"
+              _hover={{
+                backgroundColor: "rgba(151, 58, 52, 0.1)",
+                color: "#973a34",
+              }}
             >
               Deletar Conta
             </Button>
