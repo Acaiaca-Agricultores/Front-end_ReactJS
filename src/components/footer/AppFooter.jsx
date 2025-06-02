@@ -24,6 +24,7 @@ const Footer = () => {
         maxWidth="1200px"
         margin="0 auto"
         pb="1.5rem"
+        gap={{ base: "1.5rem", md: "1rem" }}
       >
         <Box width={{ base: "100px", md: "150px" }}>
           <Image

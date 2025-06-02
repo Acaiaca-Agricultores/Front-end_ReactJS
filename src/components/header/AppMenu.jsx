@@ -87,6 +87,18 @@ const AppMenu = ({ setLastScrollY }) => {
         >
           Sobre
         </MenuItem>
+        <MenuItem
+          onClick={() => navigate("/perfil")}
+          _hover={{ textDecoration: "none", color: "#83a11d" }}
+        >
+          Perfil
+        </MenuItem>
+        <MenuItem
+          onClick={() => navigate("/configurações")}
+          _hover={{ textDecoration: "none", color: "#83a11d" }}
+        >
+          Configurações
+        </MenuItem>
         {shouldRenderButtons && (
           <MenuItem
             onClick={(e) => scrollTo(e, "appforms")}

@@ -8,7 +8,6 @@ import {
   VStack,
   Heading,
   Text,
-  Spinner,
   Alert,
   AlertIcon,
   useToast,
@@ -426,14 +425,6 @@ function FarmerProfile() {
 
   const fileInputRef = React.useRef();
 
-  if (isLoading) {
-    return (
-      <Flex justify="center" align="center" height="100vh" bg="gray.50">
-        {/* Spinner removido conforme solicitado */}
-      </Flex>
-    );
-  }
-
   if (error && !userData) {
     return (
       <Center height="80vh" bg="gray.50">
@@ -472,9 +463,8 @@ function FarmerProfile() {
       </Center>
     );
   }
-
-  // Defina o nome do perfil dinamicamente
-  const profileTitle = role === "consumidor" ? "Perfil do Consumidor" : "Perfil do Agricultor";
+  const profileTitle =
+    role === "consumidor" ? "Perfil do Consumidor" : "Perfil do Agricultor";
 
   return (
     <>
@@ -500,7 +490,7 @@ function FarmerProfile() {
           backdropFilter="blur(3px)"
           zIndex="1"
         />
-        <VStack spacing={4} zIndex="2" px={4} mt={{ base: 0, md: 100 }}>
+        <VStack spacing={4} zIndex="2" px={4} mt={{ base: "5rem", md: 100 }}>
           <Avatar
             name={userData.username}
             src={getProfileImageUrl(userData.imageProfile)}
@@ -510,7 +500,12 @@ function FarmerProfile() {
           />
           <Heading as="h1" size="xl" fontWeight="bold">
             <Typewriter
-              words={[`Olá, ${userName || (role === "consumidor" ? "Consumidor" : "Agricultor")}!`]}
+              words={[
+                `Olá, ${
+                  userName ||
+                  (role === "consumidor" ? "Consumidor" : "Agricultor")
+                }!`,
+              ]}
               loop={1}
               cursor
               cursorStyle="_"
@@ -528,12 +523,12 @@ function FarmerProfile() {
       <Box
         maxWidth="700px"
         margin="auto"
-        mt={{ base: "-50px", md: "-3rem" }}
-        mb={10}
+        mt={{ base: "-2rem", md: "-3rem" }}
+        mb={{ base: 0, md: 16 }}
         p={{ base: 4, md: 8 }}
         shadow="xl"
         borderWidth="1px"
-        borderRadius="lg"
+        borderRadius={{ base: "none", md: "lg" }}
         bg="white"
         zIndex="3"
         position="relative"
