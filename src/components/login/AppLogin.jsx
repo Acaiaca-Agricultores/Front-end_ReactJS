@@ -45,9 +45,11 @@ const AppLogin = () => {
     if (token) {
       const userRole = localStorage.getItem("userRole");
       if (userRole === "agricultor") {
-        navigation("/Home");
+        navigation("/perfil");
+        window.location.reload();
       } else if (userRole === "consumidor") {
-        navigation("/Home");
+        navigation("/home");
+        window.location.reload();
       }
     }
   }, [navigation]);
@@ -82,11 +84,11 @@ const AppLogin = () => {
       return;
     }
 
-    const url = import.meta.env.VITE_LOGIN_API_URL;
+    const API_URL = import.meta.env.VITE_API_URL;
 
     try {
       const response = await axios.post(
-        url,
+        API_URL + "auth/login",
         { email, password, role },
         {
           headers: {
@@ -121,9 +123,11 @@ const AppLogin = () => {
 
       if (role === "agricultor") {
         navigation("/perfil");
+        setTimeout(() => window.location.reload(), 100);
       }
       if (role === "consumidor") {
         navigation("/home");
+        setTimeout(() => window.location.reload(), 100);
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);

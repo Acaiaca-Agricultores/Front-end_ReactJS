@@ -99,7 +99,7 @@ const AppCadastro = () => {
       phone,
     } = data;
 
-    const url = import.meta.env.VITE_REGISTER_API_URL;
+    const API_URL = import.meta.env.VITE_API_URL;
 
     const payload = {
       username,
@@ -114,7 +114,7 @@ const AppCadastro = () => {
     };
 
     try {
-      const response = await axios.post(url, payload, {
+      const response = await axios.post(API_URL + "auth/register", payload, {
         headers: { "Content-Type": "application/json" },
       });
 
@@ -136,8 +136,10 @@ const AppCadastro = () => {
 
       if (role === "agricultor") {
         navigation("/perfil");
+        window.location.reload();
       } else if (role === "consumidor") {
-        navigation("/perfil");
+        navigation("/home");
+        window.location.reload();
       }
     } catch (error) {
       console.error("Erro ao fazer cadastro:", error);
@@ -170,6 +172,7 @@ const AppCadastro = () => {
           isClosable: true,
         });
         navigation("/perfil");
+        window.location.reload();
       } else if (userRole === "consumidor") {
         toast({
           title: "Bem-vindo!",
@@ -179,6 +182,7 @@ const AppCadastro = () => {
           isClosable: true,
         });
         navigation("/home");
+        window.location.reload();
       } else {
         toast({
           title: "Erro de autenticação",

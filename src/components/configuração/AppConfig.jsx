@@ -62,8 +62,10 @@ const AppConfig = () => {
       return;
     }
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
     try {
-      await axios.delete(`http://localhost:3000/user/${userId}`, {
+      await axios.delete(`${API_URL}user/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -82,7 +84,8 @@ const AppConfig = () => {
       localStorage.removeItem("role");
       setUserName("");
 
-      navigate("/login");
+      navigate("/");
+      window.location.reload();
     } catch (err) {
       console.error(
         "Erro ao deletar conta:",

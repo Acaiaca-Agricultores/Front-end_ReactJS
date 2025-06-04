@@ -21,13 +21,13 @@ import {
 import { SearchIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { Typewriter } from "react-simple-typewriter";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import AppCarrossel from "../carrossel/AppCarrossel";
 import dataFruits from "../services/dataCardFruits.json";
 import dataLegumes from "../services/dataCardLegu.json";
 import dataVerduras from "../services/dataCardVerd.json";
 import dataAgricultores from "../services/dataCardAgri.json";
 import ImagemFeira from "../../assets/feira.jpg";
+import AppLoading from "../loading/AppLoading";
 
 const AppAgriHome = () => {
   const [userName, setUserName] = useState("");
@@ -35,7 +35,7 @@ const AppAgriHome = () => {
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
   const [ordemPreco, setOrdemPreco] = useState("");
   const [termoDePesquisa, setTermoDePesquisa] = useState("");
-  const navigation = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   const categories = [
     { label: "Todas", value: "Todos" },
@@ -46,7 +46,8 @@ const AppAgriHome = () => {
   ];
 
   useEffect(() => {
-    const storedName = localStorage.getItem("userName");
+    const storedName =
+      localStorage.getItem("userName") || localStorage.getItem("username");
     const storedUserId = localStorage.getItem("userId");
     if (storedName) {
       setUserName(storedName);
@@ -54,6 +55,9 @@ const AppAgriHome = () => {
     if (storedUserId) {
       setUserId(storedUserId);
     }
+    setTimeout(() => {
+      setLoading(false);
+    }, 800);
   }, []);
 
   const normalizeString = (str) => {
@@ -132,6 +136,10 @@ const AppAgriHome = () => {
   const handleChangePesquisa = (event) => {
     setTermoDePesquisa(event.target.value);
   };
+
+  if (loading) {
+    return <AppLoading />;
+  }
 
   return (
     <>

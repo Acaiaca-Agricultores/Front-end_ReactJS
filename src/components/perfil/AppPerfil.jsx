@@ -30,6 +30,9 @@ import {
 import axios from "axios";
 import { Typewriter } from "react-simple-typewriter";
 import ImagemFeira from "../../assets/feira.jpg";
+import AppLoading from "../loading/AppLoading";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 const ProfileDetailItem = ({
   icon,
@@ -80,7 +83,7 @@ const ProfileDetailItem = ({
 const getProfileImageUrl = (imgPath) => {
   if (!imgPath) return "";
   if (imgPath.startsWith("http")) return imgPath;
-  return `http://localhost:3000${imgPath}`;
+  return `${API_URL.replace(/\/$/, "")}/${imgPath.replace(/^\/+/, "")}`;
 };
 
 function FarmerProfile() {
@@ -121,7 +124,7 @@ function FarmerProfile() {
     }
 
     try {
-      const response = await axios.get(`http://localhost:3000/user/${userId}`, {
+      const response = await axios.get(`${API_URL}user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const farmerData = response.data.user;
@@ -250,7 +253,7 @@ function FarmerProfile() {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/user/${userId}`,
+        `${API_URL}/user/${userId}`,
         changedData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -276,6 +279,7 @@ function FarmerProfile() {
         isClosable: true,
       });
       setIsEditing(false);
+      window.location.reload();
     } catch (err) {
       if (
         err.response &&
@@ -349,16 +353,12 @@ function FarmerProfile() {
     }
 
     try {
-      const response = await axios.put(
-        `http://localhost:3000/user/${userId}/edit`,
-        form,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.put(`${API_URL}user/${userId}/edit`, form, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       const updatedUser = response.data.user;
       setUserData(updatedUser);
       setFormData({
@@ -382,6 +382,7 @@ function FarmerProfile() {
         isClosable: true,
       });
       setIsEditing(false);
+      window.location.reload();
     } catch (err) {
       if (
         err.response &&
@@ -423,6 +424,9 @@ function FarmerProfile() {
     }
   };
 
+  const profileTitle =
+    role === "consumidor" ? "Perfil do Consumidor" : "Perfil do Agricultor";
+
   const fileInputRef = React.useRef();
 
   if (error && !userData) {
@@ -435,7 +439,7 @@ function FarmerProfile() {
           </Alert>
           <Button
             mt={4}
-            colorScheme="green"
+            background="#83A11D"
             onClick={() => fetchUserData()}
             isLoading={isLoading}
           >
@@ -446,25 +450,24 @@ function FarmerProfile() {
     );
   }
 
-  if (!userData) {
+  if (!userData && error) {
     return (
       <Center height="80vh" bg="gray.50">
-        <Box p={8} borderWidth={1} borderRadius="lg" boxShadow="lg" bg="white">
-          <Text>Não foi possível carregar os dados do perfil.</Text>
-          <Button
-            mt={4}
-            colorScheme="green"
-            onClick={() => fetchUserData()}
-            isLoading={isLoading}
-          >
-            Tentar Novamente
-          </Button>
-        </Box>
+        <Button
+          mt={4}
+          background="#83A11D"
+          onClick={() => fetchUserData()}
+          isLoading={isLoading}
+        >
+          Tentar Novamente
+        </Button>
       </Center>
     );
   }
-  const profileTitle =
-    role === "consumidor" ? "Perfil do Consumidor" : "Perfil do Agricultor";
+
+  if (isLoading) {
+    return <AppLoading />;
+  }
 
   return (
     <>
@@ -637,7 +640,7 @@ function FarmerProfile() {
                     onClick={() =>
                       fileInputRef.current && fileInputRef.current.click()
                     }
-                    _hover={{ opacity: 0.8, boxShadow: "0 0 0 2px #38A169" }}
+                    _hover={{ opacity: 0.8, boxShadow: "0 0 0 2px #83A11D" }}
                   />
                   <Input
                     type="file"
@@ -670,7 +673,7 @@ function FarmerProfile() {
             <Button
               mt={8}
               leftIcon={<CheckIcon />}
-              colorScheme="green"
+              color="#83A11D"
               type="submit"
               isLoading={isSubmitting}
               loadingText="Salvando..."
