@@ -28,8 +28,10 @@ import dataVerduras from "../services/dataCardVerd.json";
 import dataAgricultores from "../services/dataCardAgri.json";
 import ImagemFeira from "../../assets/feira.jpg";
 import AppLoading from "../loading/AppLoading";
+import { useNavigate } from "react-router-dom";
 
 const AppAgriHome = () => {
+  const navigate = useNavigate();
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState("");
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
@@ -46,6 +48,10 @@ const AppAgriHome = () => {
   ];
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
     const storedName =
       localStorage.getItem("userName") || localStorage.getItem("username");
     const storedUserId = localStorage.getItem("userId");
@@ -58,7 +64,7 @@ const AppAgriHome = () => {
     setTimeout(() => {
       setLoading(false);
     }, 800);
-  }, []);
+  }, [navigate]);
 
   const normalizeString = (str) => {
     if (typeof str !== "string") return "";

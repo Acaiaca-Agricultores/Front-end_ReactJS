@@ -31,15 +31,19 @@ const AppConfig = () => {
   const navigation = useNavigate();
   const [userName, setUserName] = useState("");
   const toast = useToast();
-  const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigation("/login");
+      return;
+    }
     const storedName = localStorage.getItem("userName");
     if (storedName) {
       setUserName(storedName);
     }
-  }, []);
+  }, [navigation]);
 
   const handleDeleteAccount = async () => {
     onOpen();
@@ -84,7 +88,7 @@ const AppConfig = () => {
       localStorage.removeItem("role");
       setUserName("");
 
-      navigate("/");
+      navigation("/");
       window.location.reload();
     } catch (err) {
       console.error(
@@ -105,7 +109,7 @@ const AppConfig = () => {
         localStorage.removeItem("userName");
         localStorage.removeItem("role");
         setUserName("");
-        navigate("/login");
+        navigation("/login");
       }
     }
   };

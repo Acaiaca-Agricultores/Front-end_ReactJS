@@ -31,6 +31,7 @@ import axios from "axios";
 import { Typewriter } from "react-simple-typewriter";
 import ImagemFeira from "../../assets/feira.jpg";
 import AppLoading from "../loading/AppLoading";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -87,6 +88,7 @@ const getProfileImageUrl = (imgPath) => {
 };
 
 function FarmerProfile() {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [userName, setUserName] = useState("");
   const [role, setRole] = useState("");
@@ -180,8 +182,13 @@ function FarmerProfile() {
   }, []);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     fetchUserData();
-  }, [fetchUserData]);
+  }, [fetchUserData, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

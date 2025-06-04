@@ -107,11 +107,15 @@ const AppCadastro = () => {
       password,
       confirmpassword: confirmPassword,
       role,
-      propertyName,
-      state,
+      propertyName: role === "agricultor" ? propertyName : undefined,
       city,
+      state,
       phoneNumber: phone,
     };
+
+    Object.keys(payload).forEach(
+      (key) => payload[key] === undefined && delete payload[key]
+    );
 
     try {
       const response = await axios.post(API_URL + "auth/register", payload, {
@@ -147,7 +151,6 @@ const AppCadastro = () => {
         title: "Erro no cadastro",
         description:
           error.response?.data?.msg ||
-          JSON.stringify(error.response?.data) ||
           error.message ||
           "Erro ao fazer cadastro. Tente novamente.",
         status: "error",
