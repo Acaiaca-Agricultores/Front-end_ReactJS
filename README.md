@@ -12,8 +12,6 @@ Acesse a plataforma online: https://plataforma-acaiaca.vercel.app/
 
 ---
 
-## 🚀 Tecnologias Utilizadas
-
 ## 🛠 Tecnologias Utilizadas
 
 <ul>
