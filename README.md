@@ -36,7 +36,7 @@ Acesse a plataforma online: https://plataforma-acaiaca.vercel.app/
     <strong> Axios</strong> – Biblioteca para requisições HTTP e consumo de APIs.
   </li>
   <li>
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vite/vite-original.svg" height="20" alt="Vite" />
+    <img src="https://vitejs.dev/logo-with-shadow.png" height="20" alt="Vite" />
     <strong> Vite</strong> – Utilizado para build e desenvolvimento com carregamento ultrarrápido.
   </li>
 </ul>
