@@ -32,6 +32,7 @@ import { Typewriter } from "react-simple-typewriter";
 import ImagemFeira from "../../assets/feira.jpg";
 import AppLoading from "../loading/AppLoading";
 import { useNavigate } from "react-router-dom";
+import AppSelect from "../configuração/AppSelect";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -92,6 +93,8 @@ function FarmerProfile() {
   const [userData, setUserData] = useState(null);
   const [userName, setUserName] = useState("");
   const [role, setRole] = useState("");
+  const [selectedEstado, setSelectedEstado] = useState("");
+  const [selectedCidade, setSelectedCidade] = useState("");
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -614,24 +617,41 @@ function FarmerProfile() {
               handleInputChange={handleInputChange}
               placeholder="Ex: Sítio Esperança"
             />
-            <ProfileDetailItem
-              label="Cidade"
-              name="cityName"
-              value={userData.cityName}
-              isEditing={isEditing}
-              formData={formData}
-              handleInputChange={handleInputChange}
-              placeholder="Sua cidade"
-            />
-            <ProfileDetailItem
-              label="Estado"
-              name="stateName"
-              value={userData.stateName}
-              isEditing={isEditing}
-              formData={formData}
-              handleInputChange={handleInputChange}
-              placeholder="Seu estado"
-            />
+            {isEditing ? (
+              <AppSelect
+                selectedEstado={formData.stateName}
+                setSelectedEstado={(value) =>
+                  setFormData((prev) => ({ ...prev, stateName: value, cityName: "" }))
+                }
+                selectedCidade={formData.cityName}
+                setSelectedCidade={(value) => setFormData((prev) => ({ ...prev, cityName: value }))}
+                toast={toast}
+                labelEstado="Estado"
+                labelCidade="Cidade"
+                isDisabledCidade={!formData.stateName}
+              />
+            ) : (
+              <>
+                <ProfileDetailItem
+                  label="Cidade"
+                  name="cityName"
+                  value={userData.cityName}
+                  isEditing={false}
+                  formData={formData}
+                  handleInputChange={handleInputChange}
+                  placeholder="Sua cidade"
+                />
+                <ProfileDetailItem
+                  label="Estado"
+                  name="stateName"
+                  value={userData.stateName}
+                  isEditing={false}
+                  formData={formData}
+                  handleInputChange={handleInputChange}
+                  placeholder="Seu estado"
+                />
+              </>
+            )}
             {isEditing && (
               <FormControl mb={4}>
                 <FormLabel>Foto de Perfil</FormLabel>

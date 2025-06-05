@@ -146,6 +146,7 @@ const AppAgricultor = () => {
             {...buttonStyles}
             w="100%"
             aria-label="Saiba mais sobre a plataforma"
+            onClick={() => navigation("/sobre")}
           >
             Saiba Mais!
           </Button>

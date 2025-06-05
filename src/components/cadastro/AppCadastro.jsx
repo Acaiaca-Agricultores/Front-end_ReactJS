@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Box,
   FormControl,
@@ -24,21 +24,22 @@ import {
   PopoverCloseButton,
   SimpleGrid,
 } from "@chakra-ui/react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
 import IconInfo from "../../assets/icons/info.png";
-import IconHidden from "../../assets/icons/hidden.svg";
-import IconVisible from "../../assets/icons/show.png";
 import AppStepper, { steps, useAppStepperControls } from "./AppStepper";
+import AppSelect from "../configuração/AppSelect";
 import axios from "axios";
 
 const AppCadastro = () => {
-  const [show, setShow] = useState(false);
-  const handleClick = () => setShow(!show);
-  const navigation = useNavigate();
-  const toast = useToast();
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { activeStep, goToNext, goToPrevious } = useAppStepperControls();
+  const [selectedEstado, setSelectedEstado] = useState("");
+  const [selectedCidade, setSelectedCidade] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -60,6 +61,24 @@ const AppCadastro = () => {
     },
     mode: "onTouched",
   });
+
+  const toast = useToast();
+  const API_URL = import.meta.env.VITE_API_URL;
+  const navigation = useNavigate();
+
+  const formatPhone = (value) => {
+    if (!value) return value;
+    value = value.replace(/\D/g, "");
+    if (value.length <= 10) {
+      return value
+        .replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3")
+        .replace(/-$/, "");
+    } else {
+      return value
+        .replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3")
+        .replace(/-$/, "");
+    }
+  };
 
   const handleNext = async () => {
     let fieldsToValidate = [];
@@ -94,12 +113,20 @@ const AppCadastro = () => {
       confirmPassword,
       role,
       propertyName,
-      state,
-      city,
       phone,
     } = data;
 
-    const API_URL = import.meta.env.VITE_API_URL;
+    if (!selectedEstado || !selectedCidade) {
+      toast({
+        title: "Erro de validação",
+        description: "Selecione um estado e uma cidade.",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+      setIsSubmitting(false);
+      return;
+    }
 
     const payload = {
       username,
@@ -108,13 +135,14 @@ const AppCadastro = () => {
       confirmpassword: confirmPassword,
       role,
       propertyName: role === "agricultor" ? propertyName : undefined,
-      city,
-      state,
+      state: selectedEstado,
+      city: selectedCidade,
       phoneNumber: phone,
     };
-
     Object.keys(payload).forEach(
-      (key) => payload[key] === undefined && delete payload[key]
+      (key) =>
+        (payload[key] === undefined || payload[key] === "") &&
+        delete payload[key]
     );
 
     try {
@@ -123,7 +151,7 @@ const AppCadastro = () => {
       });
 
       const responseData = response.data;
-      const { token, name, id } = responseData;
+      const { token, username: name, id } = responseData;
       localStorage.setItem("token", token);
       localStorage.setItem("userName", name || username);
       localStorage.setItem("userEmail", email);
@@ -147,57 +175,38 @@ const AppCadastro = () => {
       }
     } catch (error) {
       console.error("Erro ao fazer cadastro:", error);
-      toast({
-        title: "Erro no cadastro",
-        description:
-          error.response?.data?.msg ||
+      if (error.response && error.response.data) {
+        console.log("Erro detalhado do backend:", error.response.data);
+        let msg =
+          error.response.data.msg ||
           error.message ||
-          "Erro ao fazer cadastro. Tente novamente.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const userRole = localStorage.getItem("userRole");
-      if (userRole === "agricultor") {
+          "Erro ao fazer cadastro. Tente novamente.";
+        const detalhes = Object.entries(error.response.data)
+          .filter(([k]) => k !== "msg")
+          .map(([k, v]) => `${k}: ${v}`)
+          .join("\n");
+        if (detalhes) msg += "\n" + detalhes;
         toast({
-          title: "Bem-vindo!",
-          description: "Você já está logado.",
-          status: "success",
-          duration: 3000,
+          title: "Erro no cadastro",
+          description: msg,
+          status: "error",
+          duration: 5000,
           isClosable: true,
         });
-        navigation("/perfil");
-        window.location.reload();
-      } else if (userRole === "consumidor") {
-        toast({
-          title: "Bem-vindo!",
-          description: "Você já está logado.",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        navigation("/home");
-        window.location.reload();
       } else {
         toast({
-          title: "Erro de autenticação",
-          description: "Não foi possível identificar seu tipo de usuário.",
+          title: "Erro no cadastro",
+          description:
+            error.message || "Erro ao fazer cadastro. Tente novamente.",
           status: "error",
           duration: 3000,
           isClosable: true,
         });
-        navigation("/");
       }
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [navigation, toast]);
+  };
 
   return (
     <Box
@@ -311,7 +320,7 @@ const AppCadastro = () => {
                   <InputGroup>
                     <Input
                       id="password"
-                      type={show ? "text" : "password"}
+                      type={showCurrent ? "text" : "password"}
                       placeholder="Digite sua senha"
                       _placeholder={{ color: "#b0b0b0" }}
                       border={"2px solid  #83a11d"}
@@ -329,26 +338,26 @@ const AppCadastro = () => {
                           value: 6,
                           message: "A senha deve ter pelo menos 6 caracteres",
                         },
+                        validate: (value) =>
+                          /[A-Z]/.test(value) ||
+                          ("A senha deve conter pelo menos uma letra maiúscula" &&
+                            /[a-z]/.test(value)) ||
+                          ("A senha deve conter pelo menos uma letra minúscula" &&
+                            /[^A-Za-z0-9]/.test(value)) ||
+                          "A senha deve conter pelo menos um caractere especial",
                       })}
                     />
                     <InputRightElement h={"100%"} width={"4.5rem"}>
                       <Button
-                        h="100%"
-                        onClick={handleClick}
-                        background="transparent"
-                        boxSize={"100%"}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        _hover={{
-                          background: "transparent",
-                        }}
+                        variant="ghost"
+                        _hover={{ background: "transparent" }}
+                        onClick={() => setShowCurrent((v) => !v)}
                       >
-                        <img
-                          src={show ? IconVisible : IconHidden}
-                          alt={show ? "Ocultar senha" : "Mostrar senha"}
-                          style={{ width: "1.5rem", height: "1.5rem" }}
-                        />
+                        {showCurrent ? (
+                          <ViewOffIcon color={"#83a11d"} />
+                        ) : (
+                          <ViewIcon color={"#83a11d"} />
+                        )}
                       </Button>
                     </InputRightElement>
                   </InputGroup>
@@ -363,7 +372,7 @@ const AppCadastro = () => {
                   <InputGroup>
                     <Input
                       id="confirmPassword"
-                      type={show ? "text" : "password"}
+                      type={showConfirm ? "text" : "password"}
                       placeholder="Confirme sua senha"
                       _placeholder={{ color: "#b0b0b0" }}
                       border={"2px solid  #83a11d"}
@@ -376,29 +385,38 @@ const AppCadastro = () => {
                       }}
                       {...register("confirmPassword", {
                         required: "Confirmação de senha obrigatória",
-                        validate: (value) =>
-                          value === watch("password") ||
-                          "As senhas não coincidem",
+                        minLength: {
+                          value: 6,
+                          message: "A senha deve ter pelo menos 6 caracteres",
+                        },
+                        validate: (value) => {
+                          if (value !== watch("password")) {
+                            return "As senhas não coincidem";
+                          }
+                          if (!/[A-Z]/.test(value)) {
+                            return "A senha deve conter pelo menos uma letra maiúscula";
+                          }
+                          if (!/[a-z]/.test(value)) {
+                            return "A senha deve conter pelo menos uma letra minúscula";
+                          }
+                          if (!/[^A-Za-z0-9]/.test(value)) {
+                            return "A senha deve conter pelo menos um caractere especial";
+                          }
+                          return true;
+                        },
                       })}
                     />
                     <InputRightElement h={"100%"} width={"4.5rem"}>
                       <Button
-                        h="100%"
-                        onClick={handleClick}
-                        background="transparent"
-                        boxSize={"100%"}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        _hover={{
-                          background: "transparent",
-                        }}
+                        variant="ghost"
+                        _hover={{ background: "transparent" }}
+                        onClick={() => setShowConfirm((v) => !v)}
                       >
-                        <img
-                          src={show ? IconVisible : IconHidden}
-                          alt={show ? "Ocultar senha" : "Mostrar senha"}
-                          style={{ width: "1.5rem", height: "1.5rem" }}
-                        />
+                        {showConfirm ? (
+                          <ViewOffIcon color={"#83a11d"} />
+                        ) : (
+                          <ViewIcon color={"#83a11d"} />
+                        )}
                       </Button>
                     </InputRightElement>
                   </InputGroup>
@@ -433,50 +451,13 @@ const AppCadastro = () => {
                     {errors.propertyName && errors.propertyName.message}
                   </FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={errors.state}>
-                  <FormLabel>Estado</FormLabel>
-                  <Input
-                    type="text"
-                    placeholder="Digite seu estado"
-                    _placeholder={{ color: "#b0b0b0" }}
-                    border={"2px solid  #83a11d"}
-                    aria-required="true"
-                    width={"100%"}
-                    height={"3rem"}
-                    _focus={{
-                      borderColor: "#c0ab8e",
-                      boxShadow: "0 0 0 1px #e5d1b0",
-                    }}
-                    {...register("state", {
-                      required: "Estado é obrigatório",
-                    })}
-                  />
-                  <FormErrorMessage>
-                    {errors.state && errors.state.message}
-                  </FormErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={errors.city}>
-                  <FormLabel>Cidade</FormLabel>
-                  <Input
-                    type="text"
-                    placeholder="Digite sua cidade"
-                    _placeholder={{ color: "#b0b0b0" }}
-                    border={"2px solid  #83a11d"}
-                    aria-required="true"
-                    width={"100%"}
-                    height={"3rem"}
-                    _focus={{
-                      borderColor: "#c0ab8e",
-                      boxShadow: "0 0 0 1px #e5d1b0",
-                    }}
-                    {...register("city", {
-                      required: "Cidade é obrigatória",
-                    })}
-                  />
-                  <FormErrorMessage>
-                    {errors.city && errors.city.message}
-                  </FormErrorMessage>
-                </FormControl>
+                <AppSelect
+                  selectedEstado={selectedEstado}
+                  setSelectedEstado={setSelectedEstado}
+                  selectedCidade={selectedCidade}
+                  setSelectedCidade={setSelectedCidade}
+                  toast={toast}
+                />
                 <FormControl isInvalid={errors.phone}>
                   <FormLabel>Telefone</FormLabel>
                   <Input
@@ -494,11 +475,15 @@ const AppCadastro = () => {
                     {...register("phone", {
                       required: "Telefone é obrigatório",
                       pattern: {
-                        value: /^\(\d{2}\)?[\s-]?\d{4,5}-?\d{4}$/,
+                        value: /^\(\d{2}\) \d{4,5}-\d{4}$/,
                         message:
                           "Formato de telefone inválido. Use (XX) XXXXX-XXXX ou (XX) XXXX-XXXX",
                       },
                     })}
+                    onChange={(e) => {
+                      const formatted = formatPhone(e.target.value);
+                      e.target.value = formatted;
+                    }}
                   />
                   <FormErrorMessage>
                     {errors.phone && errors.phone.message}

@@ -21,10 +21,9 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
-import IconHidden from "../../assets/icons/hidden.svg";
-import IconVisible from "../../assets/icons/show.png";
 
 const AppLogin = () => {
   const toast = useToast();
@@ -257,22 +256,20 @@ const AppLogin = () => {
                 />
                 <InputRightElement height={"4rem"} width={"4.5rem"}>
                   <Button
-                    h="100%"
+                    variant="ghost"
                     onClick={handleClick}
-                    background="transparent"
-                    boxSize={"100%"}
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
-                    _hover={{
-                      background: "transparent",
-                    }}
+                    background="transparent"
+                    boxSize={"100%"}
+                    _hover={{ background: "transparent" }}
                   >
-                    <img
-                      src={show ? IconVisible : IconHidden}
-                      alt={show ? "Mostrar senha" : "Ocultar senha"}
-                      style={{ width: "1.5rem", height: "1.5rem" }}
-                    />
+                    {show ? (
+                      <ViewOffIcon color={"#83a11d"} />
+                    ) : (
+                      <ViewIcon color={"#83a11d"} />
+                    )}
                   </Button>
                 </InputRightElement>
               </InputGroup>
@@ -337,9 +334,18 @@ const AppLogin = () => {
               </FormErrorMessage>
             </FormControl>
             <ButtonGroup w={"100%"} gap="1rem" alignItems={"center"}>
-              <Link _hover={{ color: "#c0ab8e" }} fontSize="1rem" width={"30%"}>
+              <Button
+                background={"transparent"}
+                color={"#ffffff"}
+                _hover={{ color: "#c0ab8e" }}
+                fontSize="1rem"
+                width={"30%"}
+                onClick={() => navigation("/esqueci-senha")}
+                aria-label="Esqueci minha senha"
+                
+              >
                 Esqueceu a senha?
-              </Link>
+              </Button>
               <Button
                 type="submit"
                 w={"100%"}

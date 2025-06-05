@@ -16,14 +16,17 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  Input,
+  InputGroup,
 } from "@chakra-ui/react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Typewriter } from "react-simple-typewriter";
 
 import ImagemFeira from "../../assets/feira.jpg";
-import IconPlan from "../../assets/icons/alterar-plano.svg";
+import IconPassword from "../../assets/icons/atualizar-senha.svg";
 import IconProfile from "../../assets/icons/editar-conta.svg";
 import IconDelete from "../../assets/icons/delete.png";
 
@@ -32,6 +35,13 @@ const AppConfig = () => {
   const [userName, setUserName] = useState("");
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -114,6 +124,65 @@ const AppConfig = () => {
     }
   };
 
+  const handleOpenPasswordModal = () => setPasswordModalOpen(true);
+  const handleClosePasswordModal = () => {
+    setPasswordModalOpen(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  };
+
+  const handleChangePassword = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast({
+        title: "Preencha todos os campos.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "As senhas não coincidem.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+    const API_URL = import.meta.env.VITE_API_URL;
+    try {
+      await axios.put(
+        `${API_URL}user/${userId}/edit`,
+        {
+          currentPassword,
+          newPassword,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      toast({
+        title: "Senha alterada com sucesso!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      handleClosePasswordModal();
+    } catch (err) {
+      toast({
+        title: "Erro ao alterar senha.",
+        description: err.response?.data?.msg || "Tente novamente mais tarde.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <>
       <Flex
@@ -169,8 +238,14 @@ const AppConfig = () => {
         <Heading padding={10}>Detalhes da Conta</Heading>
         <Center flexDirection="column" gap={10} mt={4}>
           <Box display={"flex"} alignItems="center" gap={2}>
-            <Image width={"3rem"} src={IconPlan} alt="Alterar Plano" />
-            <Text>Alterar Plano</Text>
+            <Image width={"3rem"} src={IconPassword} alt="Alterar Plano" />
+            <Button
+              background={"transparent"}
+              color={"#000000"}
+              onClick={handleOpenPasswordModal}
+            >
+              Alterar Senha
+            </Button>
           </Box>
           <Divider />
 
@@ -221,6 +296,94 @@ const AppConfig = () => {
             </Button>
             <Button colorScheme="red" onClick={executeDelete}>
               Deletar Conta
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={isPasswordModalOpen}
+        onClose={handleClosePasswordModal}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Alterar Senha</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Box as="form" display="flex" flexDirection="column" gap={4}>
+              <Text>Digite sua senha atual e a nova senha:</Text>
+              <InputGroup>
+                <Input
+                  border={"2px solid  #83a11d"}
+                  _focus={{
+                    borderColor: "#c0ab8e",
+                    boxShadow: "0 0 0 1px #e5d1b0",
+                  }}
+                  type={showCurrent ? "text" : "password"}
+                  placeholder="Senha atual"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                />
+                <Button
+                  variant="ghost"
+                  onClick={() => setShowCurrent((v) => !v)}
+                >
+                  {showCurrent ? (
+                    <ViewOffIcon color={"#83a11d"} />
+                  ) : (
+                    <ViewIcon color={"#83a11d"} />
+                  )}
+                </Button>
+              </InputGroup>
+              <InputGroup>
+                <Input
+                  border={"2px solid  #83a11d"}
+                  _focus={{
+                    borderColor: "#c0ab8e",
+                    boxShadow: "0 0 0 1px #e5d1b0",
+                  }}
+                  type={showNew ? "text" : "password"}
+                  placeholder="Nova senha"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+                <Button variant="ghost" onClick={() => setShowNew((v) => !v)}>
+                  {showNew ? (
+                    <ViewOffIcon color={"#83a11d"} />
+                  ) : (
+                    <ViewIcon color={"#83a11d"} />
+                  )}
+                </Button>
+              </InputGroup>
+              <InputGroup>
+                <Input
+                  border={"2px solid  #83a11d"}
+                  _focus={{
+                    borderColor: "#c0ab8e",
+                    boxShadow: "0 0 0 1px #e5d1b0",
+                  }}
+                  type={showConfirm ? "text" : "password"}
+                  placeholder="Confirmar nova senha"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                <Button variant="ghost" onClick={() => setShowNew((v) => !v)}>
+                  {showNew ? (
+                    <ViewOffIcon color={"#83a11d"} />
+                  ) : (
+                    <ViewIcon color={"#83a11d"} />
+                  )}
+                </Button>
+              </InputGroup>
+            </Box>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={handleClosePasswordModal}>
+              Cancelar
+            </Button>
+            <Button background={"#83a11d"} onClick={handleChangePassword}>
+              Alterar Senha
             </Button>
           </ModalFooter>
         </ModalContent>

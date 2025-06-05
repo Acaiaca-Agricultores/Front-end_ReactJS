@@ -8,6 +8,7 @@ import AppPage404 from "./components/pagina 404/AppPage404.jsx";
 import AppCadastro from "./components/cadastro/AppCadastro.jsx";
 import AppConfig from "./components/configuração/AppConfig.jsx";
 import AppPerfil from "./components/perfil/AppPerfil.jsx";
+import AppSenha from "./components/configuração/AppSenha.jsx";
 
 const AppRouters = () => {
   return (
@@ -21,6 +22,7 @@ const AppRouters = () => {
       <Route path="/login" element={<AppLogin />} />
       <Route path="/cadastro" element={<AppCadastro />} />
       <Route path="/configurações" element={<AppConfig />} />
+      <Route path="/esqueci-senha" element={<AppSenha />} />
     </Routes>
   );
 };

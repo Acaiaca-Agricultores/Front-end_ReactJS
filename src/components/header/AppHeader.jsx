@@ -137,6 +137,9 @@ const Header = () => {
   };
 
   const headerBgColor = useMemo(() => {
+    if (location.pathname === "/esqueci-senha") {
+      return "rgba(82, 96, 26, 0.8)";
+    }
     if (isOnRootPage) {
       return lastScrollY < scrollThreshold
         ? "transparent"
@@ -148,7 +151,7 @@ const Header = () => {
       }
       return "transparent";
     }
-  }, [isOnRootPage, lastScrollY, scrollThreshold]);
+  }, [isOnRootPage, lastScrollY, scrollThreshold, location.pathname]);
 
   const desktopLogoEffectiveOpacity = useMemo(() => {
     if (isOnRootPage) {
