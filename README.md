@@ -1,6 +1,6 @@
 <img src="img-readme-acaiaca-front/25500F.png">
 
-# Acaiacá 🍏
+# 🌿 Acaiacá
 
 A Acaiacá é uma plataforma que conecta pequenos agricultores diretamente aos consumidores, valorizando a produção local e promovendo relações mais humanas, justas e conscientes no acesso aos alimentos.
 
