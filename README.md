@@ -2,29 +2,26 @@
 
 # Acaiacá 🍏
 
-O Açaíacá é uma plataforma que conecta pequenos agricultores diretamente aos consumidores, valorizando a produção local e promovendo relações mais humanas, justas e conscientes no acesso aos alimentos.
+A Acaiacá é uma plataforma que conecta pequenos agricultores diretamente aos consumidores, valorizando a produção local e promovendo relações mais humanas, justas e conscientes no acesso aos alimentos.
 
 ---
 
-## 💻 Demonstração
+## 💻 Plataforma
 
-Acesse a plataforma online: [🔗 https://plataforma-acaiaca.vercel.app/]  
-(Screenshots opcionais abaixo)
+Acesse a plataforma online: https://plataforma-acaiaca.vercel.app/
 
-![screenshot da aplicação](./screenshot.png)
+![screenshot da aplicação](./img-readme-acaiaca-front/print-plataforma.png)
 
 ---
 
 ## 🚀 Tecnologias Utilizadas
 
-Este projeto foi desenvolvido com as seguintes tecnologias:
-
 - [ ] HTML5
-- [ ] CSS3 / [Tailwind | Sass | Bootstrap]
-- [ ] JavaScript / [TypeScript]
-- [ ] [React | Vue | Angular]
-- [ ] [Axios | Fetch API]
-- [ ] [Vite | Webpack | Create React App]
+- [ ] Chakra
+- [ ] JavaScript
+- [ ] React 
+- [ ] Axios 
+- [ ] Vite 
 
 ---
 
