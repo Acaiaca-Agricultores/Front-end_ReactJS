@@ -14,12 +14,35 @@ Acesse a plataforma online: https://plataforma-acaiaca.vercel.app/
 
 ## 🚀 Tecnologias Utilizadas
 
-- [ ] HTML5
-- [ ] Chakra
-- [ ] JavaScript
-- [ ] React 
-- [ ] Axios 
-- [ ] Vite 
+## 🛠 Tecnologias Utilizadas
+
+<ul>
+  <li>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" height="20" alt="HTML5" />
+    <strong> HTML5</strong> – Utilizado para estruturar semanticamente a aplicação.
+  </li>
+  <li>
+    <img src="https://img.shields.io/badge/Chakra%20UI-319795?style=flat&logo=chakraui&logoColor=white" height="20" alt="Chakra UI" />
+    <strong> Chakra UI</strong> – Biblioteca de componentes para estilização com foco em acessibilidade e produtividade.
+  </li>
+  <li>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" height="20" alt="JavaScript" />
+    <strong> JavaScript</strong> – Responsável pela lógica e interatividade da aplicação.
+  </li>
+  <li>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" height="20" alt="React" />
+    <strong> React</strong> – Framework para criação de interfaces modernas com componentes reutilizáveis.
+  </li>
+  <li>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/axios/axios-plain.svg" height="20" alt="Axios" />
+    <strong> Axios</strong> – Biblioteca para requisições HTTP e consumo de APIs.
+  </li>
+  <li>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vite/vite-original.svg" height="20" alt="Vite" />
+    <strong> Vite</strong> – Utilizado para build e desenvolvimento com carregamento ultrarrápido.
+  </li>
+</ul>
+
 
 ---
 
