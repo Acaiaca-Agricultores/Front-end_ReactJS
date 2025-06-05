@@ -6,8 +6,6 @@ A Acaiacá é uma plataforma que conecta pequenos agricultores diretamente aos c
 
 ## 💻 Plataforma
 
-
-
 ![screenshot da aplicação](./img-readme-acaiaca-front/print-plataforma.png)
 
 A arquitetura da plataforma Acaiacá incorpora a inclusão como um requisito central desde sua fase de projeto. Recursos de acessibilidade, tais como navegação por voz, sistema de comandos otimizado e uma interface de usuário (UI) intuitiva e de fácil navegação, são implementados para assegurar a utilização universal. É tecnologia com propósito, feita para todos.
@@ -23,8 +21,6 @@ A arquitetura da plataforma Acaiacá incorpora a inclusão como um requisito cen
     🎨 <strong>Protótipo no Figma</strong>
   </a>
 </p>
-
----
 
 ## 🛠 Tecnologias Utilizadas
 
@@ -55,10 +51,15 @@ A arquitetura da plataforma Acaiacá incorpora a inclusão como um requisito cen
   </li>
 </ul>
 
-
----
-
 ## 📦 Instalação e Uso
+
+<p>
+      Antes de começar, verifique se você atende aos seguintes requisitos:
+   </p>
+
+- Certifique-se que instalou a versão mais recente do Node.js.  [Baixe aqui](https://nodejs.org/en)
+- Certifique-se de que instalou algum um editor de código em sua máquina. [Baixe aqui](https://code.visualstudio.com/)
+<br/>
 
 Siga os passos abaixo para executar o projeto localmente:
 
