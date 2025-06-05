@@ -4,8 +4,6 @@
 
 A Acaiacá é uma plataforma que conecta pequenos agricultores diretamente aos consumidores, valorizando a produção local e promovendo relações mais humanas, justas e conscientes no acesso aos alimentos.
 
----
-
 ## 💻 Plataforma
 
 Acesse a plataforma online: https://plataforma-acaiaca.vercel.app/
