@@ -10,17 +10,19 @@ A Acaiacá é uma plataforma que conecta pequenos agricultores diretamente aos c
 
 A arquitetura da plataforma Acaiacá incorpora a inclusão como um requisito central desde sua fase de projeto. Recursos de acessibilidade, tais como navegação por voz, sistema de comandos otimizado e uma interface de usuário (UI) intuitiva e de fácil navegação, são implementados para assegurar a utilização universal. É tecnologia com propósito, feita para todos.
 
-<p>
-  <a href="https://plataforma-acaiaca.vercel.app/" target="_blank">
+<ul>
+  <li><a href="https://plataforma-acaiaca.vercel.app/" target="_blank">
     🌐 <strong>Plataforma Online</strong>
-  </a>
-</p>
+  </a></li>
 
-<p>
+
+<li>
   <a href="https://www.figma.com/design/UbY4ih0tBA93Zc3nckwc8Y/Acaiac%C3%A1-Design-Novo" target="_blank">
     🎨 <strong>Protótipo no Figma</strong>
-  </a>
-</p>
+  </a></li>
+
+
+</ul>
 
 ## 🛠 Tecnologias Utilizadas
 
