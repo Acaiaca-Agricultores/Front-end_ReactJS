@@ -50,10 +50,10 @@ Siga os passos abaixo para executar o projeto localmente:
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/[seu-usuario]/[nome-do-projeto].git
+git clone https://github.com/Acaiaca-Agricultores/Front-end_ReactJS.git
 
 # 2. Acesse a pasta do projeto
-cd [nome-do-projeto]
+cd front-end/
 
 # 3. Instale as dependências
 npm install
