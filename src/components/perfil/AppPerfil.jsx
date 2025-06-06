@@ -105,6 +105,7 @@ function FarmerProfile() {
     imageProfile: "",
   });
   const [selectedImage, setSelectedImage] = useState(null);
+  const [newPassword, setNewPassword] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -263,7 +264,7 @@ function FarmerProfile() {
 
     try {
       const response = await axios.put(
-        `${API_URL}/user/${userId}`,
+        `${API_URL}user/${userId}`,
         changedData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -361,6 +362,9 @@ function FarmerProfile() {
     if (selectedImage) {
       form.append("profileImage", selectedImage);
     }
+    if (newPassword) {
+      form.append("password", newPassword);
+    }
 
     try {
       const response = await axios.put(`${API_URL}user/${userId}/edit`, form, {
@@ -381,6 +385,7 @@ function FarmerProfile() {
         imageProfile: updatedUser.imageProfile || "",
       });
       setSelectedImage(null);
+      setNewPassword("");
       if (updatedUser.username) {
         setUserName(updatedUser.username);
         localStorage.setItem("username", updatedUser.username);
@@ -624,7 +629,7 @@ function FarmerProfile() {
                   setFormData((prev) => ({
                     ...prev,
                     stateName: value,
-                    cityName: "",
+                    cityName: value !== prev.stateName ? "" : prev.cityName,
                   }))
                 }
                 selectedCidade={formData.cityName}
@@ -698,6 +703,18 @@ function FarmerProfile() {
                     </Button>
                   )}
                 </Box>
+              </FormControl>
+            )}
+            {isEditing && (
+              <FormControl mb={4}>
+                <FormLabel>Nova Senha</FormLabel>
+                <Input
+                  type="password"
+                  placeholder="Digite a nova senha"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  autoComplete="new-password"
+                />
               </FormControl>
             )}
           </VStack>
