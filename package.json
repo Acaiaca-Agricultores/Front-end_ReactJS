@@ -1,7 +1,7 @@
 {
   "name": "plataform-acaiaca",
   "private": true,
-  "version": "0.7.1",
+  "version": "1.8.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,10 +15,12 @@
     "@djpfs/react-vlibras": "^2.0.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "axios": "^1.9.0",
     "framer-motion": "^12.10.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.56.4",
+    "react-icons": "^5.5.0",
     "react-multi-carousel": "^2.8.6",
     "react-simple-typewriter": "^5.0.1"
   },
@@ -30,6 +32,7 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
     "react-router-dom": "^7.6.0",
-    "vite": "^6.3.1"
+    "vite": "^6.3.1",
+    "vite-plugin-mkcert": "^1.17.8"
   }
 }

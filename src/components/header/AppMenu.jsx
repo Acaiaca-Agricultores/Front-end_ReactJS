@@ -65,6 +65,22 @@ const AppMenu = ({ setLastScrollY }) => {
         >
           Início
         </MenuItem>
+        <MenuItem
+          onClick={() =>
+            window.scrollTo({ top: 0, behavior: "smooth" }) || navigate("/login")
+          }
+          _hover={{ textDecoration: "none", color: "#83a11d" }}
+        >
+          Login
+        </MenuItem>
+        <MenuItem
+          onClick={() =>
+            window.scrollTo({ top: 0, behavior: "smooth" }) || navigate("/cadastro")
+          }
+          _hover={{ textDecoration: "none", color: "#83a11d" }}
+        >
+          Cadastro
+        </MenuItem>
         {shouldRenderButtons && (
           <>
             <MenuItem
@@ -86,6 +102,18 @@ const AppMenu = ({ setLastScrollY }) => {
           _hover={{ textDecoration: "none", color: "#83a11d" }}
         >
           Sobre
+        </MenuItem>
+        <MenuItem
+          onClick={() => navigate("/perfil")}
+          _hover={{ textDecoration: "none", color: "#83a11d" }}
+        >
+          Perfil
+        </MenuItem>
+        <MenuItem
+          onClick={() => navigate("/configurações")}
+          _hover={{ textDecoration: "none", color: "#83a11d" }}
+        >
+          Configurações
         </MenuItem>
         {shouldRenderButtons && (
           <MenuItem

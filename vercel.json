@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    { "source": "/login", "destination": "/" },
+    { "source": "/cadastro", "destination": "/" },
+    { "source": "/perfil", "destination": "/" },
+    { "source": "/home", "destination": "/" },
+    { "source": "/configuracao", "destination": "/" },
+    { "source": "/sobre", "destination": "/" },
+    { "source": "/assinatura", "destination": "/" },
+    { "source": "/404", "destination": "/" },
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}

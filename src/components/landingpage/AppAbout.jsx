@@ -104,8 +104,8 @@ const AppAbout = () => {
           onClose={onClose}
           handleOpenModal={handleOpenModal}
         />
-        <AppPerfil />
         <AppOds />
+        <AppPerfil />
       </Box>
     </>
   );

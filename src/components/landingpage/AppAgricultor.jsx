@@ -20,6 +20,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Logo from "../../assets/logo_semfundo.png";
+import IconPlay from "../../assets/icons/play-button.png";
 
 const buttonStyles = {
   color: "white",
@@ -145,6 +146,7 @@ const AppAgricultor = () => {
             {...buttonStyles}
             w="100%"
             aria-label="Saiba mais sobre a plataforma"
+            onClick={() => navigation("/sobre")}
           >
             Saiba Mais!
           </Button>
@@ -175,7 +177,7 @@ const AppAgricultor = () => {
             _hover={{ bg: "#a98d6c" }}
             aria-label="Assistir vídeo"
           >
-            ▶
+            <Image src={IconPlay} alt="Ícone de Play" role="img" w={"2.5rem"} />
           </Button>
         ) : (
           <Modal

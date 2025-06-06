@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import "../../global-styles.css";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
+import axios from "axios";
 import {
   Box,
   Text,
@@ -12,31 +13,30 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  Alert,
-  AlertIcon,
   Link,
   InputRightElement,
   InputGroup,
   Radio,
   RadioGroup,
   Stack,
+  useToast,
 } from "@chakra-ui/react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
-import IconHidden from "../../assets/icons/hidden.svg";
-import IconVisible from "../../assets/icons/show.png";
 
 const AppLogin = () => {
+  const toast = useToast();
   const [value, setValue] = React.useState("agricultor");
   const [show, setShow] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const handleClick = () => setShow(!show);
   const navigation = useNavigate();
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState("success");
   const {
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm();
 
   useEffect(() => {
@@ -44,69 +44,115 @@ const AppLogin = () => {
     if (token) {
       const userRole = localStorage.getItem("userRole");
       if (userRole === "agricultor") {
-        navigation("/Home");
+        navigation("/perfil");
+        window.location.reload();
       } else if (userRole === "consumidor") {
-        navigation("/Home");
+        navigation("/home");
+        window.location.reload();
       }
     }
   }, [navigation]);
 
   const onSubmit = async (data) => {
     const { email, password, role } = data;
+    setIsLoading(true);
+
     if (role === "consumidor" && value === "agricultor") {
-      setAlertMessage(
-        "Você selecionou o perfil errado. Por favor, escolha 'Agricultor'."
-      );
-      setAlertType("error");
+      toast({
+        title: "Erro",
+        description:
+          "Você selecionou o perfil errado. Por favor, escolha 'Agricultor'.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setIsLoading(false);
       return;
     }
 
     if (role === "agricultor" && value === "consumidor") {
-      setAlertMessage(
-        "Você selecionou o perfil errado. Por favor, escolha 'Consumidor'."
-      );
-      setAlertType("error");
+      toast({
+        title: "Erro",
+        description:
+          "Você selecionou o perfil errado. Por favor, escolha 'Consumidor'.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setIsLoading(false);
       return;
     }
-    const url = import.meta.env.VITE_LOGIN_API_URL;
-    const requestOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password, role }),
-    };
+
+    const API_URL = import.meta.env.VITE_API_URL;
 
     try {
-      const response = await fetch(url, requestOptions);
+      const response = await axios.post(
+        API_URL + "auth/login",
+        { email, password, role },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        setAlertMessage(
-          `Erro: ${response.status} - ${errorText || response.statusText}`
-        );
-        setAlertType("error");
-        return;
-      }
-
-      const responseData = await response.json();
+      const responseData = response.data;
       const token = responseData.token;
       const userName = responseData.username || "Usuário";
+      const userId =
+        responseData.user?.id ||
+        responseData.id ||
+        responseData._id ||
+        responseData.userId;
+
       localStorage.setItem("token", token);
       localStorage.setItem("userRole", role);
       localStorage.setItem("userName", userName);
-      setAlertMessage("Login realizado com sucesso!");
-      setAlertType("success");
+      if (userId) {
+        localStorage.setItem("userId", userId);
+      }
+
+      toast({
+        title: "Sucesso",
+        description: "Login realizado com sucesso!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
       if (role === "agricultor") {
-        navigation("/Home");
+        navigation("/perfil");
+        setTimeout(() => window.location.reload(), 100);
       }
       if (role === "consumidor") {
-        navigation("/Home");
+        navigation("/home");
+        setTimeout(() => window.location.reload(), 100);
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      setAlertMessage("Erro ao fazer login. Tente novamente.");
-      setAlertType("error");
+      let errorMessage =
+        "Erro ao tentar fazer login. Tente novamente mais tarde.";
+      if (error.response) {
+        errorMessage = `Erro: ${error.response.status} - ${
+          error.response.data?.message ||
+          error.response.data?.msg ||
+          error.response.statusText ||
+          "Erro desconhecido da API"
+        }`;
+      } else if (error.request) {
+        errorMessage =
+          "Não foi possível conectar ao servidor. Verifique sua conexão.";
+      }
+
+      toast({
+        title: "Erro",
+        description: errorMessage,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -210,22 +256,20 @@ const AppLogin = () => {
                 />
                 <InputRightElement height={"4rem"} width={"4.5rem"}>
                   <Button
-                    h="100%"
+                    variant="ghost"
                     onClick={handleClick}
-                    background="transparent"
-                    boxSize={"100%"}
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
-                    _hover={{
-                      background: "transparent",
-                    }}
+                    background="transparent"
+                    boxSize={"100%"}
+                    _hover={{ background: "transparent" }}
                   >
-                    <img
-                      src={show ? IconVisible : IconHidden}
-                      alt={show ? "Mostrar senha" : "Ocultar senha"}
-                      style={{ width: "1.5rem", height: "1.5rem" }}
-                    />
+                    {show ? (
+                      <ViewOffIcon color={"#83a11d"} />
+                    ) : (
+                      <ViewIcon color={"#83a11d"} />
+                    )}
                   </Button>
                 </InputRightElement>
               </InputGroup>
@@ -235,55 +279,73 @@ const AppLogin = () => {
             </FormControl>
             <FormControl isInvalid={errors.role}>
               <FormLabel htmlFor="role">Tipo de usuário</FormLabel>
-              <RadioGroup
-                {...register("role", {
-                  required: "Selecione o tipo de usuário",
-                })}
-                onChange={(val) => setValue(val)}
-                value={value}
-              >
-                <Stack
-                  direction="row"
-                  spacing={5}
-                  width={"100%"}
-                  display={"flex"}
-                  justifyContent={"space-around"}
-                >
-                  <Radio
-                    value="agricultor"
-                    _checked={{
-                      bg: "#83a11d",
-                      borderColor: "#83a11d",
-                      color: "white",
+              <Controller
+                name="role"
+                control={control}
+                rules={{ required: "Selecione o tipo de usuário" }}
+                defaultValue={value}
+                render={({ field }) => (
+                  <RadioGroup
+                    {...field}
+                    onChange={(val) => {
+                      setValue(val);
+                      field.onChange(val);
                     }}
+                    value={value}
                   >
-                    <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
-                      Agricultor
-                    </Text>
-                  </Radio>
-                  <Radio
-                    fontSize={{ base: "1rem", md: "1.2rem" }}
-                    value="consumidor"
-                    _checked={{
-                      bg: "#83a11d",
-                      borderColor: "#83a11d",
-                      color: "white",
-                    }}
-                  >
-                    <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
-                      Consumidor
-                    </Text>
-                  </Radio>
-                </Stack>
-              </RadioGroup>
+                    <Stack
+                      direction="row"
+                      spacing={5}
+                      width={"100%"}
+                      display={"flex"}
+                      justifyContent={"space-around"}
+                    >
+                      <Radio
+                        value="agricultor"
+                        _checked={{
+                          bg: "#83a11d",
+                          borderColor: "#83a11d",
+                          color: "white",
+                        }}
+                      >
+                        <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
+                          Agricultor
+                        </Text>
+                      </Radio>
+                      <Radio
+                        fontSize={{ base: "1rem", md: "1.2rem" }}
+                        value="consumidor"
+                        _checked={{
+                          bg: "#83a11d",
+                          borderColor: "#83a11d",
+                          color: "white",
+                        }}
+                      >
+                        <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
+                          Consumidor
+                        </Text>
+                      </Radio>
+                    </Stack>
+                  </RadioGroup>
+                )}
+              />
               <FormErrorMessage>
                 {errors.role && errors.role.message}
               </FormErrorMessage>
             </FormControl>
             <ButtonGroup w={"100%"} gap="1rem" alignItems={"center"}>
-              <Link _hover={{ color: "#c0ab8e" }} fontSize="1rem" width={"30%"}>
+              <Button
+                background={"transparent"}
+                color={"#ffffff"}
+                _hover={{ color: "#c0ab8e" }}
+                fontSize="1rem"
+                width={"30%"}
+                onClick={() => navigation("/esqueci-senha")}
+                aria-label="Esqueci minha senha"
+                
+              >
                 Esqueceu a senha?
-              </Link>
+              </Button>
               <Button
                 type="submit"
                 w={"100%"}
@@ -297,7 +359,7 @@ const AppLogin = () => {
                   color: "#ffffff",
                 }}
                 aria-label="Fazer login"
-                isLoading={false}
+                isLoading={isLoading}
                 loadingText="Fazendo login..."
                 spinnerPlacement="end"
               >
@@ -305,22 +367,6 @@ const AppLogin = () => {
               </Button>
             </ButtonGroup>
           </form>
-          {alertMessage && (
-            <Alert
-              status={alertType}
-              position="absolute"
-              top="0vh"
-              left="50%"
-              transform="translateX(-50%)"
-              zIndex="999"
-              width="80%"
-              maxWidth="400px"
-              color={"black"}
-            >
-              <AlertIcon />
-              {alertMessage}
-            </Alert>
-          )}
         </Box>
       </Box>
     </>

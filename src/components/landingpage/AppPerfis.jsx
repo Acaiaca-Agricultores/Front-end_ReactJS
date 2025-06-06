@@ -111,7 +111,7 @@ const AppPerfis = () => {
               alt={`Foto de ${item.title}`}
               objectFit="cover"
               width={{ base: "100%", md: "180px", lg: "200px" }}
-              height={{ base: "200px", md: "auto" }}
+              height={{ base: "100%", md: "auto" }}
               alignSelf={{ base: "center", md: "stretch" }}
               borderTopLeftRadius={{ base: "xl", md: "xl" }}
               borderBottomLeftRadius={{ base: "0", md: "xl" }}
