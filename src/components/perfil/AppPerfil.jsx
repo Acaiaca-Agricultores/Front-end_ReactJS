@@ -621,14 +621,19 @@ function FarmerProfile() {
               <AppSelect
                 selectedEstado={formData.stateName}
                 setSelectedEstado={(value) =>
-                  setFormData((prev) => ({ ...prev, stateName: value, cityName: "" }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    stateName: value,
+                    cityName: "",
+                  }))
                 }
                 selectedCidade={formData.cityName}
-                setSelectedCidade={(value) => setFormData((prev) => ({ ...prev, cityName: value }))}
+                setSelectedCidade={(value) =>
+                  setFormData((prev) => ({ ...prev, cityName: value }))
+                }
                 toast={toast}
                 labelEstado="Estado"
                 labelCidade="Cidade"
-                isDisabledCidade={!formData.stateName}
               />
             ) : (
               <>

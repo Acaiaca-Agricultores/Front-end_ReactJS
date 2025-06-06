@@ -134,7 +134,7 @@ const AppCadastro = () => {
       password,
       confirmpassword: confirmPassword,
       role,
-      propertyName: role === "agricultor" ? propertyName : undefined,
+      propertyName,
       state: selectedEstado,
       city: selectedCidade,
       phoneNumber: phone,
@@ -144,6 +144,7 @@ const AppCadastro = () => {
         (payload[key] === undefined || payload[key] === "") &&
         delete payload[key]
     );
+    console.log(payload)
 
     try {
       const response = await axios.post(API_URL + "auth/register", payload, {
