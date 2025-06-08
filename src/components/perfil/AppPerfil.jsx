@@ -130,7 +130,7 @@ function FarmerProfile() {
     }
 
     try {
-      const response = await axios.get(`${API_URL}/user/${userId}`, {
+      const response = await axios.get(`${API_URL}user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const farmerData = response.data.user;
@@ -264,7 +264,7 @@ function FarmerProfile() {
 
     try {
       const response = await axios.put(
-        `${API_URL}user/${userId}`,
+        `${API_URL}/user/${userId}`,
         changedData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -367,7 +367,7 @@ function FarmerProfile() {
     }
 
     try {
-      const response = await axios.put(`${API_URL}/user/${userId}/edit`, form, {
+      const response = await axios.put(`${API_URL}user/${userId}/edit`, form, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -703,18 +703,6 @@ function FarmerProfile() {
                     </Button>
                   )}
                 </Box>
-              </FormControl>
-            )}
-            {isEditing && (
-              <FormControl mb={4}>
-                <FormLabel>Nova Senha</FormLabel>
-                <Input
-                  type="password"
-                  placeholder="Digite a nova senha"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  autoComplete="new-password"
-                />
               </FormControl>
             )}
           </VStack>

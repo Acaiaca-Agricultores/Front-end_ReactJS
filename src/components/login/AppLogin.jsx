@@ -87,7 +87,7 @@ const AppLogin = () => {
 
     try {
       const response = await axios.post(
-        API_URL + "/auth/login",
+        API_URL + "auth/login",
         { email, password, role },
         {
           headers: {
@@ -342,7 +342,6 @@ const AppLogin = () => {
                 width={"30%"}
                 onClick={() => navigation("/esqueci-senha")}
                 aria-label="Esqueci minha senha"
-                
               >
                 Esqueceu a senha?
               </Button>
