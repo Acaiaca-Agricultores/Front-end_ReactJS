@@ -342,7 +342,6 @@ const AppLogin = () => {
                 width={"30%"}
                 onClick={() => navigation("/esqueci-senha")}
                 aria-label="Esqueci minha senha"
-                
               >
                 Esqueceu a senha?
               </Button>

@@ -147,7 +147,7 @@ const AppCadastro = () => {
     console.log(payload)
 
     try {
-      const response = await axios.post(API_URL + "auth/register", payload, {
+      const response = await axios.post(API_URL + "/auth/register", payload, {
         headers: { "Content-Type": "application/json" },
       });
 

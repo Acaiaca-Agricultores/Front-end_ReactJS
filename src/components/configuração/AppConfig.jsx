@@ -156,10 +156,11 @@ const AppConfig = () => {
     const API_URL = import.meta.env.VITE_API_URL;
     try {
       await axios.put(
-        `${API_URL}user/${userId}/edit`,
+        `${API_URL}user/${userId}/password`,
         {
-          currentPassword,
+          oldPassword: currentPassword,
           newPassword,
+          confirmPassword,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -368,8 +369,8 @@ const AppConfig = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
-                <Button variant="ghost" onClick={() => setShowNew((v) => !v)}>
-                  {showNew ? (
+                <Button variant="ghost" onClick={() => setShowConfirm((v) => !v)}>
+                  {showConfirm ? (
                     <ViewOffIcon color={"#83a11d"} />
                   ) : (
                     <ViewIcon color={"#83a11d"} />
