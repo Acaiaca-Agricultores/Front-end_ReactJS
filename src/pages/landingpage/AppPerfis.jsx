@@ -51,7 +51,6 @@ const AppPerfis = () => {
       backgroundImage={`url(${BackgroundImage})`}
       backgroundSize="cover"
       backgroundPosition="center"
-      backgroundAttachment="fixed"
       backgroundRepeat="no-repeat"
       position="relative"
       width="100%"

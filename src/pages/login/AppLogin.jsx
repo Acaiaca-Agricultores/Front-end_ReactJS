@@ -98,12 +98,7 @@ const AppLogin = () => {
       const responseData = response.data;
       const token = responseData.token;
       const userName = responseData.username || "Usuário";
-      const userId =
-        responseData.user?.id ||
-        responseData.id ||
-        responseData._id ||
-        responseData.userId;
-
+      const userId = responseData.userId;
       localStorage.setItem("token", token);
       localStorage.setItem("userRole", role);
       localStorage.setItem("userName", userName);
@@ -338,7 +333,7 @@ const AppLogin = () => {
                 color={"#ffffff"}
                 _hover={{ color: "#c0ab8e" }}
                 fontSize="1rem"
-                width={"30%"}
+                width={{ base: "100%", md: "30%" }}
                 onClick={() => navigation("/esqueci-senha")}
                 aria-label="Esqueci minha senha"
               >

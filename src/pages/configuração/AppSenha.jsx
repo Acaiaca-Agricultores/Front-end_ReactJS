@@ -11,9 +11,26 @@ import {
   Link as ChakraLink,
   useToast,
   Spinner,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  FormControl as ModalFormControl,
+  FormLabel as ModalFormLabel,
+  Input as ModalInput,
+  FormErrorMessage as ModalFormError,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+});
 
 export const ForgotPasswordScreen = () => {
   const {
@@ -22,31 +39,78 @@ export const ForgotPasswordScreen = () => {
     formState: { errors, isSubmitting },
   } = useForm();
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    handleSubmit: handleResetSubmit,
+    register: registerReset,
+    formState: { errors: resetErrors, isSubmitting: isResetting },
+  } = useForm();
   const [submissionMessage, setSubmissionMessage] = useState("");
+  const [emailSubmitted, setEmailSubmitted] = useState("");
+  const [userId, setUserId] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const navigate = useNavigate();
 
-  const onSubmit = async (values) => {
-    setSubmissionMessage("");
-    setIsSuccess(false);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    if (values.email === "teste@exemplo.com") {
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  const onSubmit = async ({ email }) => {
+    try {
+      const response = await api.post("user", { email });
+      const { user } = response.data;
+      setEmailSubmitted(email);
+      setUserId(user._id);
+      console.log("Response data:", response.data);
+      setSubmissionMessage(response.data.msg);
       setIsSuccess(true);
-      setSubmissionMessage(
-        "Se este e-mail estiver cadastrado, você receberá um link para redefinir sua senha em breve. Verifique sua caixa de entrada e spam."
-      );
+      onOpen();
       toast({
-        title: "Instruções enviadas!",
-        description: "Verifique seu e-mail.",
+        title: "Sucesso",
         status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: error.response?.data?.msg || error.message,
+        status: "error",
         duration: 5000,
         isClosable: true,
       });
-    } else {
-      setIsSuccess(false);
-      setSubmissionMessage("E-mail não encontrado em nosso sistema.");
+      return;
+    }
+  };
+
+  const onReset = async ({ newPassword, confirmPassword }) => {
+    if (newPassword !== confirmPassword) {
       toast({
-        title: "Erro ao solicitar",
-        description: "O e-mail fornecido não foi encontrado.",
+        title: "Erro",
+        description: "As senhas não coincidem.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+    try {
+      await api.put(`/user/${userId}/reset-password`, {
+        newPassword,
+        confirmPassword,
+      });
+      toast({
+        title: "Sucesso",
+        description: "Senha alterada com sucesso.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      onClose();
+      navigate("/login");
+    } catch (err) {
+      toast({
+        title: "Erro",
+        description:
+          err.response?.data?.msg || err.message || "Algo deu errado.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -134,6 +198,63 @@ export const ForgotPasswordScreen = () => {
               {submissionMessage}
             </Text>
           )}
+
+          <Modal isOpen={isOpen} onClose={onClose} isCentered>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Alterar Senha</ModalHeader>
+              <ModalBody>
+                <form onSubmit={handleResetSubmit(onReset)}>
+                  <ModalFormControl isInvalid={resetErrors.newPassword} mb={4}>
+                    <ModalFormLabel htmlFor="newPassword">
+                      Nova Senha
+                    </ModalFormLabel>
+                    <ModalInput
+                      id="newPassword"
+                      type="password"
+                      {...registerReset("newPassword", {
+                        required: "Informe a nova senha",
+                      })}
+                    />
+                    <ModalFormError>
+                      {resetErrors.newPassword &&
+                        resetErrors.newPassword.message}
+                    </ModalFormError>
+                  </ModalFormControl>
+                  <ModalFormControl
+                    isInvalid={resetErrors.confirmPassword}
+                    mb={4}
+                  >
+                    <ModalFormLabel htmlFor="confirmPassword">
+                      Confirme a Senha
+                    </ModalFormLabel>
+                    <ModalInput
+                      id="confirmPassword"
+                      type="password"
+                      {...registerReset("confirmPassword", {
+                        required: "Confirme a senha",
+                      })}
+                    />
+                    <ModalFormError>
+                      {resetErrors.confirmPassword &&
+                        resetErrors.confirmPassword.message}
+                    </ModalFormError>
+                  </ModalFormControl>
+                  <ModalFooter>
+                    <Button
+                      colorScheme="green"
+                      mr={3}
+                      isLoading={isResetting}
+                      type="submit"
+                    >
+                      Alterar
+                    </Button>
+                    <Button onClick={onClose}>Cancelar</Button>
+                  </ModalFooter>
+                </form>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
 
           <Text textAlign="center" mt={4}>
             Lembrou a senha?{" "}

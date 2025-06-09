@@ -9,14 +9,14 @@ import Footer from "../components/footer/AppFooter.jsx";
 import AppRouters from "./routers.jsx";
 import AppButton from "../pages/landingpage/AppButton.jsx";
 import AppChat from "../components/chat/AppChat.jsx";
-import UserChat from "../components/chat/UserChat.jsx";
+// import UserChat from "../components/chat/UserChat.jsx";
 
 function App() {
   const location = useLocation();
 
   return (
     <>
-      <UserChat />
+      {/* <UserChat /> */}
       <AppChat />
       {location.pathname !== "/404" && <Header display="flex" />}
       <AppRouters />

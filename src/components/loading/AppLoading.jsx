@@ -8,7 +8,7 @@ import sowingSeeds from "../../assets/loading/sowing-seeds.mp4";
 import vegetables from "../../assets/loading/vegetables.mp4";
 import wheat from "../../assets/loading/wheat.mp4";
 
-import { Center, Heading } from "@chakra-ui/react";
+import { Center } from "@chakra-ui/react";
 
 function getRandomLoadingVideo() {
   const videos = [
