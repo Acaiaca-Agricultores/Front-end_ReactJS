@@ -4,12 +4,12 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter, useLocation } from "react-router-dom";
 import VLibras from "@djpfs/react-vlibras";
 
-import Header from "./components/header/AppHeader.jsx";
-import Footer from "./components/footer/AppFooter.jsx";
+import Header from "../components/header/AppHeader.jsx";
+import Footer from "../components/footer/AppFooter.jsx";
 import AppRouters from "./routers.jsx";
-import AppButton from "./components/landingpage/AppButton.jsx";
-import AppChat from "./components/chat/AppChat.jsx";
-import UserChat from "./components/chat/UserChat.jsx";
+import AppButton from "../pages/landingpage/AppButton.jsx";
+import AppChat from "../components/chat/AppChat.jsx";
+import UserChat from "../components/chat/UserChat.jsx";
 
 function App() {
   const location = useLocation();

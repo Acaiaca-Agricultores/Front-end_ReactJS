@@ -30,7 +30,7 @@ import {
 import axios from "axios";
 import { Typewriter } from "react-simple-typewriter";
 import ImagemFeira from "../../assets/feira.jpg";
-import AppLoading from "../loading/AppLoading";
+import AppLoading from "../../components/loading/AppLoading";
 import { useNavigate } from "react-router-dom";
 import AppSelect from "../configuração/AppSelect";
 

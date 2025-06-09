@@ -1,14 +1,14 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
-import LandingPageApp from "./components/landingpage/app.jsx";
-import AppAbout from "./components/landingpage/AppAbout.jsx";
-import AppLogin from "./components/login/AppLogin.jsx";
-import AppHome from "./components/home/AppHome.jsx";
-import AppPage404 from "./components/pagina 404/AppPage404.jsx";
-import AppCadastro from "./components/cadastro/AppCadastro.jsx";
-import AppConfig from "./components/configuração/AppConfig.jsx";
-import AppPerfil from "./components/perfil/AppPerfil.jsx";
-import AppSenha from "./components/configuração/AppSenha.jsx";
+import LandingPageApp from "../pages/landingpage/app.jsx";
+import AppAbout from "../pages/landingpage/AppAbout.jsx";
+import AppLogin from "../pages/login/AppLogin.jsx";
+import AppHome from "../pages/home/AppHome.jsx";
+import AppPage404 from "../pages/pagina 404/AppPage404.jsx";
+import AppCadastro from "../pages/cadastro/AppCadastro.jsx";
+import AppConfig from "../pages/configuração/AppConfig.jsx";
+import AppPerfil from "../pages/perfil/AppPerfil.jsx";
+import AppSenha from "../pages/configuração/AppSenha.jsx";
 
 const AppRouters = () => {
   return (

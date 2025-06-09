@@ -21,13 +21,13 @@ import {
 import { SearchIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { Typewriter } from "react-simple-typewriter";
 import { useEffect, useState } from "react";
-import AppCarrossel from "../carrossel/AppCarrossel";
-import dataFruits from "../services/dataCardFruits.json";
-import dataLegumes from "../services/dataCardLegu.json";
-import dataVerduras from "../services/dataCardVerd.json";
-import dataAgricultores from "../services/dataCardAgri.json";
+import AppCarrossel from "../../components/carrossel/AppCarrossel";
+import dataFruits from "../../services/dataCardFruits.json";
+import dataLegumes from "../../services/dataCardLegu.json";
+import dataVerduras from "../../services/dataCardVerd.json";
+import dataAgricultores from "../../services/dataCardAgri.json";
 import ImagemFeira from "../../assets/feira.jpg";
-import AppLoading from "../loading/AppLoading";
+import AppLoading from "../../components/loading/AppLoading";
 import { useNavigate } from "react-router-dom";
 
 const AppAgriHome = () => {

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import "../../global-styles.css";
+import "../../styles/global-styles.css";
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
@@ -13,7 +13,6 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  Link,
   InputRightElement,
   InputGroup,
   Radio,
