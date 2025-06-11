@@ -12,8 +12,12 @@ import {
 } from "@chakra-ui/react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { useNavigate } from "react-router-dom";
 
 const AppCarrossel = ({ data, title }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
+  const navigation = useNavigate();
+
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
@@ -131,6 +135,9 @@ const AppCarrossel = ({ data, title }) => {
                 <Button
                   {...buttonStyles}
                   aria-label={`Saiba mais sobre ${item.title}`}
+                  onClick={() =>
+                    item._isAgricultor && navigation(`/perfil/${item.id}`)
+                  }
                 >
                   Saiba Mais
                 </Button>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -89,6 +90,7 @@ const getProfileImageUrl = (imgPath) => {
 };
 
 function FarmerProfile() {
+  const { userId: paramUserId } = useParams();
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [userName, setUserName] = useState("");
@@ -116,21 +118,21 @@ function FarmerProfile() {
     setIsLoading(true);
     setError(null);
     const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
+    const userIdToFetch = paramUserId || localStorage.getItem("userId");
     const storedUserName = localStorage.getItem("username");
 
     if (storedUserName) {
       setUserName(storedUserName);
     }
 
-    if (!token || !userId) {
+    if (!token || !userIdToFetch) {
       setError("Token ou ID do usuário não encontrado. Faça login novamente.");
       setIsLoading(false);
       return;
     }
 
     try {
-      const response = await axios.get(`${API_URL}/user/${userId}`, {
+      const response = await axios.get(`${API_URL}/user/${userIdToFetch}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const farmerData = response.data.user;
@@ -183,7 +185,7 @@ function FarmerProfile() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [paramUserId]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");

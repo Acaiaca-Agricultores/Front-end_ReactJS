@@ -15,6 +15,7 @@ const AppRouters = () => {
     <Routes>
       <Route path="/home" element={<AppHome />} />
       <Route path="/perfil" element={<AppPerfil />} />
+      <Route path="/perfil/:userId" element={<AppPerfil />} />
       <Route path="*" element={<Navigate to="/404" />} />
       <Route path="/404" element={<AppPage404 />} />
       <Route path="/" element={<LandingPageApp />} />
