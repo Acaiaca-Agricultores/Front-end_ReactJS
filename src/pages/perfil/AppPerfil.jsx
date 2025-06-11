@@ -130,7 +130,7 @@ function FarmerProfile() {
     }
 
     try {
-      const response = await axios.get(`${API_URL}user/${userId}`, {
+      const response = await axios.get(`${API_URL}/user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const farmerData = response.data.user;
@@ -367,7 +367,7 @@ function FarmerProfile() {
     }
 
     try {
-      const response = await axios.put(`${API_URL}user/${userId}/edit`, form, {
+      const response = await axios.put(`${API_URL}/user/${userId}/edit`, form, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

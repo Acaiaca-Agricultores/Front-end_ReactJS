@@ -22,23 +22,21 @@ import { SearchIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { Typewriter } from "react-simple-typewriter";
 import { useEffect, useState } from "react";
 import AppCarrossel from "../../components/carrossel/AppCarrossel";
-import dataFruits from "../../services/dataCardFruits.json";
-import dataLegumes from "../../services/dataCardLegu.json";
-import dataVerduras from "../../services/dataCardVerd.json";
-import dataAgricultores from "../../services/dataCardAgri.json";
 import ImagemFeira from "../../assets/feira.jpg";
 import AppLoading from "../../components/loading/AppLoading";
 import { useNavigate } from "react-router-dom";
 
 const AppAgriHome = () => {
   const navigate = useNavigate();
+
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState("");
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
   const [ordemPreco, setOrdemPreco] = useState("");
   const [termoDePesquisa, setTermoDePesquisa] = useState("");
   const [loading, setLoading] = useState(true);
-
+  const [allProducts, setAllProducts] = useState([]);
+  const [agricultores, setAgricultores] = useState([]);
   const categories = [
     { label: "Todas", value: "Todos" },
     { label: "Agricultores", value: "Agricultores" },
@@ -47,10 +45,13 @@ const AppAgriHome = () => {
     { label: "Legumes", value: "Legumes" },
   ];
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
+      return;
     }
     const storedName =
       localStorage.getItem("userName") || localStorage.getItem("username");
@@ -61,9 +62,90 @@ const AppAgriHome = () => {
     if (storedUserId) {
       setUserId(storedUserId);
     }
-    setTimeout(() => {
-      setLoading(false);
-    }, 800);
+
+    const fetchProducts = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/login");
+          return;
+        }
+        const [response, responseAgri] = await Promise.all([
+          fetch(API_URL + "/products", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          fetch(`${API_URL}/user/agricultores`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        if (response.status === 401 || response.status === 403) {
+          console.error(
+            "Token inválido ou expirado. Redirecionando para o login."
+          );
+          navigate("/login");
+          return;
+        }
+        if (!response.ok) {
+          throw new Error(
+            `Falha na requisição de produtos com status: ${response.status}`
+          );
+        }
+        const data = await response.json();
+        const mappedData = data.map((product) => ({
+          id: product._id,
+          title: product.name,
+          description: product.description,
+          price: product.price,
+          image: product.image,
+          category: product.category,
+          agricultor: {
+            id: product.userId._id,
+            name: product.userId.username,
+            location: `${product.userId.cityName}, ${product.userId.stateName}`,
+            image: product.userId.imageProfile,
+          },
+          _isAgricultor: false,
+        }));
+        setAllProducts(mappedData);
+
+        if (responseAgri.ok) {
+          const dataAgri = await responseAgri.json();
+          const mappedAgriWithProducts = dataAgri.map((user) => {
+            const imgPath = user.imageProfile;
+            const imageUrl = imgPath.startsWith("http")
+              ? imgPath
+              : `${API_URL}${imgPath}`;
+            const productsByUser = mappedData.filter(
+              (prod) => prod.agricultor.id === user._id
+            );
+            return {
+              id: user._id,
+              title: user.username,
+              description: `${user.cityName}, ${user.stateName}`,
+              propertyName: user.propertyName,
+              typeProducts: user.typeProducts,
+              image: imageUrl,
+              createdAt: user.createdAt,
+              updatedAt: user.updatedAt,
+              __v: user.__v,
+              _isAgricultor: true,
+              products: productsByUser,
+            };
+          });
+          setAgricultores(mappedAgriWithProducts);
+        } else {
+          console.error("Erro ao buscar agricultores:", responseAgri.status);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
   }, [navigate]);
 
   const normalizeString = (str) => {
@@ -71,43 +153,33 @@ const AppAgriHome = () => {
     return str
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\\u0300-\\u036f]/g, "");
+      .replace(/[\u0300-\u036f]/g, "");
   };
 
   const getCategoriaData = () => {
     let data;
+
     switch (categoriaSelecionada) {
       case "Todos":
-        data = [
-          ...dataFruits,
-          ...dataLegumes,
-          ...dataVerduras,
-          ...dataAgricultores.agricultores.map((item) => ({
-            title: item.nome,
-            description: item.localizacao,
-            price: item.produtos ? item.produtos.join(", ") : "",
-            image: item.imagem,
-            _isAgricultor: true,
-          })),
-        ];
+        data = allProducts;
         break;
       case "Frutas":
-        data = dataFruits;
+        data = allProducts.filter(
+          (item) => item.category.toLowerCase() === "fruta"
+        );
         break;
       case "Legumes":
-        data = dataLegumes;
+        data = allProducts.filter(
+          (item) => item.category.toLowerCase() === "legume"
+        );
         break;
       case "Verduras":
-        data = dataVerduras;
+        data = allProducts.filter(
+          (item) => item.category.toLowerCase() === "verdura"
+        );
         break;
       case "Agricultores":
-        data = dataAgricultores.agricultores.map((item) => ({
-          title: item.nome,
-          description: item.localizacao,
-          price: item.produtos ? item.produtos.join(", ") : "",
-          image: item.imagem,
-          _isAgricultor: true,
-        }));
+        data = agricultores;
         break;
       default:
         data = [];
@@ -124,12 +196,8 @@ const AppAgriHome = () => {
 
     if (ordemPreco && categoriaSelecionada !== "Agricultores") {
       data = [...data].sort((a, b) => {
-        const precoA = parseFloat(
-          (a.price || "").replace(/[^0-9,.-]+/g, "").replace(",", ".")
-        );
-        const precoB = parseFloat(
-          (b.price || "").replace(/[^0-9,.-]+/g, "").replace(",", ".")
-        );
+        const precoA = parseFloat(a.price);
+        const precoB = parseFloat(b.price);
         if (isNaN(precoA) || isNaN(precoB)) return 0;
         if (ordemPreco === "crescente") return precoA - precoB;
         if (ordemPreco === "decrescente") return precoB - precoA;
@@ -207,11 +275,11 @@ const AppAgriHome = () => {
           padding={{ base: "2rem", md: "2rem 0" }}
         >
           <GridItem
-            colSpan={4}
+            colSpan={{ base: 4, md: 1 }}
             display={{ base: "block", md: "none" }}
             mb={4}
-            paddingLeft={{ base: "0", md: "2rem" }}
-            paddingRight={{ base: "0", md: "2rem" }}
+            paddingLeft={{ base: "2rem", md: "0" }}
+            paddingRight={{ base: "2rem", md: "0" }}
           >
             <Menu>
               <MenuButton
@@ -223,7 +291,7 @@ const AppAgriHome = () => {
                 border={"2px solid #83a11d"}
                 width="100%"
               />
-              <MenuList zIndex={3} width={"348px;"}>
+              <MenuList zIndex={3}>
                 <MenuItem
                   isDisabled
                   color="#83a11d"
@@ -260,7 +328,6 @@ const AppAgriHome = () => {
               </MenuList>
             </Menu>
           </GridItem>
-
           <GridItem
             colSpan={1}
             rowSpan={{ base: 1, md: 5 }}
@@ -316,7 +383,6 @@ const AppAgriHome = () => {
               ))}
             </UnorderedList>
           </GridItem>
-
           <GridItem
             gap={"1rem"}
             display={"flex"}
@@ -325,6 +391,7 @@ const AppAgriHome = () => {
             colStart={{ base: 1, md: 2 }}
             colSpan={{ base: 4, md: 4 }}
             mt={{ base: 4, md: 0 }}
+            padding={{ base: "0 2rem", md: "0" }}
           >
             <Menu>
               <MenuButton
@@ -366,66 +433,67 @@ const AppAgriHome = () => {
               </InputRightAddon>
             </InputGroup>
           </GridItem>
-          {categoriaSelecionada === "Todos" ||
-          categoriaSelecionada === "Frutas" ? (
-            <GridItem colSpan={4}>
-              <AppCarrossel
-                data={
-                  categoriaSelecionada === "Frutas"
-                    ? getCategoriaData()
-                    : getCategoriaData().filter((item) =>
-                        dataFruits.includes(item)
-                      )
-                }
-                title="Frutas"
-              />
+          {categoriaSelecionada === "Todos" && termoDePesquisa.trim() !== "" ? (
+            <GridItem colSpan={4} padding={{ base: "0 2rem", md: "0" }}>
+              <AppCarrossel data={getCategoriaData()} title="Resultados" />
             </GridItem>
-          ) : null}
-          {categoriaSelecionada === "Todos" ||
-          categoriaSelecionada === "Legumes" ? (
-            <GridItem colSpan={4}>
-              <AppCarrossel
-                data={
-                  categoriaSelecionada === "Legumes"
-                    ? getCategoriaData()
-                    : getCategoriaData().filter((item) =>
-                        dataLegumes.includes(item)
-                      )
-                }
-                title="Legumes"
-              />
-            </GridItem>
-          ) : null}
-          {categoriaSelecionada === "Todos" ||
-          categoriaSelecionada === "Verduras" ? (
-            <GridItem colSpan={4}>
-              <AppCarrossel
-                data={
-                  categoriaSelecionada === "Verduras"
-                    ? getCategoriaData()
-                    : getCategoriaData().filter((item) =>
-                        dataVerduras.includes(item)
-                      )
-                }
-                title="Verduras"
-              />
-            </GridItem>
-          ) : null}
-          {categoriaSelecionada === "Todos" ||
-          categoriaSelecionada === "Agricultores" ? (
-            <GridItem colSpan={4}>
-              <AppCarrossel
-                data={
-                  categoriaSelecionada === "Agricultores"
-                    ? getCategoriaData()
-                    : getCategoriaData().filter(
-                        (item) => item._isAgricultor === true
-                      )
-                }
-                title="Agricultores"
-              />
-            </GridItem>
-          ) : null}
+          ) : (
+            <>
+              {(categoriaSelecionada === "Todos" ||
+                categoriaSelecionada === "Frutas") && (
+                <GridItem colSpan={4} padding={{ base: "0 2rem", md: "0" }}>
+                  <AppCarrossel
+                    data={getCategoriaData().filter(
+                      (p) => p.category.toLowerCase() === "fruta"
+                    )}
+                    title="Frutas"
+                  />
+                </GridItem>
+              )}
+
+              {(categoriaSelecionada === "Todos" ||
+                categoriaSelecionada === "Legumes") && (
+                <GridItem colSpan={4} padding={{ base: "0 2rem", md: "0" }}>
+                  <AppCarrossel
+                    data={getCategoriaData().filter(
+                      (p) => p.category.toLowerCase() === "legume"
+                    )}
+                    title="Legumes"
+                  />
+                </GridItem>
+              )}
+
+              {(categoriaSelecionada === "Todos" ||
+                categoriaSelecionada === "Verduras") && (
+                <GridItem colSpan={4} padding={{ base: "0 2rem", md: "0" }}>
+                  <AppCarrossel
+                    data={getCategoriaData().filter(
+                      (p) => p.category.toLowerCase() === "verdura"
+                    )}
+                    title="Verduras"
+                  />
+                </GridItem>
+              )}
+
+              {(categoriaSelecionada === "Todos" ||
+                categoriaSelecionada === "Agricultores") && (
+                <GridItem colSpan={4} padding={{ base: "0 2rem", md: "0" }}>
+                  <AppCarrossel
+                    data={
+                      categoriaSelecionada === "Agricultores"
+                        ? getCategoriaData()
+                        : agricultores.filter((item) =>
+                            normalizeString(item.title).includes(
+                              normalizeString(termoDePesquisa)
+                            )
+                          )
+                    }
+                    title="Agricultores"
+                  />
+                </GridItem>
+              )}
+            </>
+          )}
         </Grid>
       </Box>
     </>

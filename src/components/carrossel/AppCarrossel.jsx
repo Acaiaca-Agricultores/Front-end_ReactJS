@@ -91,7 +91,7 @@ const AppCarrossel = ({ data, title }) => {
                 mb={4}
               />
               <Stack spacing="3" flex="1 1 auto">
-                <Heading size="md" noOfLines={2}>
+                <Heading size="2rem" noOfLines={2}>
                   {item.title}
                 </Heading>
                 <Text color="gray.600" fontSize="sm" noOfLines={3}>
@@ -99,13 +99,30 @@ const AppCarrossel = ({ data, title }) => {
                 </Text>
                 <Text
                   color="#52601A"
-                  fontSize="xl"
+                  fontSize="md"
                   fontWeight="medium"
                   mt="auto"
                   pt="2"
                 >
-                  {item.price}
+                  {item._isAgricultor
+                    ? `Propriedade: ${item.propertyName}`
+                    : typeof item.price === "number"
+                    ? new Intl.NumberFormat("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      }).format(item.price)
+                    : item.price}
                 </Text>
+                {item._isAgricultor && (
+                  <Text color="gray.600" fontSize="sm" noOfLines={2} mt="1">
+                    Categorias:{" "}
+                    {item.products?.length > 0
+                      ? Array.from(
+                          new Set(item.products.map((p) => p.category))
+                        ).join(", ")
+                      : "—"}
+                  </Text>
+                )}
               </Stack>
             </CardBody>
             <Divider borderColor="gray.200" />
