@@ -180,7 +180,7 @@ function FarmerProfile() {
       );
       setError(
         err.response?.data?.msg ||
-          "Falha ao carregar dados do perfil. Tente novamente."
+        "Falha ao carregar dados do perfil. Tente novamente."
       );
     } finally {
       setIsLoading(false);
@@ -318,7 +318,7 @@ function FarmerProfile() {
       }
       setError(
         err.response?.data?.msg ||
-          "Falha ao atualizar o perfil. Tente novamente."
+        "Falha ao atualizar o perfil. Tente novamente."
       );
       toast({
         title: "Erro ao Atualizar",
@@ -425,7 +425,7 @@ function FarmerProfile() {
       }
       setError(
         err.response?.data?.msg ||
-          "Falha ao atualizar o perfil. Tente novamente."
+        "Falha ao atualizar o perfil. Tente novamente."
       );
       toast({
         title: "Erro ao Atualizar",
@@ -521,9 +521,8 @@ function FarmerProfile() {
           <Heading as="h1" size="xl" fontWeight="bold">
             <Typewriter
               words={[
-                `Olá, ${
-                  userName ||
-                  (role === "consumidor" ? "Consumidor" : "Agricultor")
+                `Olá, ${userName ||
+                (role === "consumidor" ? "Consumidor" : "Agricultor")
                 }!`,
               ]}
               loop={1}
