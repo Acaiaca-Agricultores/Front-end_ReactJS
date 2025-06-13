@@ -6,9 +6,56 @@ import {
   Textarea,
   Button,
   Text,
+  useToast,
 } from "@chakra-ui/react";
+import { useState } from "react";
+
+const API_URL = "http://localhost:8080/sending-email";
 
 const AppForms = () => {
+  const toast = useToast();
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [mensagem, setMensagem] = useState("");
+  const [titulo, setTitulo] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      ownerRef: nome,
+      emailFrom: email,
+      emailTo: "alissonsartori33@gmail.com",
+      title: titulo,
+      text: mensagem,
+    };
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        toast({
+          title: "Mensagem enviada com sucesso",
+          status: "success",
+          duration: 3000,
+        });
+        setNome("");
+        setEmail("");
+        setMensagem("");
+        setTitulo("");
+      } else {
+        toast({
+          title: "Erro ao enviar mensagem",
+          status: "error",
+          duration: 3000,
+        });
+      }
+    } catch (err) {
+      toast({ title: "Erro de rede", status: "error", duration: 3000 });
+    }
+  };
+
   return (
     <Box
       id="appforms"
@@ -38,13 +85,19 @@ const AppForms = () => {
         <Text as={"h1"} color={"#ffffff"} textAlign={"center"} fontSize="2xl">
           Fomulário de Contato
         </Text>
-        <form role="form" aria-label="Formulário de contato">
+        <form
+          role="form"
+          aria-label="Formulário de contato"
+          onSubmit={handleSubmit}
+        >
           <FormControl id="nome" mb={4} isRequired>
             <FormLabel htmlFor="nome">Nome</FormLabel>
             <Input
               type="text"
               id="nome"
               name="nome"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
               placeholder="Seu nome"
               _placeholder={{ color: "#b0b0b0" }}
               border={"2px solid  #83a11d"}
@@ -62,6 +115,8 @@ const AppForms = () => {
               type="email"
               id="email"
               name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Seu email"
               _placeholder={{ color: "#b0b0b0" }}
               border={"2px solid  #83a11d"}
@@ -73,11 +128,31 @@ const AppForms = () => {
               }}
             />
           </FormControl>
+          <FormControl id="titulo" mb={4} isRequired>
+            <FormLabel htmlFor="titulo">Titulo</FormLabel>
+            <Input
+              type="text"
+              id="titulo"
+              name="titulo"
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
+              placeholder="Seu título"
+              _placeholder={{ color: "#b0b0b0" }}
+              border={"2px solid  #83a11d"}
+              aria-required="true"
+              _focus={{
+                borderColor: "#c0ab8e",
+                boxShadow: "0 0 0 1px #e5d1b0",
+              }}
+            />
+          </FormControl>
           <FormControl id="mensagem" mb={4} isRequired>
             <FormLabel htmlFor="mensagem">Mensagem</FormLabel>
             <Textarea
               id="mensagem"
               name="mensagem"
+              value={mensagem}
+              onChange={(e) => setMensagem(e.target.value)}
               placeholder="Digite sua mensagem"
               _placeholder={{ color: "#b0b0b0" }}
               rows={5}
