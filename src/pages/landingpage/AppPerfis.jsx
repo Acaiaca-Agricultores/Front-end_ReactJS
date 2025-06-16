@@ -22,7 +22,7 @@ import RamonImagem from "../../assets/fotosPerfis/ramon.png";
 import YasminImagem from "../../assets/fotosPerfis/yasmin.png";
 import BackgroundImage from "../../assets/background-perfil.jpg";
 
-import dataCardRaw from "../services/dataCard.json";
+import dataCardRaw from "../../services/dataCard.json";
 
 const imageMap = {
   AlissonImagem,
@@ -51,7 +51,6 @@ const AppPerfis = () => {
       backgroundImage={`url(${BackgroundImage})`}
       backgroundSize="cover"
       backgroundPosition="center"
-      backgroundAttachment="fixed"
       backgroundRepeat="no-repeat"
       position="relative"
       width="100%"

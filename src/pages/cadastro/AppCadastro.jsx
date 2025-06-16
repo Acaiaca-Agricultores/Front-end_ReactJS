@@ -144,7 +144,6 @@ const AppCadastro = () => {
         (payload[key] === undefined || payload[key] === "") &&
         delete payload[key]
     );
-    console.log(payload)
 
     try {
       const response = await axios.post(API_URL + "/auth/register", payload, {
@@ -374,6 +373,7 @@ const AppCadastro = () => {
                     <Input
                       id="confirmPassword"
                       type={showConfirm ? "text" : "password"}
+                      autoComplete="new-password"
                       placeholder="Confirme sua senha"
                       _placeholder={{ color: "#b0b0b0" }}
                       border={"2px solid  #83a11d"}

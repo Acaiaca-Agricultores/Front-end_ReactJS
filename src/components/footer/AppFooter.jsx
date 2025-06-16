@@ -72,7 +72,7 @@ const Footer = () => {
             <Text fontSize="sm">Instagram</Text>
           </Link>
           <Link
-            href="#"
+            href="https://www.linkedin.com/company/acaiac%C3%A1/"
             display="flex"
             alignItems="center"
             gap="0.3rem"

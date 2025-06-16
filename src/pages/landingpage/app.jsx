@@ -4,6 +4,7 @@ import AppAgricultor from "./AppAgricultor";
 import AppTechPlat from "./AppTecPlat";
 import AppSubs from "./AppSubs";
 import AppForms from "./AppForms";
+import AppTestimonials from "./AppTestimonials";
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
       <AppAgricultor />
       <AppTechPlat />
       <AppSubs />
+      <AppTestimonials />
       <AppForms />
     </>
   );

@@ -79,7 +79,7 @@ const AppConfig = () => {
     const API_URL = import.meta.env.VITE_API_URL;
 
     try {
-      await axios.delete(`${API_URL}user/${userId}`, {
+      await axios.delete(`${API_URL}/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -156,7 +156,7 @@ const AppConfig = () => {
     const API_URL = import.meta.env.VITE_API_URL;
     try {
       await axios.put(
-        `${API_URL}user/${userId}/password`,
+        `${API_URL}/user/${userId}/password`,
         {
           oldPassword: currentPassword,
           newPassword,
@@ -369,7 +369,10 @@ const AppConfig = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
-                <Button variant="ghost" onClick={() => setShowConfirm((v) => !v)}>
+                <Button
+                  variant="ghost"
+                  onClick={() => setShowConfirm((v) => !v)}
+                >
                   {showConfirm ? (
                     <ViewOffIcon color={"#83a11d"} />
                   ) : (

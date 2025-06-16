@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import "../../global-styles.css";
+import "../../styles/global-styles.css";
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
@@ -13,7 +13,6 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  Link,
   InputRightElement,
   InputGroup,
   Radio,
@@ -87,7 +86,7 @@ const AppLogin = () => {
 
     try {
       const response = await axios.post(
-        API_URL + "auth/login",
+        API_URL + "/auth/login",
         { email, password, role },
         {
           headers: {
@@ -99,15 +98,11 @@ const AppLogin = () => {
       const responseData = response.data;
       const token = responseData.token;
       const userName = responseData.username || "Usuário";
-      const userId =
-        responseData.user?.id ||
-        responseData.id ||
-        responseData._id ||
-        responseData.userId;
-
+      const userId = responseData.userId;
       localStorage.setItem("token", token);
       localStorage.setItem("userRole", role);
       localStorage.setItem("userName", userName);
+      localStorage.setItem("email", email); // Salva o email do login
       if (userId) {
         localStorage.setItem("userId", userId);
       }
@@ -339,7 +334,7 @@ const AppLogin = () => {
                 color={"#ffffff"}
                 _hover={{ color: "#c0ab8e" }}
                 fontSize="1rem"
-                width={"30%"}
+                width={{ base: "100%", md: "30%" }}
                 onClick={() => navigation("/esqueci-senha")}
                 aria-label="Esqueci minha senha"
               >
