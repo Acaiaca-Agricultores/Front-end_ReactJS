@@ -24,6 +24,7 @@ import {
   TabPanels,
   Tabs,
   Tag,
+  Textarea,
 } from "@chakra-ui/react";
 import {
   EditIcon,
@@ -122,6 +123,7 @@ function AppPerfil() {
     stateName: "",
     phoneNumber: "",
     imageProfile: "",
+    historia: "",
   });
   const [selectedImage, setSelectedImage] = useState(null);
   const [newPassword, setNewPassword] = useState("");
@@ -131,8 +133,8 @@ function AppPerfil() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loggedInUserId = localStorage.getItem("userId");
-  const canEditCurrentProfile = !id || id === loggedInUserId; // This determines if the viewer is the owner
-  const userIdToFetch = id || loggedInUserId; // This is the ID of the profile being viewed
+  const canEditCurrentProfile = !id || id === loggedInUserId;
+  const userIdToFetch = id || loggedInUserId;
 
   const fetchUserData = useCallback(async () => {
     setIsLoading(true);
@@ -159,6 +161,7 @@ function AppPerfil() {
         stateName: farmerData.stateName || "",
         phoneNumber: farmerData.phoneNumber || "",
         imageProfile: farmerData.imageProfile || "",
+        historia: farmerData.historia || "",
       });
       if (farmerData.username) {
         localStorage.setItem("username", farmerData.username);
@@ -224,6 +227,7 @@ function AppPerfil() {
         stateName: userData.stateName || "",
         phoneNumber: userData.phoneNumber || "",
         imageProfile: userData.imageProfile || "",
+        historia: userData.historia || "",
       });
       setSelectedImage(null);
     }
@@ -240,7 +244,11 @@ function AppPerfil() {
     let hasChanges = false;
     Object.keys(formData).forEach((key) => {
       if (formData[key] !== userData[key] && key !== "imageProfile") {
-        form.append(key, formData[key]);
+        if (key === "historia") {
+          form.append("historia", formData["historia"]);
+        } else {
+          form.append(key, formData[key]);
+        }
         hasChanges = true;
       }
     });
@@ -302,13 +310,7 @@ function AppPerfil() {
   if (error && !userData) {
     return (
       <Center height="80vh" bg="white" color="black">
-        <Box
-          p={8}
-          borderWidth={1}
-          borderRadius="lg"
-          bg="#EDD1AF"
-          color="white"
-        >
+        <Box p={8} borderWidth={1} borderRadius="lg" bg="#EDD1AF" color="white">
           <Alert status="error" borderRadius="md" bg="red.500">
             <AlertIcon color="white" />
             {error}
@@ -421,10 +423,29 @@ function AppPerfil() {
               {userData.role === "consumidor" ? "Consumidor" : "Agricultor"}
             </Tag>
           </VStack>
-          <Text color="gray.400" fontSize="sm">
-            Bem-vindo(a) ao seu painel! Aqui você pode gerenciar suas
-            informações.
-          </Text>
+          {isEditing ? (
+            <Textarea
+              name="historia"
+              value={formData.historia}
+              onChange={handleInputChange}
+              placeholder="Conte um pouco da sua história..."
+              color="black"
+              bg="transparent"
+              border={"2px solid  #83a11d"}
+              _hover={{ border: "2px solid  #83a11d" }}
+              _focus={{
+                borderColor: "#c0ab8e",
+                boxShadow: "0 0 0 1px #e5d1b0",
+              }}
+              display="flex"
+              fontSize="sm"
+              minH="60px"
+            />
+          ) : (
+            <Text color="gray.400" fontSize="sm" display="block">
+              {userData.historia}
+            </Text>
+          )}
         </VStack>
         <Box as="main" flex={1} w="100%" mt={{ base: 4, lg: 0 }}>
           <Tabs variant="unstyled">
@@ -439,16 +460,18 @@ function AppPerfil() {
               >
                 Meu Perfil
               </Tab>
-              <Tab
-                _selected={{
-                  color: "white",
-                  bg: "#52601A",
-                  borderRadius: "lg",
-                }}
-                color="gray.400"
-              >
-                Meus Produtos
-              </Tab>
+              {userData.role !== "consumidor" && (
+                <Tab
+                  _selected={{
+                    color: "white",
+                    bg: "#52601A",
+                    borderRadius: "lg",
+                  }}
+                  color="gray.400"
+                >
+                  Meus Produtos
+                </Tab>
+              )}
             </TabList>
             <TabPanels mt={6}>
               <TabPanel p={0}>
@@ -551,11 +574,21 @@ function AppPerfil() {
                   </form>
                 </Box>
               </TabPanel>
-              <TabPanel>
-                <Center boxShadow="xl" borderRadius="lg" background={"#EDD1AF"} p={6}>
-                  <AppProducts isOwner={canEditCurrentProfile} viewedUserId={userIdToFetch} />
-                </Center>
-              </TabPanel>
+              {userData.role !== "consumidor" && (
+                <TabPanel>
+                  <Center
+                    boxShadow="xl"
+                    borderRadius="lg"
+                    background={"#EDD1AF"}
+                    p={6}
+                  >
+                    <AppProducts
+                      isOwner={canEditCurrentProfile}
+                      viewedUserId={userIdToFetch}
+                    />
+                  </Center>
+                </TabPanel>
+              )}
             </TabPanels>
           </Tabs>
         </Box>

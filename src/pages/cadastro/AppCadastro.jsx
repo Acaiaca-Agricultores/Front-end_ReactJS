@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   FormControl,
@@ -39,6 +39,11 @@ const AppCadastro = () => {
   const { activeStep, goToNext, goToPrevious } = useAppStepperControls();
   const [selectedEstado, setSelectedEstado] = useState("");
   const [selectedCidade, setSelectedCidade] = useState("");
+  const [stepsState, setStepsState] = useState([
+    { title: "Etapa 1", description: "Dados Pessoais" },
+    { title: "Etapa 2", description: "Endereço da Propriedade" },
+    { title: "Etapa 3", description: "Tipo de Usuário" },
+  ]);
 
   const {
     register,
@@ -82,10 +87,13 @@ const AppCadastro = () => {
 
   const handleNext = async () => {
     let fieldsToValidate = [];
-    if (activeStep === 0) {
+    if (activeStep === 2) {
       fieldsToValidate = ["username", "email", "password", "confirmPassword"];
-    } else if (activeStep === 1) {
+    } else if (activeStep === 3) {
       fieldsToValidate = ["propertyName", "state", "city", "phone"];
+      if (role === "agricultor" && stepsState.length === 4) {
+        fieldsToValidate.push("farmerStory");
+      }
     }
 
     if (fieldsToValidate.length > 0) {
@@ -114,6 +122,7 @@ const AppCadastro = () => {
       role,
       propertyName,
       phone,
+      farmerStory,
     } = data;
 
     if (!selectedEstado || !selectedCidade) {
@@ -138,6 +147,7 @@ const AppCadastro = () => {
       state: selectedEstado,
       city: selectedCidade,
       phoneNumber: phone,
+      ...(role === "agricultor" && { farmerStory }),
     };
     Object.keys(payload).forEach(
       (key) =>
@@ -208,6 +218,24 @@ const AppCadastro = () => {
     }
   };
 
+  const role = watch("role");
+  useEffect(() => {
+    if (role === "agricultor") {
+      setStepsState([
+        { title: "Etapa 1", description: "Dados Pessoais" },
+        { title: "Etapa 2", description: "Endereço da Propriedade" },
+        { title: "Etapa 3", description: "Tipo de Usuário" },
+        { title: "Etapa 4", description: "História do Agricultor" },
+      ]);
+    } else {
+      setStepsState([
+        { title: "Etapa 1", description: "Dados Pessoais" },
+        { title: "Etapa 2", description: "Endereço da Propriedade" },
+        { title: "Etapa 3", description: "Tipo de Usuário" },
+      ]);
+    }
+  }, [role]);
+
   return (
     <Box
       id="appforms"
@@ -247,7 +275,7 @@ const AppCadastro = () => {
           height={{ base: "none", md: "100vh" }}
           padding={{ base: "2rem", md: "5rem 20rem 5rem 20rem" }}
         >
-          <AppStepper activeStep={activeStep} steps={steps} />
+          <AppStepper activeStep={activeStep} steps={stepsState} />
 
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -264,6 +292,114 @@ const AppCadastro = () => {
             }}
           >
             {activeStep === 0 && (
+              <FormControl isInvalid={errors.role}>
+                <FormLabel htmlFor="role">Tipo de usuário</FormLabel>
+                <Controller
+                  name="role"
+                  control={control}
+                  rules={{ required: "Selecione o tipo de usuário" }}
+                  render={({ field }) => (
+                    <RadioGroup {...field}>
+                      <Stack
+                        direction="column"
+                        spacing={5}
+                        width={"100%"}
+                        display={"flex"}
+                        justifyContent={"center"}
+                        alignItems={"center"}
+                      >
+                        <Radio
+                          value="agricultor"
+                          display="flex"
+                          alignItems="center"
+                          gap={"1rem"}
+                          _checked={{
+                            bg: "#83a11d",
+                            borderColor: "#83a11d",
+                            color: "white",
+                          }}
+                        >
+                          <Box
+                            display={"flex"}
+                            alignItems="center"
+                            gap={"1rem"}
+                          >
+                            <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
+                              Agricultor
+                            </Text>
+                            <Popover>
+                              <PopoverTrigger>
+                                <Image
+                                  src={IconInfo}
+                                  alt="Ícone animado representando informação"
+                                  width={"1.5rem"}
+                                  height={"1.5rem"}
+                                />
+                              </PopoverTrigger>
+                              <PopoverContent>
+                                <PopoverArrow />
+                                <PopoverCloseButton />
+                                <PopoverBody>
+                                  <Text color={"#000000"} fontSize={"1rem"}>
+                                    Agricultor é a pessoa que cultiva a terra e
+                                    produz alimentos, este perfil é voltado para
+                                    quem deseja vender seus produtos agrícolas.
+                                  </Text>
+                                </PopoverBody>
+                              </PopoverContent>
+                            </Popover>
+                          </Box>
+                        </Radio>
+                        <Radio
+                          value="consumidor"
+                          _checked={{
+                            bg: "#83a11d",
+                            borderColor: "#83a11d",
+                            color: "white",
+                          }}
+                        >
+                          <Box
+                            display={"flex"}
+                            alignItems="center"
+                            gap={"1rem"}
+                          >
+                            <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
+                              Consumidor
+                            </Text>
+                            <Popover>
+                              <PopoverTrigger>
+                                <Image
+                                  src={IconInfo}
+                                  alt="Ícone animado representando informação"
+                                  width={"1.5rem"}
+                                  height={"1.5rem"}
+                                />
+                              </PopoverTrigger>
+                              <PopoverContent>
+                                <PopoverArrow />
+                                <PopoverCloseButton />
+                                <PopoverBody>
+                                  <Text color={"#000000"} fontSize={"1rem"}>
+                                    Consumidor é a pessoa que compra produtos
+                                    agrícolas, este perfil é voltado para quem
+                                    deseja comprar produtos frescos e saudáveis.
+                                  </Text>
+                                </PopoverBody>
+                              </PopoverContent>
+                            </Popover>
+                          </Box>
+                        </Radio>
+                      </Stack>
+                    </RadioGroup>
+                  )}
+                />
+                <FormErrorMessage>
+                  {errors.role && errors.role.message}
+                </FormErrorMessage>
+              </FormControl>
+            )}
+
+            {activeStep === 1 && (
               <>
                 <FormControl isInvalid={errors.username}>
                   <FormLabel>Nome e Sobrenome</FormLabel>
@@ -428,30 +564,32 @@ const AppCadastro = () => {
               </>
             )}
 
-            {activeStep === 1 && (
+            {activeStep === 2 && (
               <>
-                <FormControl isInvalid={errors.propertyName}>
-                  <FormLabel>Nome da Propriedade</FormLabel>
-                  <Input
-                    type="text"
-                    placeholder="Digite o nome da sua propriedade"
-                    _placeholder={{ color: "#b0b0b0" }}
-                    border={"2px solid  #83a11d"}
-                    aria-required="true"
-                    width={"100%"}
-                    height={"3rem"}
-                    _focus={{
-                      borderColor: "#c0ab8e",
-                      boxShadow: "0 0 0 1px #e5d1b0",
-                    }}
-                    {...register("propertyName", {
-                      required: "Nome da propriedade é obrigatório",
-                    })}
-                  />
-                  <FormErrorMessage>
-                    {errors.propertyName && errors.propertyName.message}
-                  </FormErrorMessage>
-                </FormControl>
+                {watch("role") !== "consumidor" && (
+                  <FormControl isInvalid={errors.propertyName}>
+                    <FormLabel>Nome da Propriedade</FormLabel>
+                    <Input
+                      type="text"
+                      placeholder="Digite o nome da sua propriedade"
+                      _placeholder={{ color: "#b0b0b0" }}
+                      border={"2px solid  #83a11d"}
+                      aria-required="true"
+                      width={"100%"}
+                      height={"3rem"}
+                      _focus={{
+                        borderColor: "#c0ab8e",
+                        boxShadow: "0 0 0 1px #e5d1b0",
+                      }}
+                      {...register("propertyName", {
+                        required: "Nome da propriedade é obrigatório",
+                      })}
+                    />
+                    <FormErrorMessage>
+                      {errors.propertyName && errors.propertyName.message}
+                    </FormErrorMessage>
+                  </FormControl>
+                )}
                 <AppSelect
                   selectedEstado={selectedEstado}
                   setSelectedEstado={setSelectedEstado}
@@ -493,110 +631,29 @@ const AppCadastro = () => {
               </>
             )}
 
-            {activeStep === 2 && (
-              <FormControl isInvalid={errors.role}>
-                <FormLabel htmlFor="role">Tipo de usuário</FormLabel>
-                <Controller
-                  name="role"
-                  control={control}
-                  rules={{ required: "Selecione o tipo de usuário" }}
-                  render={({ field }) => (
-                    <RadioGroup {...field}>
-                      <Stack
-                        direction="column"
-                        spacing={5}
-                        width={"100%"}
-                        display={"flex"}
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                      >
-                        <Radio
-                          value="agricultor"
-                          display="flex"
-                          alignItems="center"
-                          gap={"1rem"}
-                          _checked={{
-                            bg: "#83a11d",
-                            borderColor: "#83a11d",
-                            color: "white",
-                          }}
-                        >
-                          <Box
-                            display={"flex"}
-                            alignItems="center"
-                            gap={"1rem"}
-                          >
-                            <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
-                              Agricultor
-                            </Text>
-                            <Popover>
-                              <PopoverTrigger>
-                                <Image
-                                  src={IconInfo}
-                                  alt="Ícone animado representando informação"
-                                  width={"1.5rem"}
-                                  height={"1.5rem"}
-                                />
-                              </PopoverTrigger>
-                              <PopoverContent>
-                                <PopoverArrow />
-                                <PopoverCloseButton />
-                                <PopoverBody>
-                                  <Text color={"#000000"} fontSize={"1rem"}>
-                                    Agricultor é a pessoa que cultiva a terra e
-                                    produz alimentos, este perfil é voltado para
-                                    quem deseja vender seus produtos agrícolas.
-                                  </Text>
-                                </PopoverBody>
-                              </PopoverContent>
-                            </Popover>
-                          </Box>
-                        </Radio>
-                        <Radio
-                          value="consumidor"
-                          _checked={{
-                            bg: "#83a11d",
-                            borderColor: "#83a11d",
-                            color: "white",
-                          }}
-                        >
-                          <Box
-                            display={"flex"}
-                            alignItems="center"
-                            gap={"1rem"}
-                          >
-                            <Text fontSize={{ base: "1rem", md: "1.2rem" }}>
-                              Consumidor
-                            </Text>
-                            <Popover>
-                              <PopoverTrigger>
-                                <Image
-                                  src={IconInfo}
-                                  alt="Ícone animado representando informação"
-                                  width={"1.5rem"}
-                                  height={"1.5rem"}
-                                />
-                              </PopoverTrigger>
-                              <PopoverContent>
-                                <PopoverArrow />
-                                <PopoverCloseButton />
-                                <PopoverBody>
-                                  <Text color={"#000000"} fontSize={"1rem"}>
-                                    Consumidor é a pessoa que compra produtos
-                                    agrícolas, este perfil é voltado para quem
-                                    deseja comprar produtos frescos e saudáveis.
-                                  </Text>
-                                </PopoverBody>
-                              </PopoverContent>
-                            </Popover>
-                          </Box>
-                        </Radio>
-                      </Stack>
-                    </RadioGroup>
-                  )}
+            {role === "agricultor" && activeStep === 3 && (
+              <FormControl isInvalid={errors.farmerStory}>
+                <FormLabel>
+                  Conte um pouco da sua história como agricultor
+                </FormLabel>
+                <Input
+                  type="text"
+                  placeholder="Fale sobre sua experiência, desafios, conquistas..."
+                  _placeholder={{ color: "#b0b0b0" }}
+                  border={"2px solid  #83a11d"}
+                  aria-required="true"
+                  width={"100%"}
+                  height={"3rem"}
+                  _focus={{
+                    borderColor: "#c0ab8e",
+                    boxShadow: "0 0 0 1px #e5d1b0",
+                  }}
+                  {...register("farmerStory", {
+                    required: "Conte sua história para continuarmos",
+                  })}
                 />
                 <FormErrorMessage>
-                  {errors.role && errors.role.message}
+                  {errors.farmerStory && errors.farmerStory.message}
                 </FormErrorMessage>
               </FormControl>
             )}
@@ -619,7 +676,7 @@ const AppCadastro = () => {
                   Anterior
                 </Button>
               )}
-              {activeStep < steps.length - 1 && (
+              {activeStep < stepsState.length - 1 && (
                 <Button
                   onClick={handleNext}
                   w={"100%"}
@@ -636,7 +693,7 @@ const AppCadastro = () => {
                   Próximo
                 </Button>
               )}
-              {activeStep === steps.length - 1 && (
+              {activeStep === stepsState.length - 1 && (
                 <Button
                   type="submit"
                   w={"100%"}
