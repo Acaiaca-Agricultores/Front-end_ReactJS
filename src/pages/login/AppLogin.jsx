@@ -102,6 +102,7 @@ const AppLogin = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("userRole", role);
       localStorage.setItem("userName", userName);
+      localStorage.setItem("email", email); // Salva o email do login
       if (userId) {
         localStorage.setItem("userId", userId);
       }

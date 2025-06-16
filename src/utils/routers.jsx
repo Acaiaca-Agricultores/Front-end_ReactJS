@@ -16,7 +16,7 @@ const AppRouters = () => {
     <Routes>
       <Route path="/home" element={<AppHome />} />
       <Route path="/perfil" element={<AppPerfil />} />
-      <Route path="/perfil/:userId" element={<AppPerfil />} />
+      <Route path="/perfil/:id" element={<AppPerfil />} />
       <Route path="*" element={<Navigate to="/404" />} />
       <Route path="/404" element={<AppPage404 />} />
       <Route path="/" element={<LandingPageApp />} />
@@ -25,7 +25,7 @@ const AppRouters = () => {
       <Route path="/cadastro" element={<AppCadastro />} />
       <Route path="/configurações" element={<AppConfig />} />
       <Route path="/esqueci-senha" element={<AppSenha />} />
-      <Route path="/cadastro-produto" element={<AppProduto />} />
+      <Route path="/cadastro/produto" element={<AppProduto />} />
     </Routes>
   );
 };

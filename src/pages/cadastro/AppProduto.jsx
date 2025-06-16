@@ -14,14 +14,17 @@ import {
   Image,
   useToast,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ImagemFeira from "../../assets/feira.jpg";
 import ImageDefault from "../../assets/default.png";
-
+import { useLocation } from "react-router-dom";
 
 const AppProduto = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const toast = useToast();
+  const location = useLocation();
+  const productToEdit = location.state?.product;
+
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
@@ -31,6 +34,17 @@ const AppProduto = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const fileInputRef = useState(null);
+
+  useEffect(() => {
+    if (productToEdit) {
+      setName(productToEdit.title || "");
+      setCategory(productToEdit.category || "");
+      setDescription(productToEdit.description || "");
+      setQuantity(productToEdit.quantity?.toString() || "");
+      setPrice(productToEdit.price?.toString() || "");
+      setImagePreview(productToEdit.image || "");
+    }
+  }, [productToEdit]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -48,67 +62,120 @@ const AppProduto = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const normalizedCategory = category.trim().toLowerCase();
-    const numericQuantity = Number(quantity);
-    const numericPrice = Number(price);
+
+    const parsedQuantity = Number(quantity);
+    if (isNaN(parsedQuantity) || parsedQuantity < 0) {
+      toast({
+        title: "Quantidade inválida",
+        description:
+          "Por favor, insira um número válido e não negativo para a quantidade.",
+        status: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
+    const parsedPrice = Number(price);
+    if (isNaN(parsedPrice) || parsedPrice < 0) {
+      toast({
+        title: "Preço inválido",
+        description:
+          "Por favor, insira um número válido e não negativo para o preço.",
+        status: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
     const formData = new FormData();
     formData.append("name", name);
     formData.append("category", normalizedCategory);
     formData.append("description", description);
-    formData.append("quantity", numericQuantity.toString());
-    formData.append("price", numericPrice.toString());
+    formData.append("quantity", parsedQuantity.toString());
+    formData.append("price", parsedPrice.toString());
     const userId = localStorage.getItem("userId");
     if (userId) {
       formData.append("userId", userId);
     }
     if (imageFile) {
       formData.append("productImage", imageFile);
+    } else if (
+      productToEdit &&
+      productToEdit.image &&
+      !imagePreview.startsWith("blob:")
+    ) {
+      formData.append("productImage", productToEdit.image);
     } else if (image) {
       formData.append("productImage", image);
     }
+
     const token = localStorage.getItem("token");
-    console.log("Dados enviados:", {
-      name,
-      category: normalizedCategory,
-      description,
-      quantity: numericQuantity,
-      price: numericPrice,
-      userId,
-      imageFile,
-    });
+    console.log("Dados enviados:", Object.fromEntries(formData));
+
     try {
-      const res = await fetch(API_URL + "/product/register", {
-        method: "PUT",
-        body: formData,
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
+      let res;
+      let successMessage;
+
+      if (productToEdit && productToEdit.id) {
+        res = await fetch(`${API_URL}/product/edit/${productToEdit.id}`, {
+          method: "PUT",
+          body: formData,
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        successMessage = "Produto atualizado com sucesso!";
+      } else {
+        res = await fetch(API_URL + "/product/register", {
+          method: "PUT",
+          body: formData,
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        successMessage = "Produto cadastrado com sucesso!";
+      }
+
       if (res.ok) {
         toast({
-          title: "Produto cadastrado com sucesso!",
+          title: successMessage,
           status: "success",
           duration: 3000,
         });
-        setName("");
-        setCategory("");
-        setDescription("");
-        setQuantity("");
-        setPrice("");
-        setImageFile(null);
-        setImagePreview("");
+        if (!productToEdit) {
+          setName("");
+          setCategory("");
+          setDescription("");
+          setQuantity("");
+          setPrice("");
+          setImageFile(null);
+          setImagePreview("");
+          setImage("");
+        }
       } else {
         let data;
         try {
           data = await res.json();
         } catch (e) {
-          data = { msg: "Erro ao cadastrar produto" };
+          data = {
+            msg: productToEdit
+              ? "Erro ao atualizar produto"
+              : "Erro ao cadastrar produto",
+          };
         }
         toast({
-          title: data.msg || "Erro ao cadastrar produto",
+          title:
+            data.msg ||
+            (productToEdit
+              ? "Erro ao atualizar produto"
+              : "Erro ao cadastrar produto"),
           status: "error",
           duration: 3000,
         });
       }
     } catch (err) {
-      toast({ title: "Erro de rede", status: "error", duration: 3000 });
+      console.error("Erro na requisição:", err);
+      toast({
+        title: "Erro de rede ou na requisição",
+        status: "error",
+        duration: 3000,
+      });
     }
   };
 
@@ -126,7 +193,7 @@ const AppProduto = () => {
         alignItems={"center"}
         justifyContent={"center"}
         width="100%"
-        height={{ base: "100vh", md: "100%" }}
+        height={{ base: "120vh", md: "100%" }}
       >
         <Box
           display="flex"
@@ -144,6 +211,7 @@ const AppProduto = () => {
             border="2px solid #84a11F"
             borderRadius="md"
             margin="2rem"
+            height={{ base: "100vh", md: "80vh" }}
           >
             <form onSubmit={handleSubmit} style={{ width: "100%" }}>
               <Flex
@@ -153,7 +221,9 @@ const AppProduto = () => {
               >
                 <VStack spacing={6} align="stretch" flex={1}>
                   <Heading as="h1" size="lg" color="white" mb={2}>
-                    Cadastrar Novo Produto
+                    {productToEdit
+                      ? "Editar Produto"
+                      : "Cadastrar Novo Produto"}
                   </Heading>
                   <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
                     <FormControl id="product-name">
@@ -266,20 +336,24 @@ const AppProduto = () => {
                   <Button
                     type="submit"
                     w={"100%"}
-                    color="#ffffff"
-                    background="#52601A"
-                    borderRadius="10px"
-                    fontFamily="Onest"
-                    padding="1.5rem"
+                    color={"#ffffff"}
+                    background={"#52601A"}
+                    borderRadius={"10px"}
+                    fontFamily={"Onest"}
+                    padding={"1.5rem"}
                     _hover={{
                       background: "#c0ab8e",
                       color: "#ffffff",
                     }}
-                    aria-label="Fazer cadastro"
-                    LoadingText="Fazendo cadastro..."
+                    aria-label={
+                      productToEdit ? "Salvar Alterações" : "Fazer cadastro"
+                    }
+                    LoadingText={
+                      productToEdit ? "Salvando..." : "Fazendo cadastro..."
+                    }
                     spinnerPlacement="end"
                   >
-                    Cadastrar
+                    {productToEdit ? "Salvar Alterações" : "Cadastrar"}
                   </Button>
                 </VStack>
                 <Center flexDirection="column" gap={4}>

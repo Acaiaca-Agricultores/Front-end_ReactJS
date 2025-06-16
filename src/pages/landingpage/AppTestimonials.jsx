@@ -40,7 +40,7 @@ const AppTestimonials = ({ title = "Depoimentos de Agricultores" }) => {
   };
 
   return (
-    <Box bg="#fcead0" padding={"4rem"} borderRadius="md" shadow="md">
+    <Box bg="#fcead0" padding={"4rem"} borderRadius="md">
       <Heading as="h2" size="xl" textAlign="center" my={10}>
         {title}
       </Heading>
@@ -51,13 +51,12 @@ const AppTestimonials = ({ title = "Depoimentos de Agricultores" }) => {
         keyBoardControl
         containerClass="carousel-container"
         itemClass="carousel-item-padding-40-px"
-
       >
         {testimonials.map((item, idx) => (
           <Card
             key={idx}
             mx={2}
-            boxShadow="md"
+            boxShadow="none"
             borderRadius="lg"
             overflow="hidden"
             h={["auto", "auto", "300px"]}
