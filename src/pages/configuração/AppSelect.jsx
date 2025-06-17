@@ -50,8 +50,15 @@ export default function SelectEstadoCidade({
         `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedEstado}/municipios?orderBy=nome`
       )
         .then((res) => res.json())
-        .then((data) => setCidades(data))
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setCidades(data);
+          } else {
+            setCidades([]);
+          }
+        })
         .catch(() => {
+          setCidades([]);
           if (toast) {
             toast({
               title: "Erro ao carregar cidades",
@@ -108,12 +115,13 @@ export default function SelectEstadoCidade({
           isDisabled={
             loadingCidades ||
             !selectedEstado ||
+            !Array.isArray(cidades) ||
             cidades.length === 0 ||
             !!errorCidades
           }
           {...props}
         >
-          {cidades.map((cidade) => (
+          {Array.isArray(cidades) && cidades.map((cidade) => (
             <option key={cidade.id} value={cidade.nome} style={{ color: '#000' }}>
               {cidade.nome}
             </option>

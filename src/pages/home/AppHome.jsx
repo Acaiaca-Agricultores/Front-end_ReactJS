@@ -321,7 +321,7 @@ const AppAgriHome = () => {
     </Card>
   );
 
-  const renderProductCard = (item, index) => (
+  const renderProductCard = (product, index) => (
     <Card key={index} {...cardStyles}>
       <CardBody
         flex="1 1 auto"
@@ -333,22 +333,22 @@ const AppAgriHome = () => {
           width="100%"
           height={{ base: "150px", md: "200px" }}
           objectFit="cover"
-          src={item.image || ImageDefault}
-          alt={`Imagem de ${item.name}`}
+          src={product.image || ImageDefault}
+          alt={`Imagem de ${product.name}`}
           borderRadius="md"
           mb={4}
         />
         <Stack gap={2}>
-          <Heading size="md">{item.name}</Heading>
+          <Heading size="md">{product.name}</Heading>
           <Text color="green.600" fontSize="lg" fontWeight="bold">
-            R$ {Number(item.price).toFixed(2)}
+            R$ {Number(product.price).toFixed(2)}
           </Text>
           <Text fontSize="sm" color="gray.600" noOfLines={2}>
-            {item.description}
+            {product.description}
           </Text>
-          {item.agricultor?.username && (
+          {product.agricultor?.username && (
             <Text fontSize="sm" color="gray.500" mt={2}>
-              Vendido por: <strong>{item.agricultor.username}</strong>
+              Vendido por: <strong>{product.agricultor.username}</strong>
             </Text>
           )}
         </Stack>
@@ -358,7 +358,9 @@ const AppAgriHome = () => {
         <Button
           {...buttonStyles}
           width="100%"
-          onClick={() => navigate(`/produto/${item.id}`)}
+          onClick={() => {
+            navigate(`/product/${product.id}`);
+          }}
         >
           Ver Produto
         </Button>
