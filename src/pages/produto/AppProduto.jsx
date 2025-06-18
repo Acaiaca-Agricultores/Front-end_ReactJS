@@ -2,22 +2,21 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AppLoading from "../../components/loading/AppLoading";
 import AppCarrossel from "../../components/carrossel/AppCarrossel";
+import ProductCard from "../../components/carrossel/ProductCard";
 import { useNavigate, useParams } from "react-router-dom";
 import ImagemPerfil from "../../assets/plataforma-vovo.png";
 
 import {
   Box,
   Flex,
-  Text,
   Heading,
   Container,
   Alert,
   AlertIcon,
   Button,
-  SimpleGrid,
 } from "@chakra-ui/react";
 import ProductDetailCard from "./ProductDetailCard";
-import { set } from "react-hook-form";
+
 const ProductDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -27,12 +26,16 @@ const ProductDetailPage = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [id]);
+
   const getProduct = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
       setError("Você precisa estar logado para ver os detalhes do produto.");
       setIsLoading(false);
-      navigate("/login"); // Redirect to login if no token
+      navigate("/login");
       return;
     }
     if (!id) {
@@ -42,33 +45,76 @@ const ProductDetailPage = () => {
     }
 
     try {
-      const response = await axios.get(`${API_URL}/product/${id}`, {
+      const productResponse = await axios.get(`${API_URL}/product/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const responseData = await axios.get(
-        `${API_URL}/products/user/4a98f7e7-fd80-4dac-89df-8ee7497259b0`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
+      if (!productResponse.data) {
+        setError("Produto não encontrado.");
+        setIsLoading(false);
+        return;
+      }
+
+      const product = productResponse.data;
+      console.log("Dados do produto:", product);
+
+      let agricultorData = product.User || product.agricultor;
+
+      if (!agricultorData && product.userId) {
+        try {
+          const agricultorResponse = await axios.get(
+            `${API_URL}/user/${product.userId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          agricultorData = agricultorResponse.data;
+          console.log("Dados do agricultor:", agricultorData);
+        } catch (agricultorErr) {
+          console.warn("Erro ao buscar dados do agricultor:", agricultorErr);
         }
-      );
+      }
 
-      const product = response.data;
-      const userProducts = responseData.data;
+      const productWithAgricultor = {
+        ...product,
+        agricultor: agricultorData || {},
+      };
 
-      setProductData(product);
-      setUserProducts(userProducts);
+      console.log("Dados combinados:", productWithAgricultor);
+
+      setProductData(productWithAgricultor);
+
+      if (product.userId) {
+        try {
+          const userProductsResponse = await axios.get(
+            `${API_URL}/products/user/${product.userId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+          const otherProducts = userProductsResponse.data.filter(
+            (p) => p.id !== product.id
+          );
+          setUserProducts(otherProducts);
+        } catch (productsErr) {
+          console.warn("Erro ao buscar produtos relacionados:", productsErr);
+          setUserProducts([]);
+        }
+      }
     } catch (err) {
       console.error("Erro ao carregar produto:", err);
-      // More specific error handling based on status code if needed
       if (err.response && err.response.status === 401) {
         setError(
           "Sessão expirada ou não autorizada. Por favor, faça login novamente."
         );
-        localStorage.removeItem("token"); // Clear invalid token
+        localStorage.removeItem("token");
         navigate("/login");
       } else {
-        setError("Erro ao carregar produto. Por favor, tente novamente.");
+        setError(
+          err.response?.data?.message ||
+            "Erro ao carregar produto. Por favor, tente novamente."
+        );
       }
     } finally {
       setIsLoading(false);
@@ -77,7 +123,7 @@ const ProductDetailPage = () => {
 
   useEffect(() => {
     getProduct();
-  }, [id, navigate, API_URL]); // Add dependencies to useEffect
+  }, [id, navigate, API_URL]);
 
   if (isLoading) {
     return <AppLoading />;
@@ -121,55 +167,34 @@ const ProductDetailPage = () => {
           <Box position="absolute" inset="0" bg="rgba(0, 0, 0, 0.6)" />
         </Box>
         <Container maxW="container.xl" py={8}>
-          <ProductDetailCard product={productData} API_URL={API_URL} />
-          <Flex
-            justifyContent="space-between"
-            alignItems="center"
-            mt={10}
-            mb={4}
-          >
-            <Heading as="h2" size="lg" color="gray.700">
-              Produtos do mesmo agricultor
-            </Heading>
-            <Button colorScheme="green" variant="outline" size="sm">
-              Ver Mais
-            </Button>
-          </Flex>
-          <AppCarrossel
-            data={userProducts}
-            title=""
-            renderItem={(item) => (
-              <Box
-                key={item.id}
-                p={4}
-                borderWidth="1px"
-                borderRadius="md"
-                bg="white"
-                boxShadow="sm"
-              >
-                <img
-                  src={
-                    item.image
-                      ? `${API_URL}${item.image}`
-                      : `${API_URL}/uploads/products/default_placeholder.jpg`
-                  }
-                  alt={item.name}
-                  style={{
-                    width: "100%",
-                    height: 120,
-                    objectFit: "cover",
-                    borderRadius: 8,
-                  }}
-                />
-                <Text mt={2} fontWeight="bold" noOfLines={1}>
-                  {item.name}
-                </Text>
-                <Text color="green.700" fontWeight="semibold">
-                  R$ {item.price}
-                </Text>
-              </Box>
-            )}
-          />
+          <Box position="relative" top="-80px" zIndex={2}>
+            <ProductDetailCard product={productData} API_URL={API_URL} />
+          </Box>
+          {userProducts.length > 0 && (
+            <>
+              <Flex justifyContent="center" alignItems="center" mt={10} mb={4}>
+                <Heading as="h2" size="lg" color="#83a11d">
+                  Produtos do mesmo agricultor
+                </Heading>
+              </Flex>
+              <AppCarrossel
+                data={userProducts}
+                title=""
+                renderItem={(item) => (
+                  <ProductCard
+                    item={item}
+                    API_URL={API_URL}
+                    isOwner={productData.userId === localStorage.getItem("userId")}
+                    onDelete={(deletedId) => {
+                      setUserProducts((prevProducts) =>
+                        prevProducts.filter((product) => product.id !== deletedId)
+                      );
+                    }}
+                  />
+                )}
+              />
+            </>
+          )}
         </Container>
       </Box>
     </>

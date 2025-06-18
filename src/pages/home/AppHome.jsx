@@ -359,7 +359,7 @@ const AppAgriHome = () => {
           {...buttonStyles}
           width="100%"
           onClick={() => {
-            navigate(`/product/${product.id}`);
+            navigate(`/produto/${product.id}`);
           }}
         >
           Ver Produto
@@ -371,19 +371,28 @@ const AppAgriHome = () => {
   const carousels = [
     {
       title: "Frutas",
-      data: products.filter((p) => p.category.toLowerCase() === "fruta"),
+      data:
+        selectedCategory === "Todos"
+          ? filteredData.filter((p) => p.category && p.category.toLowerCase() === "fruta")
+          : products.filter((p) => p.category && p.category.toLowerCase() === "fruta"),
       show: ["Todos", "Frutas"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
     },
     {
       title: "Verduras",
-      data: products.filter((p) => p.category.toLowerCase() === "verdura"),
+      data:
+        selectedCategory === "Todos"
+          ? filteredData.filter((p) => p.category && p.category.toLowerCase() === "verdura")
+          : products.filter((p) => p.category && p.category.toLowerCase() === "verdura"),
       show: ["Todos", "Verduras"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
     },
     {
       title: "Legumes",
-      data: products.filter((p) => p.category.toLowerCase() === "legume"),
+      data:
+        selectedCategory === "Todos"
+          ? filteredData.filter((p) => p.category && p.category.toLowerCase() === "legume")
+          : products.filter((p) => p.category && p.category.toLowerCase() === "legume"),
       show: ["Todos", "Legumes"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
     },

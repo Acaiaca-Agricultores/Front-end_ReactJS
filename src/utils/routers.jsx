@@ -12,7 +12,6 @@ import AppSenha from "../pages/configuração/AppSenha.jsx";
 import AppCadastroProduto from "../pages/cadastro/AppProduto.jsx";
 import AppProduto from "../pages/produto/AppProduto.jsx";
 
-
 const AppRouters = () => {
   return (
     <Routes>
@@ -28,7 +27,7 @@ const AppRouters = () => {
       <Route path="/configurações" element={<AppConfig />} />
       <Route path="/esqueci-senha" element={<AppSenha />} />
       <Route path="/cadastro/produto" element={<AppCadastroProduto />} />
-      <Route path="/product/:id" element={<AppProduto />} />
+      <Route path="/produto/:id" element={<AppProduto />} />
     </Routes>
   );
 };

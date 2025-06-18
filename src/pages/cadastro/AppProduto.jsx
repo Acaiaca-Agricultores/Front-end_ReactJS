@@ -13,17 +13,36 @@ import {
   SimpleGrid,
   Image,
   useToast,
+  Icon,
+  Spinner,
+  useBreakpointValue,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import {
+  MdCategory,
+  MdDescription,
+  MdAttachMoney,
+  MdNumbers,
+  MdDriveFileRenameOutline,
+  MdArrowBack,
+} from "react-icons/md";
 import ImagemFeira from "../../assets/feira.jpg";
 import ImageDefault from "../../assets/default.png";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+
+const CATEGORIES = [
+  { value: "fruta", label: "Fruta" },
+  { value: "verdura", label: "Verdura" },
+  { value: "legume", label: "Legume" },
+];
 
 const AppProduto = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const toast = useToast();
   const location = useLocation();
+  const navigate = useNavigate();
   const productToEdit = location.state?.product;
+  const token = localStorage.getItem("token");
 
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
@@ -33,18 +52,46 @@ const AppProduto = () => {
   const [image, setImage] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
-  const fileInputRef = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = useRef(null);
+  const dropRef = useRef(null);
 
   useEffect(() => {
     if (productToEdit) {
-      setName(productToEdit.title || "");
+      setName(productToEdit.name || productToEdit.title || "");
       setCategory(productToEdit.category || "");
       setDescription(productToEdit.description || "");
       setQuantity(productToEdit.quantity?.toString() || "");
       setPrice(productToEdit.price?.toString() || "");
-      setImagePreview(productToEdit.image || "");
+      setImagePreview(
+        productToEdit.image
+          ? productToEdit.image.startsWith("http")
+            ? productToEdit.image
+            : `${API_URL}${productToEdit.image}`
+          : ""
+      );
     }
-  }, [productToEdit]);
+  }, [productToEdit, API_URL]);
+
+  // Drag and drop handlers
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    if (dropRef.current) dropRef.current.style.borderColor = "#c0ab8e";
+  };
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    if (dropRef.current) dropRef.current.style.borderColor = "#83a11d";
+  };
+  const handleDrop = (e) => {
+    e.preventDefault();
+    if (dropRef.current) dropRef.current.style.borderColor = "#83a11d";
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+      setImage("");
+    }
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -59,22 +106,26 @@ const AppProduto = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
+  const handleCancel = () => {
+    navigate(-1);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const normalizedCategory = category.trim().toLowerCase();
-
-    const parsedQuantity = Number(quantity);
+    const parsedQuantity = Math.floor(Number(quantity));
     if (isNaN(parsedQuantity) || parsedQuantity < 0) {
       toast({
         title: "Quantidade inválida",
         description:
-          "Por favor, insira um número válido e não negativo para a quantidade.",
+          "Por favor, insira um número inteiro positivo para a quantidade.",
         status: "error",
         duration: 3000,
       });
+      setIsLoading(false);
       return;
     }
-
     const parsedPrice = Number(price);
     if (isNaN(parsedPrice) || parsedPrice < 0) {
       toast({
@@ -84,54 +135,89 @@ const AppProduto = () => {
         status: "error",
         duration: 3000,
       });
+      setIsLoading(false);
       return;
     }
-
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("category", normalizedCategory);
-    formData.append("description", description);
-    formData.append("quantity", parsedQuantity.toString());
-    formData.append("price", parsedPrice.toString());
-    const userId = localStorage.getItem("userId");
-    if (userId) {
-      formData.append("userId", userId);
-    }
-    if (imageFile) {
-      formData.append("productImage", imageFile);
-    } else if (
-      productToEdit &&
-      productToEdit.image &&
-      !imagePreview.startsWith("blob:")
-    ) {
-      formData.append("productImage", productToEdit.image);
-    } else if (image) {
-      formData.append("productImage", image);
-    }
-
-    const token = localStorage.getItem("token");
-    console.log("Dados enviados:", Object.fromEntries(formData));
-
     try {
       let res;
       let successMessage;
-
       if (productToEdit && productToEdit.id) {
-        res = await fetch(`${API_URL}/product/edit/${productToEdit.id}`, {
-          method: "PUT",
-          body: formData,
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
-        successMessage = "Produto atualizado com sucesso!";
+        try {
+          if (imageFile) {
+            const formData = new FormData();
+            formData.append("name", name);
+            formData.append("category", normalizedCategory);
+            formData.append("description", description);
+            formData.append("quantity", parsedQuantity);
+            formData.append("price", parsedPrice);
+            formData.append("userId", localStorage.getItem("userId"));
+            formData.append("productImage", imageFile);
+            res = await fetch(`${API_URL}/product/edit/${productToEdit.id}`, {
+              method: "PUT",
+              body: formData,
+              headers: {
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+              },
+            });
+          } else {
+            const productData = {
+              name,
+              category: normalizedCategory,
+              description,
+              quantity: parsedQuantity,
+              price: parsedPrice,
+              userId: localStorage.getItem("userId"),
+            };
+            if (productToEdit.image && !imagePreview.startsWith("blob:")) {
+              productData.image = productToEdit.image;
+            }
+            res = await fetch(`${API_URL}/product/edit/${productToEdit.id}`, {
+              method: "PUT",
+              body: JSON.stringify(productData),
+              headers: {
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                "Content-Type": "application/json",
+              },
+            });
+          }
+          const responseData = await res.json();
+          if (!res.ok) {
+            throw new Error(responseData.msg || "Erro ao atualizar produto");
+          }
+          successMessage = "Produto atualizado com sucesso!";
+        } catch (error) {
+          setIsLoading(false);
+          toast({
+            title: "Erro ao atualizar produto",
+            description: error.message,
+            status: "error",
+            duration: 3000,
+          });
+          return;
+        }
       } else {
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("category", normalizedCategory);
+        formData.append("description", description);
+        formData.append("quantity", Number(parsedQuantity));
+        formData.append("price", Number(parsedPrice));
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+          formData.append("userId", userId);
+        }
+        if (imageFile) {
+          formData.append("productImage", imageFile);
+        }
         res = await fetch(API_URL + "/product/register", {
           method: "PUT",
           body: formData,
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         });
         successMessage = "Produto cadastrado com sucesso!";
       }
-
       if (res.ok) {
         toast({
           title: successMessage,
@@ -149,251 +235,324 @@ const AppProduto = () => {
           setImage("");
         }
       } else {
-        let data;
-        try {
-          data = await res.json();
-        } catch (e) {
-          data = {
-            msg: productToEdit
-              ? "Erro ao atualizar produto"
-              : "Erro ao cadastrar produto",
-          };
-        }
+        const data = await res.json();
         toast({
           title:
             data.msg ||
             (productToEdit
               ? "Erro ao atualizar produto"
               : "Erro ao cadastrar produto"),
+          description: data.error || "Verifique os dados e tente novamente",
           status: "error",
           duration: 3000,
         });
       }
     } catch (err) {
-      console.error("Erro na requisição:", err);
       toast({
         title: "Erro de rede ou na requisição",
+        description: err.message || "Tente novamente mais tarde",
         status: "error",
         duration: 3000,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  // Responsividade para tamanho do card
+  const cardWidth = useBreakpointValue({
+    base: "95vw",
+    sm: "90vw",
+    md: "700px",
+    lg: "800px",
+  });
+
   return (
-    <>
+    <Box
+      height="100vh"
+      backgroundImage={ImagemFeira}
+      backgroundSize="cover"
+      backgroundPosition="center"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      py={8}
+    >
       <Box
-        aria-label="Formulário de contato"
-        backgroundImage={`url(${ImagemFeira})`}
-        backgroundRepeat="no-repeat"
-        backgroundSize="cover"
-        objectFit={"cover"}
-        backgroundPosition="center"
-        display={"flex"}
-        flexDirection={"column"}
-        alignItems={"center"}
-        justifyContent={"center"}
-        width="100%"
-        height={{ base: "120vh", md: "100%" }}
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        boxSize={"100%"}
+        background="rgba(0, 0, 0, 0.6)"
+        backdropFilter="blur(8px)"
+        color={"white"}
+        paddingTop="6rem !important"
+        height="100vh"
       >
         <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          boxSize={"100%"}
-          background="rgba(0, 0, 0, 0.6)"
-          backdropFilter="blur(8px)"
-          color={"white"}
-          paddingTop="6rem !important"
+          w={cardWidth}
+          bg="white"
+          borderRadius="2xl"
+          boxShadow="2xl"
+          p={{ base: 4, md: 10 }}
+          position="relative"
         >
-          <Center
-            p={{ base: 4, md: 8 }}
-            border="2px solid #84a11F"
-            borderRadius="md"
-            margin="2rem"
-            height={{ base: "100vh", md: "80vh" }}
+          <Button
+            leftIcon={<MdArrowBack />}
+            variant="ghost"
+            colorScheme="green"
+            position="absolute"
+            top={4}
+            left={4}
+            onClick={handleCancel}
+            aria-label="Voltar"
           >
-            <form onSubmit={handleSubmit} style={{ width: "100%" }}>
-              <Flex
-                direction={{ base: "column", md: "row" }}
-                justify="space-between"
-                gap={10}
+            Voltar
+          </Button>
+          <Flex
+            direction={{ base: "column", md: "row" }}
+            gap={10}
+            align="center"
+          >
+            {/* Imagem e upload */}
+            <VStack flex={1} spacing={6} align="center" justify="center">
+              <Heading
+                as="h1"
+                size="lg"
+                color="green.700"
+                mb={2}
+                textAlign="center"
               >
-                <VStack spacing={6} align="stretch" flex={1}>
-                  <Heading as="h1" size="lg" color="white" mb={2}>
-                    {productToEdit
-                      ? "Editar Produto"
-                      : "Cadastrar Novo Produto"}
-                  </Heading>
-                  <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
-                    <FormControl id="product-name">
-                      <FormLabel color="gray.300">Nome do Produto:</FormLabel>
-                      <Input
-                        type="text"
-                        placeholder="Ex: Laranja"
-                        _placeholder={{ color: "#b0b0b0" }}
-                        border={"2px solid  #83a11d"}
-                        aria-required="true"
-                        required
-                        width={"100%"}
-                        height={"3rem"}
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        _focus={{
-                          borderColor: "#c0ab8e",
-                          boxShadow: "0 0 0 1px #e5d1b0",
-                        }}
+                {productToEdit ? "Editar Produto" : "Cadastrar Novo Produto"}
+              </Heading>
+              <Box
+                ref={dropRef}
+                border="2px dashed #83a11d"
+                borderRadius="lg"
+                p={4}
+                w={{ base: "200px", md: "250px" }}
+                h={{ base: "200px", md: "250px" }}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                bg="gray.50"
+                position="relative"
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                cursor="pointer"
+                transition="border-color 0.2s"
+                mb={2}
+                aria-label="Área para soltar ou clicar para enviar imagem"
+                onClick={handleImageButtonClick}
+              >
+                <Image
+                  src={imagePreview || ImageDefault}
+                  alt="Imagem do Produto"
+                  boxSize={{ base: "180px", md: "220px" }}
+                  objectFit="cover"
+                  borderRadius="md"
+                  boxShadow="md"
+                  pointerEvents="none"
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                />
+                <Text
+                  position="absolute"
+                  bottom={2}
+                  left={0}
+                  right={0}
+                  textAlign="center"
+                  fontSize="xs"
+                  color="gray.500"
+                >
+                  Arraste ou clique para enviar imagem
+                </Text>
+              </Box>
+              {imageFile && (
+                <Text fontSize="sm" color="gray.600">
+                  {imageFile.name}
+                </Text>
+              )}
+            </VStack>
+            {/* Formulário */}
+            <Box flex={2} as="form" onSubmit={handleSubmit} w="100%">
+              <VStack spacing={5} align="stretch">
+                <FormControl id="product-name" isRequired>
+                  <FormLabel color="green.700">Nome do Produto</FormLabel>
+                  <Input
+                    type="text"
+                    placeholder="Ex: Laranja"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    leftElement={
+                      <Icon
+                        as={MdDriveFileRenameOutline}
+                        color="green.400"
+                        boxSize={5}
+                        ml={2}
                       />
-                    </FormControl>
-                    <FormControl id="category">
-                      <FormLabel color="gray.300">Categoria:</FormLabel>
-                      <Select
-                        placeholder="Selecione uma categoria"
-                        color="#b0b0b0"
-                        border={"2px solid  #83a11d"}
-                        aria-required="true"
-                        required
-                        width={"100%"}
-                        height={"3rem"}
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        _focus={{
-                          borderColor: "#c0ab8e",
-                          boxShadow: "0 0 0 1px #e5d1b0",
-                        }}
+                    }
+                    size="lg"
+                    borderColor="green.200"
+                    _focus={{
+                      borderColor: "green.400",
+                      boxShadow: "0 0 0 1px #b7d08b",
+                    }}
+                  />
+                </FormControl>
+                <FormControl id="category" isRequired>
+                  <FormLabel color="green.700">Categoria</FormLabel>
+                  <Select
+                    placeholder="Selecione uma categoria"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    size="lg"
+                    borderColor="green.200"
+                    _focus={{
+                      borderColor: "green.400",
+                      boxShadow: "0 0 0 1px #b7d08b",
+                    }}
+                    icon={<Icon as={MdCategory} color="green.400" />}
+                  >
+                    {CATEGORIES.map((cat) => (
+                      <option
+                        key={cat.value}
+                        value={cat.value}
+                        style={{ color: "#000" }}
                       >
-                        <option value="fruta" style={{ color: "#000" }}>
-                          Fruta
-                        </option>
-                        <option value="verdura" style={{ color: "#000" }}>
-                          Verdura
-                        </option>
-                        <option value="legume" style={{ color: "#000" }}>
-                          Legume
-                        </option>
-                      </Select>
-                    </FormControl>
-                  </SimpleGrid>
-                  <FormControl id="description">
-                    <FormLabel color="gray.300">Descrição:</FormLabel>
+                        {cat.label}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl id="description" isRequired>
+                  <FormLabel color="green.700">Descrição</FormLabel>
+                  <Input
+                    type="text"
+                    placeholder="Ex: Laranja doce e suculenta"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    leftElement={
+                      <Icon
+                        as={MdDescription}
+                        color="green.400"
+                        boxSize={5}
+                        ml={2}
+                      />
+                    }
+                    size="lg"
+                    borderColor="green.200"
+                    _focus={{
+                      borderColor: "green.400",
+                      boxShadow: "0 0 0 1px #b7d08b",
+                    }}
+                  />
+                </FormControl>
+                <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
+                  <FormControl id="price" isRequired>
+                    <FormLabel color="green.700">Preço</FormLabel>
                     <Input
-                      type="text"
-                      placeholder="Ex: Laranja doce e suculenta"
-                      _placeholder={{ color: "#b0b0b0" }}
-                      border={"2px solid  #83a11d"}
-                      aria-required="true"
-                      required
-                      width={"100%"}
-                      height={"3rem"}
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
+                      type="number"
+                      placeholder="Ex: 2.50"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      leftElement={
+                        <Icon
+                          as={MdAttachMoney}
+                          color="green.400"
+                          boxSize={5}
+                          ml={2}
+                        />
+                      }
+                      size="lg"
+                      borderColor="green.200"
                       _focus={{
-                        borderColor: "#c0ab8e",
-                        boxShadow: "0 0 0 1px #e5d1b0",
+                        borderColor: "green.400",
+                        boxShadow: "0 0 0 1px #b7d08b",
                       }}
                     />
                   </FormControl>
-                  <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
-                    <FormControl id="price">
-                      <FormLabel color="gray.300">Preço:</FormLabel>
-                      <Input
-                        type="number"
-                        placeholder="Ex: 2.50"
-                        _placeholder={{ color: "#b0b0b0" }}
-                        border={"2px solid  #83a11d"}
-                        aria-required="true"
-                        required
-                        width={"100%"}
-                        height={"3rem"}
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                        _focus={{
-                          borderColor: "#c0ab8e",
-                          boxShadow: "0 0 0 1px #e5d1b0",
-                        }}
-                      />
-                    </FormControl>
-                    <FormControl id="quantity">
-                      <FormLabel color="gray.300">Quantidade:</FormLabel>
-                      <Input
-                        type="number"
-                        placeholder="Ex: 100"
-                        _placeholder={{ color: "#b0b0b0" }}
-                        border={"2px solid  #83a11d"}
-                        aria-required="true"
-                        required
-                        width={"100%"}
-                        height={"3rem"}
-                        value={quantity}
-                        onChange={(e) => setQuantity(e.target.value)}
-                        _focus={{
-                          borderColor: "#c0ab8e",
-                          boxShadow: "0 0 0 1px #e5d1b0",
-                        }}
-                      />
-                    </FormControl>
-                  </SimpleGrid>
+                  <FormControl id="quantity" isRequired>
+                    <FormLabel color="green.700">Quantidade</FormLabel>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="1"
+                      pattern="\d*"
+                      placeholder="Ex: 100"
+                      value={quantity}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const sanitizedValue = Math.max(
+                          0,
+                          Math.floor(Number(value)) || 0
+                        );
+                        setQuantity(sanitizedValue.toString());
+                      }}
+                      onKeyPress={(e) => {
+                        if (!/[0-9]/.test(e.key)) {
+                          e.preventDefault();
+                        }
+                      }}
+                      leftElement={
+                        <Icon
+                          as={MdNumbers}
+                          color="green.400"
+                          boxSize={5}
+                          ml={2}
+                        />
+                      }
+                      size="lg"
+                      borderColor="green.200"
+                      _focus={{
+                        borderColor: "green.400",
+                        boxShadow: "0 0 0 1px #b7d08b",
+                      }}
+                    />
+                  </FormControl>
+                </SimpleGrid>
+                <Flex gap={4} mt={2}>
                   <Button
                     type="submit"
-                    w={"100%"}
-                    color={"#ffffff"}
-                    background={"#52601A"}
-                    borderRadius={"10px"}
-                    fontFamily={"Onest"}
-                    padding={"1.5rem"}
-                    _hover={{
-                      background: "#c0ab8e",
-                      color: "#ffffff",
-                    }}
+                    w="100%"
+                    colorScheme="green"
+                    borderRadius="md"
+                    fontWeight="bold"
+                    size="lg"
+                    isLoading={isLoading}
+                    spinner={<Spinner size="md" color="white" />}
                     aria-label={
                       productToEdit ? "Salvar Alterações" : "Fazer cadastro"
                     }
-                    LoadingText={
-                      productToEdit ? "Salvando..." : "Fazendo cadastro..."
-                    }
-                    spinnerPlacement="end"
                   >
                     {productToEdit ? "Salvar Alterações" : "Cadastrar"}
                   </Button>
-                </VStack>
-                <Center flexDirection="column" gap={4}>
-                  <Image
-                    src={imagePreview || ImageDefault}
-                    alt="Imagem de Feira ou do Produto"
-                    boxSize={{ base: "200px", md: "300px" }}
-                    objectFit="cover"
-                    borderRadius="md"
-                    boxShadow="lg"
-                  />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: "none" }}
-                    ref={(el) => (fileInputRef.current = el)}
-                    onChange={handleImageChange}
-                  />
                   <Button
-                    onClick={handleImageButtonClick}
-                    cursor="pointer"
+                    onClick={handleCancel}
+                    w="100%"
+                    colorScheme="gray"
+                    borderRadius="md"
+                    fontWeight="bold"
+                    size="lg"
                     variant="outline"
-                    color="#c0ab8e"
-                    borderColor="#c0ab8e"
-                    _hover={{ bg: "rgba(205, 220, 57, 0.1)" }}
+                    aria-label="Cancelar"
                   >
-                    Enviar Imagem
+                    Cancelar
                   </Button>
-                  {imageFile && (
-                    <Text fontSize="sm" color="gray.200">
-                      {imageFile.name}
-                    </Text>
-                  )}
-                </Center>
-              </Flex>
-            </form>
-          </Center>
+                </Flex>
+              </VStack>
+            </Box>
+          </Flex>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 };
 export default AppProduto;

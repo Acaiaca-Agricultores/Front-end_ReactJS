@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter, useLocation } from "react-router-dom";
 import VLibras from "@djpfs/react-vlibras";
+import ScrollToTop from "./ScrollToTop.jsx";
 
 import Header from "../components/header/AppHeader.jsx";
 import Footer from "../components/footer/AppFooter.jsx";
@@ -31,6 +32,7 @@ createRoot(document.getElementById("root")).render(
     <ChakraProvider>
       <BrowserRouter>
         <VLibras />
+        <ScrollToTop />
         <App />
       </BrowserRouter>
     </ChakraProvider>

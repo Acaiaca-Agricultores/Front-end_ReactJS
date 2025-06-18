@@ -1,4 +1,3 @@
-import "./styles-app.css";
 import { useState } from "react";
 import {
   Box,
