@@ -28,7 +28,7 @@ import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
 import IconInfo from "../../assets/icons/info.png";
-import AppStepper, { steps, useAppStepperControls } from "./AppStepper";
+import AppStepper, {  useAppStepperControls } from "./AppStepper";
 import AppSelect from "../configuração/AppSelect";
 import axios from "axios";
 

@@ -16,6 +16,8 @@ import {
   Icon,
   Spinner,
   useBreakpointValue,
+  InputGroup,
+  InputLeftElement,
 } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
 import {
@@ -34,6 +36,14 @@ const CATEGORIES = [
   { value: "fruta", label: "Fruta" },
   { value: "verdura", label: "Verdura" },
   { value: "legume", label: "Legume" },
+  { value: "tuberculos", label: "Tubérculos" },
+  { value: "graos", label: "Grãos" },
+  { value: "oleaginosas", label: "Oleaginosas" },
+  { value: "temperos", label: "Temperos" },
+  { value: "chas", label: "Chás" },
+  { value: "mel", label: "Mel" },
+  { value: "ovos", label: "Ovos" },
+  { value: "laticinios", label: "Laticínios" },
 ];
 
 const AppProduto = () => {
@@ -73,7 +83,6 @@ const AppProduto = () => {
     }
   }, [productToEdit, API_URL]);
 
-  // Drag and drop handlers
   const handleDragOver = (e) => {
     e.preventDefault();
     if (dropRef.current) dropRef.current.style.borderColor = "#c0ab8e";
@@ -113,13 +122,58 @@ const AppProduto = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+
+    if (!name || !description || !category || !quantity || price === "") {
+      toast({
+        title: "Campos obrigatórios",
+        description:
+          "Todos os campos são obrigatórios, incluindo categoria e preço.",
+        status: "error",
+        duration: 3000,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    if (!productToEdit && !imageFile) {
+      toast({
+        title: "Imagem obrigatória",
+        description: "Foto do produto é obrigatória.",
+        status: "error",
+        duration: 3000,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    if (name.length < 3) {
+      toast({
+        title: "Nome muito curto",
+        description: "Nome do produto deve ter pelo menos 3 caracteres.",
+        status: "error",
+        duration: 3000,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    if (description.length < 10) {
+      toast({
+        title: "Descrição muito curta",
+        description: "Descrição deve ter pelo menos 10 caracteres.",
+        status: "error",
+        duration: 3000,
+      });
+      setIsLoading(false);
+      return;
+    }
+
     const normalizedCategory = category.trim().toLowerCase();
     const parsedQuantity = Math.floor(Number(quantity));
-    if (isNaN(parsedQuantity) || parsedQuantity < 0) {
+    if (isNaN(parsedQuantity) || parsedQuantity <= 0) {
       toast({
         title: "Quantidade inválida",
-        description:
-          "Por favor, insira um número inteiro positivo para a quantidade.",
+        description: "Quantidade deve ser numérica e maior que zero.",
         status: "error",
         duration: 3000,
       });
@@ -127,17 +181,29 @@ const AppProduto = () => {
       return;
     }
     const parsedPrice = Number(price);
-    if (isNaN(parsedPrice) || parsedPrice < 0) {
+    if (isNaN(parsedPrice) || parsedPrice <= 0) {
       toast({
         title: "Preço inválido",
-        description:
-          "Por favor, insira um número válido e não negativo para o preço.",
+        description: "Preço deve ser numérico e maior que zero.",
         status: "error",
         duration: 3000,
       });
       setIsLoading(false);
       return;
     }
+
+    const validCategories = CATEGORIES.map((cat) => cat.value);
+    if (!validCategories.includes(normalizedCategory)) {
+      toast({
+        title: "Categoria inválida",
+        description: "Selecione uma categoria válida da lista.",
+        status: "error",
+        duration: 3000,
+      });
+      setIsLoading(false);
+      return;
+    }
+
     try {
       let res;
       let successMessage;
@@ -200,15 +266,20 @@ const AppProduto = () => {
         formData.append("name", name);
         formData.append("category", normalizedCategory);
         formData.append("description", description);
-        formData.append("quantity", Number(parsedQuantity));
-        formData.append("price", Number(parsedPrice));
-        const userId = localStorage.getItem("userId");
-        if (userId) {
-          formData.append("userId", userId);
-        }
-        if (imageFile) {
-          formData.append("productImage", imageFile);
-        }
+        formData.append("quantity", parsedQuantity);
+        formData.append("price", parsedPrice);
+        formData.append("productImage", imageFile);
+
+        console.log("Dados sendo enviados:", {
+          name,
+          category: normalizedCategory,
+          description,
+          quantity: parsedQuantity,
+          price: parsedPrice,
+          imageFile: imageFile ? imageFile.name : "Nenhuma imagem",
+          token: token ? "Token presente" : "Token ausente",
+        });
+
         res = await fetch(API_URL + "/product/register", {
           method: "PUT",
           body: formData,
@@ -216,8 +287,22 @@ const AppProduto = () => {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
         });
+
+        console.log("Status da resposta:", res.status);
+        const responseText = await res.text();
+        console.log("Resposta do servidor:", responseText);
+
+        // Tentar fazer parse da resposta como JSON
+        let responseData;
+        try {
+          responseData = JSON.parse(responseText);
+        } catch (e) {
+          responseData = { msg: responseText };
+        }
+
         successMessage = "Produto cadastrado com sucesso!";
       }
+
       if (res.ok) {
         toast({
           title: successMessage,
@@ -235,7 +320,7 @@ const AppProduto = () => {
           setImage("");
         }
       } else {
-        const data = await res.json();
+        const data = responseData || {};
         toast({
           title:
             data.msg ||
@@ -259,7 +344,6 @@ const AppProduto = () => {
     }
   };
 
-  // Responsividade para tamanho do card
   const cardWidth = useBreakpointValue({
     base: "95vw",
     sm: "90vw",
@@ -315,7 +399,6 @@ const AppProduto = () => {
             gap={10}
             align="center"
           >
-            {/* Imagem e upload */}
             <VStack flex={1} spacing={6} align="center" justify="center">
               <Heading
                 as="h1"
@@ -381,36 +464,44 @@ const AppProduto = () => {
                 </Text>
               )}
             </VStack>
-            {/* Formulário */}
             <Box flex={2} as="form" onSubmit={handleSubmit} w="100%">
               <VStack spacing={5} align="stretch">
                 <FormControl id="product-name" isRequired>
                   <FormLabel color="green.700">Nome do Produto</FormLabel>
-                  <Input
-                    type="text"
-                    placeholder="Ex: Laranja"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    leftElement={
-                      <Icon
-                        as={MdDriveFileRenameOutline}
-                        color="green.400"
-                        boxSize={5}
-                        ml={2}
-                      />
-                    }
-                    size="lg"
-                    borderColor="green.200"
-                    _focus={{
-                      borderColor: "green.400",
-                      boxShadow: "0 0 0 1px #b7d08b",
-                    }}
-                  />
+                  <InputGroup>
+                    <InputLeftElement
+                      pointerEvents="none"
+                      children={
+                        <Icon
+                          as={MdDriveFileRenameOutline}
+                          color="green.400"
+                          boxSize={5}
+                          ml={2}
+                        />
+                      }
+                    />
+                    <Input
+                      type="text"
+                      placeholder="Ex: Laranja"
+                      _placeholder={{ color: "gray.500" }}
+                      color="gray.500"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      size="lg"
+                      borderColor="green.200"
+                      _focus={{
+                        borderColor: "green.400",
+                        boxShadow: "0 0 0 1px #b7d08b",
+                      }}
+                    />
+                  </InputGroup>
                 </FormControl>
                 <FormControl id="category" isRequired>
                   <FormLabel color="green.700">Categoria</FormLabel>
                   <Select
                     placeholder="Selecione uma categoria"
+                    _placeholder={{ color: "gray.500" }}
+                    color="gray.500"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     size="lg"
@@ -434,88 +525,109 @@ const AppProduto = () => {
                 </FormControl>
                 <FormControl id="description" isRequired>
                   <FormLabel color="green.700">Descrição</FormLabel>
-                  <Input
-                    type="text"
-                    placeholder="Ex: Laranja doce e suculenta"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    leftElement={
-                      <Icon
-                        as={MdDescription}
-                        color="green.400"
-                        boxSize={5}
-                        ml={2}
-                      />
-                    }
-                    size="lg"
-                    borderColor="green.200"
-                    _focus={{
-                      borderColor: "green.400",
-                      boxShadow: "0 0 0 1px #b7d08b",
-                    }}
-                  />
+                  <InputGroup>
+                    <InputLeftElement
+                      pointerEvents="none"
+                      children={
+                        <Icon
+                          as={MdDescription}
+                          color="green.400"
+                          boxSize={5}
+                          ml={2}
+                        />
+                      }
+                    />
+                    <Input
+                      type="text"
+                      placeholder="Ex: Laranja doce e suculenta"
+                      _placeholder={{ color: "gray.500" }}
+                      color="gray.500"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      size="lg"
+                      borderColor="green.200"
+                      _focus={{
+                        borderColor: "green.400",
+                        boxShadow: "0 0 0 1px #b7d08b",
+                      }}
+                    />
+                  </InputGroup>
                 </FormControl>
                 <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
                   <FormControl id="price" isRequired>
                     <FormLabel color="green.700">Preço</FormLabel>
-                    <Input
-                      type="number"
-                      placeholder="Ex: 2.50"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                      leftElement={
-                        <Icon
-                          as={MdAttachMoney}
-                          color="green.400"
-                          boxSize={5}
-                          ml={2}
-                        />
-                      }
-                      size="lg"
-                      borderColor="green.200"
-                      _focus={{
-                        borderColor: "green.400",
-                        boxShadow: "0 0 0 1px #b7d08b",
-                      }}
-                    />
+                    <InputGroup>
+                      <InputLeftElement
+                        pointerEvents="none"
+                        children={
+                          <Icon
+                            as={MdAttachMoney}
+                            color="green.400"
+                            boxSize={5}
+                            ml={2}
+                          />
+                        }
+                      />
+                      <Input
+                        type="number"
+                        placeholder="Ex: 2.50"
+                        _placeholder={{ color: "gray.500" }}
+                        color="gray.500"
+                        value={price}
+                        onChange={(e) => setPrice(e.target.value)}
+                        size="lg"
+                        borderColor="green.200"
+                        _focus={{
+                          borderColor: "green.400",
+                          boxShadow: "0 0 0 1px #b7d08b",
+                        }}
+                      />
+                    </InputGroup>
                   </FormControl>
                   <FormControl id="quantity" isRequired>
                     <FormLabel color="green.700">Quantidade</FormLabel>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="1"
-                      pattern="\d*"
-                      placeholder="Ex: 100"
-                      value={quantity}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const sanitizedValue = Math.max(
-                          0,
-                          Math.floor(Number(value)) || 0
-                        );
-                        setQuantity(sanitizedValue.toString());
-                      }}
-                      onKeyPress={(e) => {
-                        if (!/[0-9]/.test(e.key)) {
-                          e.preventDefault();
+                    <InputGroup>
+                      <InputLeftElement
+                        pointerEvents="none"
+                        children={
+                          <Icon
+                            as={MdNumbers}
+                            color="green.400"
+                            boxSize={5}
+                            ml={2}
+                          />
                         }
-                      }}
-                      leftElement={
-                        <Icon
-                          as={MdNumbers}
-                          color="green.400"
-                          boxSize={5}
-                          ml={2}
-                        />
-                      }
-                      size="lg"
-                      borderColor="green.200"
-                      _focus={{
-                        borderColor: "green.400",
-                        boxShadow: "0 0 0 1px #b7d08b",
-                      }}
-                    />
+                      />
+                      <Input
+                        type="number"
+                        min="0"
+                        step="1"
+                        pattern="\d*"
+                        placeholder="Ex: 100"
+                        _placeholder={{ color: "gray.500" }}
+                        color="gray.500"
+                        value={quantity}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          const sanitizedValue = Math.max(
+                            0,
+                            Math.floor(Number(value)) || 0
+                          );
+                          setQuantity(sanitizedValue.toString());
+                        }}
+                        onKeyPress={(e) => {
+                          if (!/[0-9]/.test(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
+                        size="lg"
+                        borderColor="green.200"
+                        _focus={{
+                          borderColor: "green.400",
+                          boxShadow: "0 0 0 1px #b7d08b",
+                        }}
+                      />
+                    </InputGroup>
                   </FormControl>
                 </SimpleGrid>
                 <Flex gap={4} mt={2}>

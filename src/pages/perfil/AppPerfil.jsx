@@ -180,6 +180,14 @@ function AppPerfil() {
     fetchUserData();
   }, [fetchUserData, navigate]);
 
+  // Scroll automático para posição Y próxima a 120 quando a página carrega
+  useEffect(() => {
+    window.scrollTo({
+      top: 120,
+      behavior: 'smooth'
+    });
+  }, []);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
