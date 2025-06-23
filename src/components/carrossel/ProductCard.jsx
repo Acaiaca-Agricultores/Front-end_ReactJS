@@ -51,9 +51,15 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
     }
   };
 
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(price);
+  };
+
   return (
     <Box
-      key={item.id}
       p={4}
       borderWidth="1px"
       borderRadius="lg"
@@ -73,6 +79,10 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
       maxW="350px"
       minW="250px"
       w="100%"
+      role="article"
+      aria-labelledby={`product-title-${item.id}`}
+      aria-describedby={`product-description-${item.id}`}
+      tabIndex={0}
     >
       <Box
         position="relative"
@@ -89,7 +99,7 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
                 : `${API_URL}${item.image}`
               : `${API_URL}/uploads/products/default_placeholder.jpg`
           }
-          alt={item.name}
+          alt={`Imagem do produto ${item.name}`}
           width="100%"
           height="100%"
           objectFit="cover"
@@ -107,6 +117,7 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
             py={1}
             borderRadius="md"
             fontSize="sm"
+            aria-label="Produto indisponível"
           >
             Indisponível
           </Box>
@@ -114,31 +125,54 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
       </Box>
 
       <Flex direction="column" flex={1} gap={2}>
-        <Heading size="md" color="gray.700" noOfLines={2}>
+        <Heading 
+          size="md" 
+          color="gray.700" 
+          noOfLines={2}
+          id={`product-title-${item.id}`}
+          tabIndex={0}
+        >
           {item.name || "Sem nome"}
         </Heading>
 
-        <Text fontSize="2xl" color="green.600" fontWeight="bold">
+        <Text 
+          fontSize="2xl" 
+          color="green.600" 
+          fontWeight="bold"
+          aria-label={`Preço: ${item.price ? formatPrice(item.price) : "Preço não disponível"}`}
+          tabIndex={0}
+        >
           {item.price
-            ? new Intl.NumberFormat("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              }).format(item.price)
+            ? formatPrice(item.price)
             : "Preço não disponível"}
         </Text>
 
-        <Text color="gray.600" noOfLines={2} fontSize="sm">
+        <Text 
+          color="gray.600" 
+          noOfLines={2} 
+          fontSize="sm"
+          id={`product-description-${item.id}`}
+          tabIndex={0}
+        >
           {item.description || "Sem descrição"}
         </Text>
 
         <Flex gap={2} mt={2} flexWrap="wrap">
           {item.category && (
-            <Badge colorScheme="purple" fontSize="sm">
+            <Badge 
+              colorScheme="purple" 
+              fontSize="sm"
+              aria-label={`Categoria: ${item.category}`}
+            >
               {item.category}
             </Badge>
           )}
           {item.quantity > 0 && (
-            <Badge colorScheme="green" fontSize="sm">
+            <Badge 
+              colorScheme="green" 
+              fontSize="sm"
+              aria-label={`Quantidade disponível: ${item.quantity} unidades`}
+            >
               {item.quantity} unidades
             </Badge>
           )}
@@ -154,6 +188,7 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
             boxShadow: "md",
           }}
           transition="all 0.2s"
+          aria-label={`Ver detalhes do produto ${item.name}`}
         >
           Ver Detalhes
         </Button>
@@ -171,6 +206,7 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
                   background: "#c0ab8e",
                   color: "#ffffff",
                 }}
+                aria-label={`Editar produto ${item.name}`}
               >
                 Editar
               </Button>
@@ -185,6 +221,7 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
                 }}
                 isLoading={isDeleting}
                 loadingText="Deletando..."
+                aria-label={`Deletar produto ${item.name}`}
               >
                 Deletar
               </Button>

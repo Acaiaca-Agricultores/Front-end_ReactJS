@@ -22,14 +22,19 @@ import {
   FormLabel as ModalFormLabel,
   Input as ModalInput,
   FormErrorMessage as ModalFormError,
+  InputGroup,
+  InputRightElement,
+  Image,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useSpeechRecognition } from "../../hooks/useSpeechRecognition";
+import IconVoice from "../../assets/icons/voice-command.png";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL
 });
 
 export const ForgotPasswordScreen = () => {
@@ -37,6 +42,7 @@ export const ForgotPasswordScreen = () => {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
+    setValue,
   } = useForm();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -44,20 +50,25 @@ export const ForgotPasswordScreen = () => {
     handleSubmit: handleResetSubmit,
     register: registerReset,
     formState: { errors: resetErrors, isSubmitting: isResetting },
+    setValue: setResetValue,
   } = useForm();
   const [submissionMessage, setSubmissionMessage] = useState("");
-  const [emailSubmitted, setEmailSubmitted] = useState("");
   const [userId, setUserId] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
 
-  const API_URL = import.meta.env.VITE_API_URL;
+  const { handleToggleRecording, recordingField } = useSpeechRecognition({
+    setValue,
+  });
+  const {
+    handleToggleRecording: handleResetToggleRecording,
+    recordingField: resetRecordingField,
+  } = useSpeechRecognition({ setValue: setResetValue });
 
   const onSubmit = async ({ email }) => {
     try {
       const response = await api.post("user", { email });
       const { user } = response.data;
-      setEmailSubmitted(email);
       setUserId(user._id);
       console.log("Response data:", response.data);
       setSubmissionMessage(response.data.msg);
@@ -149,22 +160,43 @@ export const ForgotPasswordScreen = () => {
               <VStack spacing={4}>
                 <FormControl isInvalid={errors.email}>
                   <FormLabel htmlFor="email">Endereço de e-mail</FormLabel>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="seuemail@exemplo.com"
-                    _focus={{
-                      borderColor: "#c0ab8e",
-                      boxShadow: "0 0 0 1px #e5d1b0",
-                    }}
-                    {...register("email", {
-                      required: "O e-mail é obrigatório",
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: "Endereço de e-mail inválido",
-                      },
-                    })}
-                  />
+                  <InputGroup>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="seuemail@exemplo.com"
+                      _focus={{
+                        borderColor: "#c0ab8e",
+                        boxShadow: "0 0 0 1px #e5d1b0",
+                      }}
+                      {...register("email", {
+                        required: "O e-mail é obrigatório",
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: "Endereço de e-mail inválido",
+                        },
+                      })}
+                      onInput={(e) => {
+                        e.currentTarget.value = e.currentTarget.value
+                          .replace(/\s/g, "")
+                          .toLowerCase();
+                      }}
+                    />
+                    <InputRightElement>
+                      <Button
+                        variant="ghost"
+                        onClick={() =>
+                          handleToggleRecording("email", {
+                            trim: true,
+                            toLowerCase: true,
+                          })
+                        }
+                        isLoading={recordingField === "email"}
+                      >
+                        <Image src={IconVoice} w="16px" />
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
                   <FormErrorMessage>
                     {errors.email && errors.email.message}
                   </FormErrorMessage>
@@ -209,13 +241,34 @@ export const ForgotPasswordScreen = () => {
                     <ModalFormLabel htmlFor="newPassword">
                       Nova Senha
                     </ModalFormLabel>
-                    <ModalInput
-                      id="newPassword"
-                      type="password"
-                      {...registerReset("newPassword", {
-                        required: "Informe a nova senha",
-                      })}
-                    />
+                    <InputGroup>
+                      <ModalInput
+                        id="newPassword"
+                        type="password"
+                        {...registerReset("newPassword", {
+                          required: "Informe a nova senha",
+                        })}
+                        onInput={(e) => {
+                          e.currentTarget.value = e.currentTarget.value.replace(
+                            /\s/g,
+                            ""
+                          );
+                        }}
+                      />
+                      <InputRightElement>
+                        <Button
+                          variant="ghost"
+                          onClick={() =>
+                            handleResetToggleRecording("newPassword", {
+                              trim: true,
+                            })
+                          }
+                          isLoading={resetRecordingField === "newPassword"}
+                        >
+                          <Image src={IconVoice} w="16px" />
+                        </Button>
+                      </InputRightElement>
+                    </InputGroup>
                     <ModalFormError>
                       {resetErrors.newPassword &&
                         resetErrors.newPassword.message}
@@ -228,13 +281,34 @@ export const ForgotPasswordScreen = () => {
                     <ModalFormLabel htmlFor="confirmPassword">
                       Confirme a Senha
                     </ModalFormLabel>
-                    <ModalInput
-                      id="confirmPassword"
-                      type="password"
-                      {...registerReset("confirmPassword", {
-                        required: "Confirme a senha",
-                      })}
-                    />
+                    <InputGroup>
+                      <ModalInput
+                        id="confirmPassword"
+                        type="password"
+                        {...registerReset("confirmPassword", {
+                          required: "Confirme a senha",
+                        })}
+                        onInput={(e) => {
+                          e.currentTarget.value = e.currentTarget.value.replace(
+                            /\s/g,
+                            ""
+                          );
+                        }}
+                      />
+                      <InputRightElement>
+                        <Button
+                          variant="ghost"
+                          onClick={() =>
+                            handleResetToggleRecording("confirmPassword", {
+                              trim: true,
+                            })
+                          }
+                          isLoading={resetRecordingField === "confirmPassword"}
+                        >
+                          <Image src={IconVoice} w="16px" />
+                        </Button>
+                      </InputRightElement>
+                    </InputGroup>
                     <ModalFormError>
                       {resetErrors.confirmPassword &&
                         resetErrors.confirmPassword.message}

@@ -36,6 +36,8 @@ const AppStepper = ({ steps: stepsProp, activeStep }) => {
       height="auto"
       gap="0"
       display={{ base: "none", md: "flex" }}
+      role="navigation"
+      aria-label="Progresso do cadastro"
     >
       {stepsProp.map((step, index) => (
         <Step key={index}>
@@ -52,6 +54,7 @@ const AppStepper = ({ steps: stepsProp, activeStep }) => {
                 color: "white",
               },
             }}
+            aria-label={`${step.title}: ${step.description} - ${index <= activeStep ? 'Concluída' : index === activeStep ? 'Atual' : 'Pendente'}`}
           >
             <StepStatus
               complete={<StepIcon />}
@@ -73,8 +76,8 @@ const AppStepper = ({ steps: stepsProp, activeStep }) => {
           </StepIndicator>
 
           <Box flexShrink="0">
-            <StepTitle>{step.title}</StepTitle>
-            <StepDescription color={"#ffffff"} >{step.description}</StepDescription>
+            <StepTitle tabIndex={0}>{step.title}</StepTitle>
+            <StepDescription color={"#ffffff"} tabIndex={0}>{step.description}</StepDescription>
           </Box>
 
           <StepSeparator

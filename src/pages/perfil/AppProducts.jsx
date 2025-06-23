@@ -19,9 +19,9 @@ export default function AppProducts({ isOwner, viewedUserId }) {
       const token = localStorage.getItem("token");
       const loggedInUserId = localStorage.getItem("userId");
 
-      const targetUserId = isOwner ? loggedInUserId : viewedUserId;
+      const userId = isOwner ? loggedInUserId : viewedUserId;
 
-      if (!token || !targetUserId) {
+      if (!token || !userId) {
         setError(
           isOwner
             ? "Token de autenticação ou userId ausente."
@@ -33,15 +33,12 @@ export default function AppProducts({ isOwner, viewedUserId }) {
       setIsLoading(true);
       setError(null);
       try {
-        const res = await axios.get(
-          `${API_URL}/products/user/${targetUserId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        const data = Array.isArray(res.data) ? res.data : res.data.products;
+        const res = await axios.get(`${API_URL}/products/user/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const payload = res.data.products || res.data || [];
         setProducts(
-          (data || []).map((product) => ({
+          payload.map((product) => ({
             id: product.id || product._id,
             name: product.name,
             description: product.description,

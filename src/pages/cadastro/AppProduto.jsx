@@ -2,7 +2,6 @@ import {
   Box,
   Flex,
   Text,
-  Center,
   FormControl,
   FormLabel,
   Input,
@@ -18,6 +17,7 @@ import {
   useBreakpointValue,
   InputGroup,
   InputLeftElement,
+  InputRightElement,
 } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
 import {
@@ -27,15 +27,18 @@ import {
   MdNumbers,
   MdDriveFileRenameOutline,
   MdArrowBack,
+  MdScale,
 } from "react-icons/md";
 import ImagemFeira from "../../assets/feira.jpg";
 import ImageDefault from "../../assets/default.png";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useSpeechRecognition } from "../../hooks/useSpeechRecognition";
+import IconVoice from "../../assets/icons/voice-command.png";
 
 const CATEGORIES = [
-  { value: "fruta", label: "Fruta" },
-  { value: "verdura", label: "Verdura" },
-  { value: "legume", label: "Legume" },
+  { value: "frutas", label: "Frutas" },
+  { value: "verduras", label: "Verduras" },
+  { value: "legumes", label: "Legumes" },
   { value: "tuberculos", label: "Tubérculos" },
   { value: "graos", label: "Grãos" },
   { value: "oleaginosas", label: "Oleaginosas" },
@@ -44,6 +47,20 @@ const CATEGORIES = [
   { value: "mel", label: "Mel" },
   { value: "ovos", label: "Ovos" },
   { value: "laticinios", label: "Laticínios" },
+];
+
+const SALE_TYPES = [
+  { value: "unidade", label: "Unidade" },
+  { value: "quilo", label: "Quilo (kg)" },
+  { value: "grama", label: "Grama (g)" },
+  { value: "caixa", label: "Caixa" },
+  { value: "bandeja", label: "Bandeja" },
+  { value: "pacote", label: "Pacote" },
+  { value: "duzia", label: "Dúzia" },
+  { value: "litro", label: "Litro (L)" },
+  { value: "mililitro", label: "Mililitro (ml)" },
+  { value: "metro", label: "Metro (m)" },
+  { value: "centimetro", label: "Centímetro (cm)" },
 ];
 
 const AppProduto = () => {
@@ -59,20 +76,41 @@ const AppProduto = () => {
   const [description, setDescription] = useState("");
   const [quantity, setQuantity] = useState("");
   const [price, setPrice] = useState("");
-  const [image, setImage] = useState("");
+  const [saleType, setSaleType] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef(null);
   const dropRef = useRef(null);
+  const { handleToggleRecording, recordingField, stopRecording } =
+    useSpeechRecognition({});
 
   useEffect(() => {
     if (productToEdit) {
       setName(productToEdit.name || productToEdit.title || "");
-      setCategory(productToEdit.category || "");
+
+      const categoryMapping = {
+        Frutas: "frutas",
+        Verduras: "verduras",
+        Legumes: "legumes",
+        Tubérculos: "tuberculos",
+        Grãos: "graos",
+        Oleaginosas: "oleaginosas",
+        Temperos: "temperos",
+        Chás: "chas",
+        Mel: "mel",
+        Ovos: "ovos",
+        Laticínios: "laticinios",
+      };
+
+      const mappedCategory =
+        categoryMapping[productToEdit.category] || productToEdit.category || "";
+      setCategory(mappedCategory);
+
       setDescription(productToEdit.description || "");
       setQuantity(productToEdit.quantity?.toString() || "");
       setPrice(productToEdit.price?.toString() || "");
+      setSaleType(productToEdit.saleType || "");
       setImagePreview(
         productToEdit.image
           ? productToEdit.image.startsWith("http")
@@ -87,10 +125,12 @@ const AppProduto = () => {
     e.preventDefault();
     if (dropRef.current) dropRef.current.style.borderColor = "#c0ab8e";
   };
+
   const handleDragLeave = (e) => {
     e.preventDefault();
     if (dropRef.current) dropRef.current.style.borderColor = "#83a11d";
   };
+
   const handleDrop = (e) => {
     e.preventDefault();
     if (dropRef.current) dropRef.current.style.borderColor = "#83a11d";
@@ -98,7 +138,6 @@ const AppProduto = () => {
     if (file) {
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
-      setImage("");
     }
   };
 
@@ -107,7 +146,6 @@ const AppProduto = () => {
     if (file) {
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
-      setImage("");
     }
   };
 
@@ -119,86 +157,59 @@ const AppProduto = () => {
     navigate(-1);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+  const validateForm = () => {
+    const errors = [];
 
-    if (!name || !description || !category || !quantity || price === "") {
-      toast({
-        title: "Campos obrigatórios",
-        description:
-          "Todos os campos são obrigatórios, incluindo categoria e preço.",
-        status: "error",
-        duration: 3000,
-      });
-      setIsLoading(false);
-      return;
+    if (!name.trim()) {
+      errors.push("Nome do produto é obrigatório");
+    } else if (name.trim().length < 3) {
+      errors.push("Nome do produto deve ter pelo menos 3 caracteres");
+    }
+
+    if (!description.trim()) {
+      errors.push("Descrição é obrigatória");
+    } else if (description.trim().length < 10) {
+      errors.push("Descrição deve ter pelo menos 10 caracteres");
+    }
+
+    if (!category) {
+      errors.push("Categoria é obrigatória");
+    }
+
+    if (!saleType) {
+      errors.push("Tipo de venda é obrigatório");
+    }
+
+    if (!quantity || quantity <= 0) {
+      errors.push("Quantidade deve ser maior que zero");
+    }
+
+    if (!price || price <= 0) {
+      errors.push("Preço deve ser maior que zero");
     }
 
     if (!productToEdit && !imageFile) {
-      toast({
-        title: "Imagem obrigatória",
-        description: "Foto do produto é obrigatória.",
-        status: "error",
-        duration: 3000,
-      });
-      setIsLoading(false);
-      return;
+      errors.push("Foto do produto é obrigatória");
     }
 
-    if (name.length < 3) {
-      toast({
-        title: "Nome muito curto",
-        description: "Nome do produto deve ter pelo menos 3 caracteres.",
-        status: "error",
-        duration: 3000,
-      });
-      setIsLoading(false);
-      return;
+    return errors;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (recordingField) {
+      stopRecording();
     }
 
-    if (description.length < 10) {
-      toast({
-        title: "Descrição muito curta",
-        description: "Descrição deve ter pelo menos 10 caracteres.",
-        status: "error",
-        duration: 3000,
-      });
-      setIsLoading(false);
-      return;
-    }
+    setIsLoading(true);
 
-    const normalizedCategory = category.trim().toLowerCase();
-    const parsedQuantity = Math.floor(Number(quantity));
-    if (isNaN(parsedQuantity) || parsedQuantity <= 0) {
+    const validationErrors = validateForm();
+    if (validationErrors.length > 0) {
       toast({
-        title: "Quantidade inválida",
-        description: "Quantidade deve ser numérica e maior que zero.",
+        title: "Erro de validação",
+        description: validationErrors.join(". "),
         status: "error",
-        duration: 3000,
-      });
-      setIsLoading(false);
-      return;
-    }
-    const parsedPrice = Number(price);
-    if (isNaN(parsedPrice) || parsedPrice <= 0) {
-      toast({
-        title: "Preço inválido",
-        description: "Preço deve ser numérico e maior que zero.",
-        status: "error",
-        duration: 3000,
-      });
-      setIsLoading(false);
-      return;
-    }
-
-    const validCategories = CATEGORIES.map((cat) => cat.value);
-    if (!validCategories.includes(normalizedCategory)) {
-      toast({
-        title: "Categoria inválida",
-        description: "Selecione uma categoria válida da lista.",
-        status: "error",
-        duration: 3000,
+        duration: 5000,
       });
       setIsLoading(false);
       return;
@@ -207,15 +218,17 @@ const AppProduto = () => {
     try {
       let res;
       let successMessage;
+
       if (productToEdit && productToEdit.id) {
         try {
           if (imageFile) {
             const formData = new FormData();
-            formData.append("name", name);
-            formData.append("category", normalizedCategory);
-            formData.append("description", description);
-            formData.append("quantity", parsedQuantity);
-            formData.append("price", parsedPrice);
+            formData.append("name", name.trim());
+            formData.append("category", category);
+            formData.append("description", description.trim());
+            formData.append("quantity", Number(quantity));
+            formData.append("price", Number(price));
+            formData.append("saleType", saleType);
             formData.append("userId", localStorage.getItem("userId"));
             formData.append("productImage", imageFile);
             res = await fetch(`${API_URL}/product/edit/${productToEdit.id}`, {
@@ -227,11 +240,12 @@ const AppProduto = () => {
             });
           } else {
             const productData = {
-              name,
-              category: normalizedCategory,
-              description,
-              quantity: parsedQuantity,
-              price: parsedPrice,
+              name: name.trim(),
+              category: category,
+              description: description.trim(),
+              quantity: Number(quantity),
+              price: Number(price),
+              saleType: saleType,
               userId: localStorage.getItem("userId"),
             };
             if (productToEdit.image && !imagePreview.startsWith("blob:")) {
@@ -246,10 +260,6 @@ const AppProduto = () => {
               },
             });
           }
-          const responseData = await res.json();
-          if (!res.ok) {
-            throw new Error(responseData.msg || "Erro ao atualizar produto");
-          }
           successMessage = "Produto atualizado com sucesso!";
         } catch (error) {
           setIsLoading(false);
@@ -263,24 +273,15 @@ const AppProduto = () => {
         }
       } else {
         const formData = new FormData();
-        formData.append("name", name);
-        formData.append("category", normalizedCategory);
-        formData.append("description", description);
-        formData.append("quantity", parsedQuantity);
-        formData.append("price", parsedPrice);
+        formData.append("name", name.trim());
+        formData.append("category", category);
+        formData.append("description", description.trim());
+        formData.append("quantity", Number(quantity));
+        formData.append("price", Number(price));
+        formData.append("saleType", saleType);
         formData.append("productImage", imageFile);
 
-        console.log("Dados sendo enviados:", {
-          name,
-          category: normalizedCategory,
-          description,
-          quantity: parsedQuantity,
-          price: parsedPrice,
-          imageFile: imageFile ? imageFile.name : "Nenhuma imagem",
-          token: token ? "Token presente" : "Token ausente",
-        });
-
-        res = await fetch(API_URL + "/product/register", {
+        res = await fetch(`${API_URL}/product/register`, {
           method: "PUT",
           body: formData,
           headers: {
@@ -288,19 +289,17 @@ const AppProduto = () => {
           },
         });
 
-        console.log("Status da resposta:", res.status);
-        const responseText = await res.text();
-        console.log("Resposta do servidor:", responseText);
-
-        // Tentar fazer parse da resposta como JSON
-        let responseData;
-        try {
-          responseData = JSON.parse(responseText);
-        } catch (e) {
-          responseData = { msg: responseText };
-        }
-
         successMessage = "Produto cadastrado com sucesso!";
+      }
+
+      let responseData;
+      let isJson = false;
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        responseData = await res.json();
+        isJson = true;
+      } else {
+        responseData = await res.text();
       }
 
       if (res.ok) {
@@ -309,33 +308,46 @@ const AppProduto = () => {
           status: "success",
           duration: 3000,
         });
+
         if (!productToEdit) {
           setName("");
           setCategory("");
           setDescription("");
           setQuantity("");
           setPrice("");
+          setSaleType("");
           setImageFile(null);
           setImagePreview("");
-          setImage("");
         }
+
+        setTimeout(() => {
+          navigate(-1);
+        }, 1500);
       } else {
-        const data = responseData || {};
-        toast({
-          title:
-            data.msg ||
+        let errorMessage;
+        if (isJson) {
+          errorMessage =
+            responseData.msg ||
             (productToEdit
               ? "Erro ao atualizar produto"
-              : "Erro ao cadastrar produto"),
-          description: data.error || "Verifique os dados e tente novamente",
+              : "Erro ao cadastrar produto");
+        } else {
+          errorMessage =
+            "Erro inesperado do servidor. Tente novamente mais tarde.";
+        }
+
+        toast({
+          title: "Erro",
+          description: errorMessage,
           status: "error",
-          duration: 3000,
+          duration: 5000,
         });
       }
     } catch (err) {
+      console.error("Erro na requisição:", err);
       toast({
-        title: "Erro de rede ou na requisição",
-        description: err.message || "Tente novamente mais tarde",
+        title: "Erro de conexão",
+        description: "Verifique sua conexão e tente novamente",
         status: "error",
         duration: 3000,
       });
@@ -347,20 +359,18 @@ const AppProduto = () => {
   const cardWidth = useBreakpointValue({
     base: "95vw",
     sm: "90vw",
-    md: "700px",
-    lg: "800px",
+    md: "48rem",
+    lg: "68rem",
   });
 
   return (
     <Box
-      height="100vh"
       backgroundImage={ImagemFeira}
       backgroundSize="cover"
       backgroundPosition="center"
       display="flex"
       alignItems="center"
       justifyContent="center"
-      py={8}
     >
       <Box
         display="flex"
@@ -371,8 +381,7 @@ const AppProduto = () => {
         background="rgba(0, 0, 0, 0.6)"
         backdropFilter="blur(8px)"
         color={"white"}
-        paddingTop="6rem !important"
-        height="100vh"
+        padding={{ base: "80px", md: "150px" }}
       >
         <Box
           w={cardWidth}
@@ -382,40 +391,51 @@ const AppProduto = () => {
           p={{ base: 4, md: 10 }}
           position="relative"
         >
-          <Button
-            leftIcon={<MdArrowBack />}
-            variant="ghost"
-            colorScheme="green"
-            position="absolute"
-            top={4}
-            left={4}
-            onClick={handleCancel}
-            aria-label="Voltar"
+          <VStack
+            display="flex"
+            justifyContent="space-around"
+            flexDirection="row"
+            alignItems="stretch"
           >
-            Voltar
-          </Button>
+            <Button
+              leftIcon={<MdArrowBack />}
+              variant="ghost"
+              colorScheme="green"
+              onClick={handleCancel}
+              aria-label="Voltar"
+            >
+              Voltar
+            </Button>
+            <Heading
+              as="h1"
+              size="lg"
+              color="green.700"
+              mb={4}
+              textAlign={{ base: "center", md: "left" }}
+            >
+              {productToEdit ? "Editar Produto" : "Cadastrar Novo Produto"}
+            </Heading>
+          </VStack>
           <Flex
             direction={{ base: "column", md: "row" }}
-            gap={10}
+            gap={{ base: 6, md: 10 }}
             align="center"
+            justify="center"
           >
-            <VStack flex={1} spacing={6} align="center" justify="center">
-              <Heading
-                as="h1"
-                size="lg"
-                color="green.700"
-                mb={2}
-                textAlign="center"
-              >
-                {productToEdit ? "Editar Produto" : "Cadastrar Novo Produto"}
-              </Heading>
+            <VStack
+              flex="1"
+              maxW={{ base: "100%", md: "250px" }}
+              spacing={4}
+              align="center"
+              justify="center"
+            >
               <Box
                 ref={dropRef}
                 border="2px dashed #83a11d"
                 borderRadius="lg"
                 p={4}
-                w={{ base: "200px", md: "250px" }}
-                h={{ base: "200px", md: "250px" }}
+                w="250px"
+                h="250px"
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
@@ -426,14 +446,13 @@ const AppProduto = () => {
                 onDrop={handleDrop}
                 cursor="pointer"
                 transition="border-color 0.2s"
-                mb={2}
                 aria-label="Área para soltar ou clicar para enviar imagem"
                 onClick={handleImageButtonClick}
               >
                 <Image
                   src={imagePreview || ImageDefault}
                   alt="Imagem do Produto"
-                  boxSize={{ base: "180px", md: "220px" }}
+                  boxSize="220px"
                   objectFit="cover"
                   borderRadius="md"
                   boxShadow="md"
@@ -464,207 +483,206 @@ const AppProduto = () => {
                 </Text>
               )}
             </VStack>
-            <Box flex={2} as="form" onSubmit={handleSubmit} w="100%">
-              <VStack spacing={5} align="stretch">
-                <FormControl id="product-name" isRequired>
-                  <FormLabel color="green.700">Nome do Produto</FormLabel>
-                  <InputGroup>
-                    <InputLeftElement
-                      pointerEvents="none"
-                      children={
-                        <Icon
-                          as={MdDriveFileRenameOutline}
-                          color="green.400"
-                          boxSize={5}
-                          ml={2}
-                        />
-                      }
-                    />
-                    <Input
-                      type="text"
-                      placeholder="Ex: Laranja"
-                      _placeholder={{ color: "gray.500" }}
-                      color="gray.500"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      size="lg"
-                      borderColor="green.200"
-                      _focus={{
-                        borderColor: "green.400",
-                        boxShadow: "0 0 0 1px #b7d08b",
-                      }}
-                    />
-                  </InputGroup>
-                </FormControl>
-                <FormControl id="category" isRequired>
-                  <FormLabel color="green.700">Categoria</FormLabel>
-                  <Select
-                    placeholder="Selecione uma categoria"
+
+            <SimpleGrid
+              columns={{ base: 1, sm: 2 }}
+              spacing={4}
+              as="form"
+              onSubmit={handleSubmit}
+              flex="2"
+              w="100%"
+              align="stretch"
+            >
+              <FormControl isRequired>
+                <FormLabel htmlFor="product-name" color="black">
+                  Nome do Produto
+                </FormLabel>
+                <Input
+                  id="product-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Digite o nome do produto"
+                  bg="gray.100"
+                  borderRadius="3xl"
+                  height="50px"
+                  color="black"
+                  _placeholder={{ color: "gray.500" }}
+                  _hover={{ bg: "gray.200" }}
+                  _focus={{
+                    bg: "white",
+                    borderColor: "green.500",
+                    boxShadow: "0 0 0 1px #38A169",
+                  }}
+                />
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel htmlFor="product-category" color="black">
+                  Categoria
+                </FormLabel>
+                <Select
+                  id="product-category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  placeholder="Selecione uma categoria"
+                  bg="gray.100"
+                  borderRadius="3xl"
+                  height="50px"
+                  color="black"
+                  _hover={{ bg: "gray.200" }}
+                  _focus={{
+                    bg: "white",
+                    borderColor: "green.500",
+                    boxShadow: "0 0 0 1px #38A169",
+                  }}
+                >
+                  {CATEGORIES.map((cat) => (
+                    <option key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel htmlFor="product-description" color="black">
+                  Descrição
+                </FormLabel>
+                <Input
+                  id="product-description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Descreva o produto, origem, etc."
+                  bg="gray.100"
+                  borderRadius="3xl"
+                  height="50px"
+                  color="black"
+                  _placeholder={{ color: "gray.500" }}
+                  _hover={{ bg: "gray.200" }}
+                  _focus={{
+                    bg: "white",
+                    borderColor: "green.500",
+                    boxShadow: "0 0 0 1px #38A169",
+                  }}
+                  minLength={10}
+                />
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel htmlFor="product-sale-type" color="black">
+                  Tipo de Venda
+                </FormLabel>
+                <Select
+                  id="product-sale-type"
+                  value={saleType}
+                  onChange={(e) => setSaleType(e.target.value)}
+                  placeholder="Selecione o tipo de venda"
+                  bg="gray.100"
+                  borderRadius="3xl"
+                  height="50px"
+                  color="black"
+                  _hover={{ bg: "gray.200" }}
+                  _focus={{
+                    bg: "white",
+                    borderColor: "green.500",
+                    boxShadow: "0 0 0 1px #38A169",
+                  }}
+                >
+                  {SALE_TYPES.map((type) => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
+                <FormControl isRequired>
+                  <FormLabel htmlFor="product-quantity" color="black">
+                    Quantidade
+                  </FormLabel>
+                  <Input
+                    id="product-quantity"
+                    type="number"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    placeholder="Ex: 50"
+                    bg="gray.100"
+                    borderRadius="3xl"
+                    height="50px"
+                    color="black"
                     _placeholder={{ color: "gray.500" }}
-                    color="gray.500"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    size="lg"
-                    borderColor="green.200"
+                    _hover={{ bg: "gray.200" }}
                     _focus={{
-                      borderColor: "green.400",
-                      boxShadow: "0 0 0 1px #b7d08b",
+                      bg: "white",
+                      borderColor: "green.500",
+                      boxShadow: "0 0 0 1px #38A169",
                     }}
-                    icon={<Icon as={MdCategory} color="green.400" />}
-                  >
-                    {CATEGORIES.map((cat) => (
-                      <option
-                        key={cat.value}
-                        value={cat.value}
-                        style={{ color: "#000" }}
-                      >
-                        {cat.label}
-                      </option>
-                    ))}
-                  </Select>
+                    min={1}
+                  />
                 </FormControl>
-                <FormControl id="description" isRequired>
-                  <FormLabel color="green.700">Descrição</FormLabel>
-                  <InputGroup>
-                    <InputLeftElement
-                      pointerEvents="none"
-                      children={
-                        <Icon
-                          as={MdDescription}
-                          color="green.400"
-                          boxSize={5}
-                          ml={2}
-                        />
-                      }
-                    />
-                    <Input
-                      type="text"
-                      placeholder="Ex: Laranja doce e suculenta"
-                      _placeholder={{ color: "gray.500" }}
-                      color="gray.500"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      size="lg"
-                      borderColor="green.200"
-                      _focus={{
-                        borderColor: "green.400",
-                        boxShadow: "0 0 0 1px #b7d08b",
-                      }}
-                    />
-                  </InputGroup>
+
+                <FormControl isRequired>
+                  <FormLabel htmlFor="product-price" color="black">
+                    Preço (por {saleType || "unidade"})
+                  </FormLabel>
+                  <Input
+                    id="product-price"
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="Ex: 2.50"
+                    bg="gray.100"
+                    borderRadius="3xl"
+                    height="50px"
+                    color="black"
+                    _placeholder={{ color: "gray.500" }}
+                    _hover={{ bg: "gray.200" }}
+                    _focus={{
+                      bg: "white",
+                      borderColor: "green.500",
+                      boxShadow: "0 0 0 1px #38A169",
+                    }}
+                    min={0.01}
+                    step={0.01}
+                  />
                 </FormControl>
-                <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
-                  <FormControl id="price" isRequired>
-                    <FormLabel color="green.700">Preço</FormLabel>
-                    <InputGroup>
-                      <InputLeftElement
-                        pointerEvents="none"
-                        children={
-                          <Icon
-                            as={MdAttachMoney}
-                            color="green.400"
-                            boxSize={5}
-                            ml={2}
-                          />
-                        }
-                      />
-                      <Input
-                        type="number"
-                        placeholder="Ex: 2.50"
-                        _placeholder={{ color: "gray.500" }}
-                        color="gray.500"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                        size="lg"
-                        borderColor="green.200"
-                        _focus={{
-                          borderColor: "green.400",
-                          boxShadow: "0 0 0 1px #b7d08b",
-                        }}
-                      />
-                    </InputGroup>
-                  </FormControl>
-                  <FormControl id="quantity" isRequired>
-                    <FormLabel color="green.700">Quantidade</FormLabel>
-                    <InputGroup>
-                      <InputLeftElement
-                        pointerEvents="none"
-                        children={
-                          <Icon
-                            as={MdNumbers}
-                            color="green.400"
-                            boxSize={5}
-                            ml={2}
-                          />
-                        }
-                      />
-                      <Input
-                        type="number"
-                        min="0"
-                        step="1"
-                        pattern="\d*"
-                        placeholder="Ex: 100"
-                        _placeholder={{ color: "gray.500" }}
-                        color="gray.500"
-                        value={quantity}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          const sanitizedValue = Math.max(
-                            0,
-                            Math.floor(Number(value)) || 0
-                          );
-                          setQuantity(sanitizedValue.toString());
-                        }}
-                        onKeyPress={(e) => {
-                          if (!/[0-9]/.test(e.key)) {
-                            e.preventDefault();
-                          }
-                        }}
-                        size="lg"
-                        borderColor="green.200"
-                        _focus={{
-                          borderColor: "green.400",
-                          boxShadow: "0 0 0 1px #b7d08b",
-                        }}
-                      />
-                    </InputGroup>
-                  </FormControl>
-                </SimpleGrid>
-                <Flex gap={4} mt={2}>
-                  <Button
-                    type="submit"
-                    w="100%"
-                    colorScheme="green"
-                    borderRadius="md"
-                    fontWeight="bold"
-                    size="lg"
-                    isLoading={isLoading}
-                    spinner={<Spinner size="md" color="white" />}
-                    aria-label={
-                      productToEdit ? "Salvar Alterações" : "Fazer cadastro"
-                    }
-                  >
-                    {productToEdit ? "Salvar Alterações" : "Cadastrar"}
-                  </Button>
-                  <Button
-                    onClick={handleCancel}
-                    w="100%"
-                    colorScheme="gray"
-                    borderRadius="md"
-                    fontWeight="bold"
-                    size="lg"
-                    variant="outline"
-                    aria-label="Cancelar"
-                  >
-                    Cancelar
-                  </Button>
-                </Flex>
-              </VStack>
-            </Box>
+              </SimpleGrid>
+            </SimpleGrid>
+          </Flex>
+          <Flex gap={4} mt={6}>
+            <Button
+              type="submit"
+              w="100%"
+              colorScheme="green"
+              borderRadius="md"
+              fontWeight="bold"
+              size="lg"
+              isLoading={isLoading}
+              spinner={<Spinner size="md" color="white" />}
+              aria-label={
+                productToEdit ? "Salvar Alterações" : "Cadastrar produto"
+              }
+            >
+              {productToEdit ? "Salvar" : "Cadastrar"}
+            </Button>
+            <Button
+              onClick={handleCancel}
+              w="100%"
+              colorScheme="gray"
+              borderRadius="md"
+              fontWeight="bold"
+              size="lg"
+              variant="outline"
+              aria-label="Cancelar"
+            >
+              Cancelar
+            </Button>
           </Flex>
         </Box>
       </Box>
     </Box>
   );
 };
+
 export default AppProduto;

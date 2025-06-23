@@ -37,18 +37,12 @@ function ProductDetailCard({ product, API_URL }) {
   };
 
   const formatPhoneNumber = (phone) => {
-    // Remove todos os caracteres não numéricos
     const numbers = phone.replace(/\D/g, "");
     
-    // Se o número não começar com 55 (código do Brasil), adiciona
     const withCountryCode = numbers.startsWith("55") ? numbers : `55${numbers}`;
     
-    // Se o número tiver 12 dígitos (com DDD) ou mais, usa como está
-    // Se tiver 11 dígitos (número local com 9), adiciona o DDD padrão
-    // Se tiver 10 dígitos (número local sem 9), adiciona 9 e o DDD padrão
     let formattedNumber = withCountryCode;
     
-    // Garante que o número tenha pelo menos 12 dígitos (código do país + DDD + número)
     if (formattedNumber.length < 12) {
       toast({
         title: "Número de telefone incompleto",
@@ -91,7 +85,6 @@ function ProductDetailCard({ product, API_URL }) {
     }).format(price);
   };
 
-  // Função para extrair as informações do agricultor considerando diferentes estruturas possíveis
   const getAgricultorInfo = () => {
     const agricultor = product.agricultor || product.User || {};
     return {
@@ -119,6 +112,9 @@ function ProductDetailCard({ product, API_URL }) {
       border="2px solid #83a11d"
       _hover={{ boxShadow: "xl", transform: "translateY(-2px)" }}
       style={{ transition: "all 0.3s ease" }}
+      role="article"
+      aria-labelledby="product-title"
+      aria-describedby="product-description"
     >
       <Flex direction={{ base: "column", md: "row" }} gap={6}>
         <Box
@@ -129,7 +125,7 @@ function ProductDetailCard({ product, API_URL }) {
           <Image
             borderRadius="lg"
             src={imageUrl}
-            alt={product.name}
+            alt={`Imagem do produto ${product.name}`}
             objectFit="cover"
             width="100%"
             height="100%"
@@ -144,7 +140,13 @@ function ProductDetailCard({ product, API_URL }) {
 
         <Box flex="1">
           <Flex justifyContent="space-between" alignItems="center" mb={4}>
-            <Heading as="h1" size="xl" color="green.700">
+            <Heading 
+              as="h1" 
+              size="xl" 
+              color="green.700"
+              id="product-title"
+              tabIndex={0}
+            >
               {product.name}
             </Heading>
             <Badge
@@ -152,24 +154,36 @@ function ProductDetailCard({ product, API_URL }) {
               fontSize="md"
               p={2}
               borderRadius="md"
+              aria-label={`Status: ${product.quantity > 0 ? "Disponível" : "Indisponível"}`}
             >
               {product.quantity > 0 ? "Disponível" : "Indisponível"}
             </Badge>
           </Flex>
 
           <Box display="flex" flexDirection="column" gap={4}>
-            <Text fontSize="xl" color="gray.700">
+            <Text 
+              fontSize="xl" 
+              color="gray.700"
+              id="product-description"
+              tabIndex={0}
+            >
               {product.description || "Nenhuma descrição disponível."}
             </Text>
 
-            <Text fontSize="3xl" color="green.600" fontWeight="bold">
+            <Text 
+              fontSize="3xl" 
+              color="green.600" 
+              fontWeight="bold"
+              aria-label={`Preço: ${product.price ? formatPrice(product.price) : "Preço não disponível"}`}
+              tabIndex={0}
+            >
               {product.price
                 ? formatPrice(product.price)
                 : "Preço não disponível"}
             </Text>
 
             {product.quantity && (
-              <Text fontSize="lg" color="gray.700">
+              <Text fontSize="lg" color="gray.700" tabIndex={0}>
                 Quantidade disponível:{" "}
                 <Badge colorScheme="green" fontSize="md">
                   {product.quantity} unidades
@@ -178,7 +192,7 @@ function ProductDetailCard({ product, API_URL }) {
             )}
 
             {product.category && (
-              <Text fontSize="lg" color="gray.700">
+              <Text fontSize="lg" color="gray.700" tabIndex={0}>
                 Categoria:{" "}
                 <Badge colorScheme="purple">{product.category}</Badge>
               </Text>
@@ -186,22 +200,28 @@ function ProductDetailCard({ product, API_URL }) {
 
             <Divider my={4} />
 
-            <Box bg="gray.50" p={4} borderRadius="md">
+            <Box 
+              bg="gray.50" 
+              p={4} 
+              borderRadius="md"
+              role="region"
+              aria-label="Informações do Vendedor"
+            >
               <Text fontSize="lg" fontWeight="bold" mb={2} color="gray.700">
                 Informações do Vendedor
               </Text>
               {agricultorInfo.username && (
-                <Text fontSize="md" color="gray.700">
+                <Text fontSize="md" color="gray.700" tabIndex={0}>
                   Vendedor: <strong>{agricultorInfo.username}</strong>
                 </Text>
               )}
               {agricultorInfo.propertyName && (
-                <Text fontSize="md" color="gray.700">
+                <Text fontSize="md" color="gray.700" tabIndex={0}>
                   Propriedade: <strong>{agricultorInfo.propertyName}</strong>
                 </Text>
               )}
               {(agricultorInfo.city || agricultorInfo.state) && (
-                <Text fontSize="md" color="gray.700">
+                <Text fontSize="md" color="gray.700" tabIndex={0}>
                   Localização:{" "}
                   <strong>
                     {[agricultorInfo.city, agricultorInfo.state]
@@ -220,6 +240,7 @@ function ProductDetailCard({ product, API_URL }) {
                   size="lg"
                   flex="1"
                   onClick={handleContact}
+                  aria-label={`Contatar vendedor ${agricultorInfo.username} via WhatsApp`}
                 >
                   Contatar Vendedor
                 </Button>
@@ -230,6 +251,7 @@ function ProductDetailCard({ product, API_URL }) {
                 size="lg"
                 flex="1"
                 onClick={handleShare}
+                aria-label="Compartilhar produto"
               >
                 Compartilhar
               </Button>

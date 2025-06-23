@@ -39,7 +39,7 @@ import ImagemFeira from "../../assets/feira.jpg";
 import ImageDefault from "../../assets/default.png";
 import AppLoading from "../../components/loading/AppLoading";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL
 
 const useAgriData = () => {
   const navigate = useNavigate();
@@ -71,28 +71,74 @@ const useAgriData = () => {
           return;
         }
 
-        const productsData = await productsResponse.json();
-        const mapearProducts = productsData.map((p) => ({
-          ...p,
-          id: p.id || p._id,
-          title: p.name,
-          image: p.image ? `${API_URL}${p.image}` : ImageDefault,
-          agricultor: p.User ? { ...p.User } : {},
-        }));
-        setProducts(mapearProducts);
+        // Check if responses are successful
+        if (!productsResponse.ok) {
+          console.error(
+            "Products API error:",
+            productsResponse.status,
+            productsResponse.statusText
+          );
+          setProducts([]);
+        } else {
+          const productsData = await productsResponse.json();
 
-        const farmersData = await farmersResponse.json();
-        const mapearFarmers = farmersData.map((user) => ({
-          ...user,
-          id: user.id || user._id || user.userId,
-          title: user.username,
-          image: user.imageProfile?.startsWith("http")
-            ? user.imageProfile
-            : user.imageProfile
-            ? `${API_URL}${user.imageProfile}`
-            : ImageDefault,
-        }));
-        setFarmers(mapearFarmers);
+          // Handle API response structure: {success: true, products: Array, count: number}
+          const productsArray = productsData.products || productsData;
+
+          // Validate that productsArray is an array
+          if (!Array.isArray(productsArray)) {
+            console.error(
+              "API returned non-array products data:",
+              productsData
+            );
+            setProducts([]);
+          } else {
+            const mapearProducts = productsArray.map((p) => ({
+              ...p,
+              id: p.id || p._id,
+              title: p.name,
+              image: p.image ? `${API_URL}${p.image}` : ImageDefault,
+              agricultor: p.User ? { ...p.User } : {},
+            }));
+            setProducts(mapearProducts);
+          }
+        }
+
+        if (!farmersResponse.ok) {
+          console.error(
+            "Farmers API error:",
+            farmersResponse.status,
+            farmersResponse.statusText
+          );
+          setFarmers([]);
+        } else {
+          const farmersData = await farmersResponse.json();
+
+          // Handle API response structure: {success: true, farmers: Array, count: number} or similar
+          const farmersArray =
+            farmersData.farmers ||
+            farmersData.users ||
+            farmersData.agricultores ||
+            farmersData;
+
+          // Validate that farmersArray is an array
+          if (!Array.isArray(farmersArray)) {
+            console.error("API returned non-array farmers data:", farmersData);
+            setFarmers([]);
+          } else {
+            const mapearFarmers = farmersArray.map((user) => ({
+              ...user,
+              id: user.id || user._id || user.userId,
+              title: user.username,
+              image: user.imageProfile?.startsWith("http")
+                ? user.imageProfile
+                : user.imageProfile
+                ? `${API_URL}${user.imageProfile}`
+                : ImageDefault,
+            }));
+            setFarmers(mapearFarmers);
+          }
+        }
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       } finally {
@@ -188,7 +234,7 @@ const CategorySelector = ({ categories, selected, onSelect }) => {
   );
 };
 
-const AppAgriHome = () => {
+const AppHome = () => {
   const { loading, products, farmers } = useAgriData();
   const [userName, setUserName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
@@ -244,7 +290,13 @@ const AppAgriHome = () => {
           chás: ["cha", "chá", "chas", "chás"],
           mel: ["mel"],
           ovos: ["ovo", "ovos"],
-          laticínios: ["laticinio", "laticínio", "laticinios", "laticínios", "derivados do leite"],
+          laticínios: [
+            "laticinio",
+            "laticínio",
+            "laticinios",
+            "laticínios",
+            "derivados do leite",
+          ],
         };
 
         return (
@@ -256,7 +308,7 @@ const AppAgriHome = () => {
 
     if (searchTerm.trim()) {
       const normalizedSearch = normalizeString(searchTerm);
-      
+
       if (selectedCategory === "Todos") {
         const filteredProducts = products.filter((item) =>
           normalizeString(item.title).includes(normalizedSearch)
@@ -267,7 +319,9 @@ const AppAgriHome = () => {
         data = [...filteredProducts, ...filteredFarmers];
       } else {
         data = data.filter((item) =>
-          normalizeString(item.title || item.username).includes(normalizedSearch)
+          normalizeString(item.title || item.username).includes(
+            normalizedSearch
+          )
         );
       }
     }
@@ -289,9 +343,15 @@ const AppAgriHome = () => {
           case "decrescente":
             return (b.price || 0) - (a.price || 0);
           case "nome":
-            return (a.title || a.username).localeCompare(b.title || b.username, "pt-BR");
+            return (a.title || a.username).localeCompare(
+              b.title || b.username,
+              "pt-BR"
+            );
           case "nome_desc":
-            return (b.title || b.username).localeCompare(a.title || a.username, "pt-BR");
+            return (b.title || b.username).localeCompare(
+              a.title || a.username,
+              "pt-BR"
+            );
           case "recentes":
             return (
               new Date(b.createdAt || b.updatedAt || 0) -
@@ -448,7 +508,8 @@ const AppAgriHome = () => {
     {
       title: "Frutas",
       data: products.filter(
-        (p) => p.category && ["fruta", "frutas"].includes(p.category.toLowerCase())
+        (p) =>
+          p.category && ["fruta", "frutas"].includes(p.category.toLowerCase())
       ),
       show: ["Todos", "Frutas"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
@@ -456,7 +517,11 @@ const AppAgriHome = () => {
     {
       title: "Verduras",
       data: products.filter(
-        (p) => p.category && ["verdura", "verduras", "hortaliça", "hortaliças"].includes(p.category.toLowerCase())
+        (p) =>
+          p.category &&
+          ["verdura", "verduras", "hortaliça", "hortaliças"].includes(
+            p.category.toLowerCase()
+          )
       ),
       show: ["Todos", "Verduras"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
@@ -464,7 +529,8 @@ const AppAgriHome = () => {
     {
       title: "Legumes",
       data: products.filter(
-        (p) => p.category && ["legume", "legumes"].includes(p.category.toLowerCase())
+        (p) =>
+          p.category && ["legume", "legumes"].includes(p.category.toLowerCase())
       ),
       show: ["Todos", "Legumes"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
@@ -472,7 +538,11 @@ const AppAgriHome = () => {
     {
       title: "Tubérculos",
       data: products.filter(
-        (p) => p.category && ["tuberculo", "tubérculo", "tuberculos", "tubérculos"].includes(p.category.toLowerCase())
+        (p) =>
+          p.category &&
+          ["tuberculo", "tubérculo", "tuberculos", "tubérculos"].includes(
+            p.category.toLowerCase()
+          )
       ),
       show: ["Todos", "Tubérculos"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
@@ -480,7 +550,9 @@ const AppAgriHome = () => {
     {
       title: "Grãos",
       data: products.filter(
-        (p) => p.category && ["grao", "grão", "graos", "grãos"].includes(p.category.toLowerCase())
+        (p) =>
+          p.category &&
+          ["grao", "grão", "graos", "grãos"].includes(p.category.toLowerCase())
       ),
       show: ["Todos", "Grãos"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
@@ -488,7 +560,9 @@ const AppAgriHome = () => {
     {
       title: "Oleaginosas",
       data: products.filter(
-        (p) => p.category && ["oleaginosa", "oleaginosas"].includes(p.category.toLowerCase())
+        (p) =>
+          p.category &&
+          ["oleaginosa", "oleaginosas"].includes(p.category.toLowerCase())
       ),
       show: ["Todos", "Oleaginosas"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
@@ -496,7 +570,11 @@ const AppAgriHome = () => {
     {
       title: "Temperos",
       data: products.filter(
-        (p) => p.category && ["tempero", "temperos", "condimento", "condimentos"].includes(p.category.toLowerCase())
+        (p) =>
+          p.category &&
+          ["tempero", "temperos", "condimento", "condimentos"].includes(
+            p.category.toLowerCase()
+          )
       ),
       show: ["Todos", "Temperos"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
@@ -504,7 +582,9 @@ const AppAgriHome = () => {
     {
       title: "Chás",
       data: products.filter(
-        (p) => p.category && ["cha", "chá", "chas", "chás"].includes(p.category.toLowerCase())
+        (p) =>
+          p.category &&
+          ["cha", "chá", "chas", "chás"].includes(p.category.toLowerCase())
       ),
       show: ["Todos", "Chás"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
@@ -528,7 +608,15 @@ const AppAgriHome = () => {
     {
       title: "Laticínios",
       data: products.filter(
-        (p) => p.category && ["laticinio", "laticínio", "laticinios", "laticínios", "derivados do leite"].includes(p.category.toLowerCase())
+        (p) =>
+          p.category &&
+          [
+            "laticinio",
+            "laticínio",
+            "laticinios",
+            "laticínios",
+            "derivados do leite",
+          ].includes(p.category.toLowerCase())
       ),
       show: ["Todos", "Laticínios"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
@@ -698,4 +786,4 @@ const AppAgriHome = () => {
   );
 };
 
-export default AppAgriHome;
+export default AppHome;

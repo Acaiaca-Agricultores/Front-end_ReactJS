@@ -16,7 +16,7 @@ import LinkedinImage from "../../assets/icons/linkedin.png";
 import AlissonImagem from "../../assets/fotosPerfis/alisson.png";
 import IsaacImagem from "../../assets/fotosPerfis/isaac.png";
 import JulliaImagem from "../../assets/fotosPerfis/jullia.png";
-import ManuelImagem from "../../assets/fotosPerfis/manuel.png";
+import ManuelImagem from "../../assets/fotosPerfis/manoel.png";
 import MayanImagem from "../../assets/fotosPerfis/mayan.png";
 import RamonImagem from "../../assets/fotosPerfis/ramon.png";
 import YasminImagem from "../../assets/fotosPerfis/yasmin.png";
@@ -88,108 +88,121 @@ const AppPerfis = () => {
         width="100%"
         maxWidth="1200px"
       >
-        {dataCard.map((item) => (
-          <Card
-            key={item.id}
-            direction={{ base: "column", md: "row" }}
-            overflow="hidden"
-            variant="outline"
-            bg="whiteAlpha.800"
-            borderColor="whiteAlpha.300"
-            borderRadius="xl"
-            boxShadow="lg"
-            width="100%"
-            transition="transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out"
-            _hover={{
-              transform: "translateY(-4px)",
-              boxShadow: "xl",
-            }}
-          >
-            <Image
-              src={item.image}
-              alt={`Foto de ${item.title}`}
-              objectFit="cover"
-              width={{ base: "100%", md: "180px", lg: "200px" }}
-              height={{ base: "100%", md: "auto" }}
-              alignSelf={{ base: "center", md: "stretch" }}
-              borderTopLeftRadius={{ base: "xl", md: "xl" }}
-              borderBottomLeftRadius={{ base: "0", md: "xl" }}
-              borderTopRightRadius={{ base: "xl", md: "0" }}
-              borderBottomRightRadius={{ base: "0", md: "0" }}
-            />
-
-            <Box
-              display="flex"
-              flexDirection="column"
-              justifyContent="space-between"
-              p={{ base: 4, md: 5 }}
-              flex="1"
+        {dataCard.map((item, idx) => {
+          const isLastSingle =
+            dataCard.length % 2 === 1 && idx === dataCard.length - 1;
+          return (
+            <Card
+              key={item.id}
+              direction={{ base: "column", md: "row" }}
+              overflow="hidden"
+              variant="outline"
+              bg="whiteAlpha.800"
+              borderColor="whiteAlpha.300"
+              borderRadius="xl"
+              boxShadow="lg"
+              width="100%"
+              transition="transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out"
+              _hover={{
+                transform: "translateY(-4px)",
+                boxShadow: "xl",
+              }}
+              sx={
+                isLastSingle
+                  ? {
+                      gridColumn: { lg: "1 / span 2" },
+                      mx: "auto",
+                      maxWidth: { lg: "50%" },
+                    }
+                  : {}
+              }
             >
-              <CardBody p={0}>
-                <Heading
-                  as="h3"
-                  size="md"
-                  fontWeight="semibold"
-                  mb={1}
-                  noOfLines={2}
-                >
-                  {item.title}
-                </Heading>
-                <Text
-                  color="gray.700"
-                  fontSize={{ base: "sm", md: "md" }}
-                  noOfLines={3}
-                  minHeight={{ base: "3.2em", md: "3.6em" }}
-                  mb={4}
-                >
-                  {item.description}
-                </Text>
-              </CardBody>
+              <Image
+                src={item.image}
+                alt={`Foto de ${item.title}`}
+                objectFit="cover"
+                width={{ base: "100%", md: "180px", lg: "300px" }}
+                height={{ base: "100%", md: "auto" }}
+                alignSelf={{ base: "center", md: "stretch" }}
+                borderTopLeftRadius={{ base: "xl", md: "xl" }}
+                borderBottomLeftRadius={{ base: "0", md: "xl" }}
+                borderTopRightRadius={{ base: "xl", md: "0" }}
+                borderBottomRightRadius={{ base: "0", md: "0" }}
+              />
 
-              <CardFooter
-                p={0}
+              <Box
                 display="flex"
-                justifyContent="flex-start"
-                gap={5}
+                flexDirection="column"
+                justifyContent="space-between"
+                p={{ base: 4, md: 5 }}
+                flex="1"
               >
-                <Link
-                  href={item.linkGithub}
-                  isExternal
-                  aria-label={`${item.title}'s Github`}
+                <CardBody p={0}>
+                  <Heading
+                    as="h3"
+                    size="md"
+                    fontWeight="semibold"
+                    mb={1}
+                    noOfLines={2}
+                  >
+                    {item.title}
+                  </Heading>
+                  <Text
+                    color="gray.700"
+                    fontSize={{ base: "sm", md: "md" }}
+                    noOfLines={3}
+                    minHeight={{ base: "3.2em", md: "3.6em" }}
+                    mb={4}
+                  >
+                    {item.description}
+                  </Text>
+                </CardBody>
+
+                <CardFooter
+                  p={0}
+                  display="flex"
+                  justifyContent="flex-start"
+                  gap={5}
                 >
-                  <Image
-                    src={GitImage}
-                    alt="GitHub"
-                    boxSize="28px"
-                    opacity={0.7}
-                    _hover={{
-                      opacity: 1,
-                      transform: "scale(1.15)",
-                      transition: "all 0.2s",
-                    }}
-                  />
-                </Link>
-                <Link
-                  href={item.linkLinkedin}
-                  isExternal
-                  aria-label={`${item.title}'s LinkedIn`}
-                >
-                  <Image
-                    src={LinkedinImage}
-                    alt="LinkedIn"
-                    boxSize="28px"
-                    opacity={0.7}
-                    _hover={{
-                      opacity: 1,
-                      transform: "scale(1.15)",
-                      transition: "all 0.2s",
-                    }}
-                  />
-                </Link>
-              </CardFooter>
-            </Box>
-          </Card>
-        ))}
+                  <Link
+                    href={item.linkGithub}
+                    isExternal
+                    aria-label={`${item.title}'s Github`}
+                  >
+                    <Image
+                      src={GitImage}
+                      alt="GitHub"
+                      boxSize="28px"
+                      opacity={0.7}
+                      _hover={{
+                        opacity: 1,
+                        transform: "scale(1.15)",
+                        transition: "all 0.2s",
+                      }}
+                    />
+                  </Link>
+                  <Link
+                    href={item.linkLinkedin}
+                    isExternal
+                    aria-label={`${item.title}'s LinkedIn`}
+                  >
+                    <Image
+                      src={LinkedinImage}
+                      alt="LinkedIn"
+                      boxSize="28px"
+                      opacity={0.7}
+                      _hover={{
+                        opacity: 1,
+                        transform: "scale(1.15)",
+                        transition: "all 0.2s",
+                      }}
+                    />
+                  </Link>
+                </CardFooter>
+              </Box>
+            </Card>
+          );
+        })}
       </SimpleGrid>
     </Box>
   );

@@ -112,12 +112,6 @@ const Header = () => {
     };
   }, [handleLogout]);
 
-  const handleLoginRedirect = useCallback(() => {
-    if (isCurrentPage(PATHS.LOGIN) || isCurrentPage(PATHS.CADASTRO)) {
-      window.location.reload();
-    }
-  }, [isCurrentPage]);
-
   useEffect(() => {
     if (
       isLoggedIn &&

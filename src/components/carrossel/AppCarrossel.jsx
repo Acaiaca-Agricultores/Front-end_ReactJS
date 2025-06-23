@@ -71,7 +71,11 @@ const AppCarrossel = ({ data, title, renderItem, itemsDesktop = 3 }) => {
             dotListClass="custom-dot-list-style"
             arrows={false}
           >
-            {data.map((item, index) => renderItem(item, index))}
+            {data.map((item, index) => (
+              <React.Fragment key={item.id || index}>
+                {renderItem(item, index)}
+              </React.Fragment>
+            ))}
           </Carousel>
         </div>
         <IconButton

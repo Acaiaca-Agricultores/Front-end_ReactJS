@@ -23,14 +23,22 @@ import {
   PopoverArrow,
   PopoverCloseButton,
   SimpleGrid,
+  Flex,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
 import IconInfo from "../../assets/icons/info.png";
-import AppStepper, {  useAppStepperControls } from "./AppStepper";
+import IconVoice from "../../assets/icons/voice-command.png";
+import { useAppStepperControls } from "./AppStepper";
 import AppSelect from "../configuração/AppSelect";
 import axios from "axios";
+import IAcaiBalloon from "./IAcaiBalloon";
+import IAcaiCadastro from "../../assets/IAcai.png";
+import IAcaiCadastro2 from "../../assets/IAcai-cadastro.png";
+import IAcaiCadastro3 from "../../assets/Aicai-mapa.png";
+import IAcaiCadastroFinal from "../../assets/IAcai-cadastro-final.png";
+import { FiMic } from "react-icons/fi";
 
 const AppCadastro = () => {
   const [showCurrent, setShowCurrent] = useState(false);
@@ -44,6 +52,8 @@ const AppCadastro = () => {
     { title: "Etapa 2", description: "Endereço da Propriedade" },
     { title: "Etapa 3", description: "Tipo de Usuário" },
   ]);
+  const [recognition, setRecognition] = useState(null);
+  const [recordingField, setRecordingField] = useState(null);
 
   const {
     register,
@@ -52,6 +62,7 @@ const AppCadastro = () => {
     control,
     formState: { errors },
     trigger,
+    setValue,
   } = useForm({
     defaultValues: {
       role: "agricultor",
@@ -71,6 +82,80 @@ const AppCadastro = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const navigation = useNavigate();
 
+  useEffect(() => {
+    if (
+      !("SpeechRecognition" in window || "webkitSpeechRecognition" in window)
+    ) {
+      toast({
+        title: "Navegador incompatível",
+        description:
+          "Seu navegador não suporta a funcionalidade de gravação de voz.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const rec = new SpeechRecognition();
+    rec.continuous = false;
+    rec.lang = "pt-BR";
+    rec.interimResults = false;
+    setRecognition(rec);
+  }, [toast]);
+
+  const handleToggleRecording = (fieldName) => {
+    if (!recognition) return;
+
+    if (recordingField) {
+      if (recordingField === fieldName) {
+        recognition.stop();
+      }
+      return;
+    }
+
+    recognition.onresult = (event) => {
+      let transcript = event.results[0][0].transcript;
+
+      if (fieldName === "email") {
+        transcript = transcript.replace(/\s/g, "").toLowerCase();
+      } else if (fieldName === "password" || fieldName === "confirmPassword") {
+        transcript = transcript.replace(/\s/g, "");
+      } else if (fieldName === "phone") {
+        transcript = formatPhone(transcript);
+      }
+
+      setValue(fieldName, transcript, { shouldValidate: true });
+      toast({
+        title: "Texto reconhecido!",
+        description: `O texto foi inserido no campo.`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+      toast({
+        title: "Erro no reconhecimento de voz",
+        description: `Erro: ${event.error}. Verifique as permissões do microfone.`,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    };
+
+    recognition.onend = () => {
+      setRecordingField(null);
+    };
+
+    recognition.start();
+    setRecordingField(fieldName);
+  };
+
   const formatPhone = (value) => {
     if (!value) return value;
     value = value.replace(/\D/g, "");
@@ -87,12 +172,12 @@ const AppCadastro = () => {
 
   const handleNext = async () => {
     let fieldsToValidate = [];
-    if (activeStep === 2) {
+    if (activeStep === 1) {
       fieldsToValidate = ["username", "email", "password", "confirmPassword"];
-    } else if (activeStep === 3) {
-      fieldsToValidate = ["propertyName", "state", "city", "phone"];
-      if (role === "agricultor" && stepsState.length === 4) {
-        fieldsToValidate.push("farmerStory");
+    } else if (activeStep === 2) {
+      fieldsToValidate = ["phone"];
+      if (watch("role") !== "consumidor") {
+        fieldsToValidate.push("propertyName");
       }
     }
 
@@ -104,6 +189,19 @@ const AppCadastro = () => {
           description: "Por favor, preencha todos os campos obrigatórios.",
           status: "error",
           duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+    }
+
+    if (activeStep === 2) {
+      if (!selectedEstado || !selectedCidade) {
+        toast({
+          title: "Erro de validação",
+          description: "Selecione um estado e uma cidade.",
+          status: "error",
+          duration: 4000,
           isClosable: true,
         });
         return;
@@ -236,6 +334,70 @@ const AppCadastro = () => {
     }
   }, [role]);
 
+  const stepImages = [
+    IAcaiCadastro,
+    IAcaiCadastro2,
+    IAcaiCadastro3,
+    IAcaiCadastroFinal,
+  ];
+
+  function getPasswordStrengthMessage(password) {
+    if (!password) return "Digite sua senha";
+    const errors = [];
+    if (password.length < 6) errors.push("Pelo menos 6 caracteres");
+    if (!/[A-Z]/.test(password)) errors.push("Uma letra maiúscula");
+    if (!/[a-z]/.test(password)) errors.push("Uma letra minúscula");
+    if (!/[0-9]/.test(password)) errors.push("Um número");
+    if (!/[^A-Za-z0-9]/.test(password)) errors.push("Um caractere especial");
+    if (errors.length === 0) return "Senha forte definida!";
+    return `Senha fraca: falta ${errors.join(", ")}`;
+  }
+
+  const getBalloonText = () => {
+    if (activeStep === 0) {
+      const perfil = watch("role");
+      if (perfil === "agricultor")
+        return "Você escolheu Agricultor! Vamos cultivar juntos.";
+      if (perfil === "consumidor")
+        return "Você escolheu Consumidor! Boas compras!";
+      return "Escolha seu perfil para começar!";
+    }
+    if (activeStep === 1) {
+      const nome = watch("username");
+      const email = watch("email");
+      const senha = watch("password");
+      const confirma = watch("confirmPassword");
+      if (!nome) return "Digite seu nome e sobrenome";
+      if (!email) return `Nome e sobrenome digitado: ${nome}`;
+      if (!senha) return `O e-mail digitado: ${email}`;
+      if (!confirma) return getPasswordStrengthMessage(senha);
+      if (confirma !== senha) return "As senhas não coincidem!";
+      return `Senha confirmada!`;
+    }
+    if (activeStep === 2) {
+      const propriedade = watch("propertyName");
+      const telefone = watch("phone");
+      if (watch("role") !== "consumidor") {
+        if (!propriedade) return "Digite o nome da sua propriedade";
+        if (propriedade && !selectedEstado)
+          return `Nome da propriedade digitado: ${propriedade}`;
+      }
+      if (!selectedEstado) return `Estado: selecione o estado`;
+      if (selectedEstado && !selectedCidade)
+        return `Estado selecionado: ${selectedEstado}`;
+      if (selectedCidade && !telefone)
+        return `Cidade selecionada: ${selectedCidade}`;
+      if (telefone) return `Telefone digitado: ${telefone}`;
+      return "Preencha os dados da propriedade!";
+    }
+    if (activeStep === 3 && role === "agricultor") {
+      const historia = watch("farmerStory");
+      if (!historia) return "Conte sua história como agricultor";
+      return `História registrada!`;
+    }
+    return "Bem-vindo ao cadastro!";
+  };
+
   return (
     <Box
       id="appforms"
@@ -275,7 +437,10 @@ const AppCadastro = () => {
           height={{ base: "none", md: "100vh" }}
           padding={{ base: "2rem", md: "5rem 20rem 5rem 20rem" }}
         >
-          <AppStepper activeStep={activeStep} steps={stepsState} />
+          <IAcaiBalloon
+            imageSrc={stepImages[activeStep]}
+            balloonText={getBalloonText()}
+          />
 
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -403,50 +568,99 @@ const AppCadastro = () => {
               <>
                 <FormControl isInvalid={errors.username}>
                   <FormLabel>Nome e Sobrenome</FormLabel>
-                  <Input
-                    type="text"
-                    placeholder="Digite seu nome e sobrenome"
-                    _placeholder={{ color: "#b0b0b0" }}
-                    border={"2px solid  #83a11d"}
-                    aria-required="true"
-                    width={"100%"}
-                    height={"3rem"}
-                    _focus={{
-                      borderColor: "#c0ab8e",
-                      boxShadow: "0 0 0 1px #e5d1b0",
-                    }}
-                    {...register("username", {
-                      required: "Seu nome e sobrenome é obrigatório",
-                    })}
-                  />
+                  <InputGroup>
+                    <Input
+                      type="text"
+                      placeholder="Digite seu nome e sobrenome"
+                      _placeholder={{ color: "#b0b0b0" }}
+                      border={"2px solid  #83a11d"}
+                      aria-required="true"
+                      width={"100%"}
+                      height={"3rem"}
+                      _focus={{
+                        borderColor: "#c0ab8e",
+                        boxShadow: "0 0 0 1px #e5d1b0",
+                      }}
+                      {...register("username", {
+                        required: "Seu nome e sobrenome é obrigatório",
+                      })}
+                    />
+                    <InputRightElement
+                      h={"100%"}
+                      width={"4.5rem"}
+                      alignItems="center"
+                    >
+                      <Button
+                        variant="ghost"
+                        _hover={{ background: "transparent" }}
+                        onClick={() => handleToggleRecording("username")}
+                        isLoading={recordingField === "username"}
+                        aria-label="Gravar nome e sobrenome"
+                      >
+                        <Image
+                          src={IconVoice}
+                          alt="Ícone de comando de voz"
+                          width={"1.5rem"}
+                          height={"1.5rem"}
+                        />
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
                   <FormErrorMessage>
                     {errors.username && errors.username.message}
                   </FormErrorMessage>
                 </FormControl>
                 <FormControl isInvalid={errors.email}>
                   <FormLabel>E-mail</FormLabel>
-                  <Input
-                    type="email"
-                    placeholder="Digite seu e-mail"
-                    _placeholder={{ color: "#b0b0b0" }}
-                    border={"2px solid  #83a11d"}
-                    aria-required="true"
-                    autoComplete="email"
-                    width={"100%"}
-                    height={"3rem"}
-                    _focus={{
-                      borderColor: "#c0ab8e",
-                      boxShadow: "0 0 0 1px #e5d1b0",
-                    }}
-                    {...register("email", {
-                      required: "Email obrigatório",
-                      pattern: {
-                        value:
-                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                        message: "Email inválido",
-                      },
-                    })}
-                  />
+                  <InputGroup>
+                    <Input
+                      type="email"
+                      placeholder="Digite seu e-mail"
+                      _placeholder={{ color: "#b0b0b0" }}
+                      border={"2px solid  #83a11d"}
+                      aria-required="true"
+                      autoComplete="email"
+                      width={"100%"}
+                      height={"3rem"}
+                      _focus={{
+                        borderColor: "#c0ab8e",
+                        boxShadow: "0 0 0 1px #e5d1b0",
+                      }}
+                      {...register("email", {
+                        required: "Email obrigatório",
+                        pattern: {
+                          value:
+                            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                          message: "Email inválido",
+                        },
+                      })}
+                      onInput={(e) => {
+                        e.currentTarget.value = e.currentTarget.value
+                          .replace(/\s/g, "")
+                          .toLowerCase();
+                      }}
+                    />
+                    <InputRightElement
+                      h={"100%"}
+                      width={"4.5rem"}
+                      alignItems="center"
+                    >
+                      <Button
+                        variant="ghost"
+                        _hover={{ background: "transparent" }}
+                        onClick={() => handleToggleRecording("email")}
+                        isLoading={recordingField === "email"}
+                        aria-label="Gravar e-mail"
+                      >
+                        <Image
+                          src={IconVoice}
+                          alt="Ícone de comando de voz"
+                          width={"1.5rem"}
+                          height={"1.5rem"}
+                        />
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
                   <FormErrorMessage>
                     {errors.email && errors.email.message}
                   </FormErrorMessage>
@@ -482,18 +696,44 @@ const AppCadastro = () => {
                             /[^A-Za-z0-9]/.test(value)) ||
                           "A senha deve conter pelo menos um caractere especial",
                       })}
+                      onInput={(e) => {
+                        e.currentTarget.value = e.currentTarget.value.replace(
+                          /\s/g,
+                          ""
+                        );
+                      }}
                     />
-                    <InputRightElement h={"100%"} width={"4.5rem"}>
+                    <InputRightElement
+                      h={"100%"}
+                      width={"6.5rem"}
+                      display="flex"
+                      alignItems="center"
+                    >
                       <Button
                         variant="ghost"
                         _hover={{ background: "transparent" }}
                         onClick={() => setShowCurrent((v) => !v)}
+                        aria-label="Mostrar/ocultar senha"
                       >
                         {showCurrent ? (
                           <ViewOffIcon color={"#83a11d"} />
                         ) : (
                           <ViewIcon color={"#83a11d"} />
                         )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        _hover={{ background: "transparent" }}
+                        onClick={() => handleToggleRecording("password")}
+                        isLoading={recordingField === "password"}
+                        aria-label="Gravar senha"
+                      >
+                        <Image
+                          src={IconVoice}
+                          alt="Ícone de comando de voz"
+                          width={"1.5rem"}
+                          height={"1.5rem"}
+                        />
                       </Button>
                     </InputRightElement>
                   </InputGroup>
@@ -542,18 +782,44 @@ const AppCadastro = () => {
                           return true;
                         },
                       })}
+                      onInput={(e) => {
+                        e.currentTarget.value = e.currentTarget.value.replace(
+                          /\s/g,
+                          ""
+                        );
+                      }}
                     />
-                    <InputRightElement h={"100%"} width={"4.5rem"}>
+                    <InputRightElement
+                      h={"100%"}
+                      width={"6.5rem"}
+                      display="flex"
+                      alignItems="center"
+                    >
                       <Button
                         variant="ghost"
                         _hover={{ background: "transparent" }}
                         onClick={() => setShowConfirm((v) => !v)}
+                        aria-label="Mostrar/ocultar senha"
                       >
                         {showConfirm ? (
                           <ViewOffIcon color={"#83a11d"} />
                         ) : (
                           <ViewIcon color={"#83a11d"} />
                         )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        _hover={{ background: "transparent" }}
+                        onClick={() => handleToggleRecording("confirmPassword")}
+                        isLoading={recordingField === "confirmPassword"}
+                        aria-label="Gravar confirmação de senha"
+                      >
+                        <Image
+                          src={IconVoice}
+                          alt="Ícone de comando de voz"
+                          width={"1.5rem"}
+                          height={"1.5rem"}
+                        />
                       </Button>
                     </InputRightElement>
                   </InputGroup>
@@ -569,22 +835,44 @@ const AppCadastro = () => {
                 {watch("role") !== "consumidor" && (
                   <FormControl isInvalid={errors.propertyName}>
                     <FormLabel>Nome da Propriedade</FormLabel>
-                    <Input
-                      type="text"
-                      placeholder="Digite o nome da sua propriedade"
-                      _placeholder={{ color: "#b0b0b0" }}
-                      border={"2px solid  #83a11d"}
-                      aria-required="true"
-                      width={"100%"}
-                      height={"3rem"}
-                      _focus={{
-                        borderColor: "#c0ab8e",
-                        boxShadow: "0 0 0 1px #e5d1b0",
-                      }}
-                      {...register("propertyName", {
-                        required: "Nome da propriedade é obrigatório",
-                      })}
-                    />
+                    <InputGroup>
+                      <Input
+                        type="text"
+                        placeholder="Digite o nome da sua propriedade"
+                        _placeholder={{ color: "#b0b0b0" }}
+                        border={"2px solid  #83a11d"}
+                        aria-required="true"
+                        width={"100%"}
+                        height={"3rem"}
+                        _focus={{
+                          borderColor: "#c0ab8e",
+                          boxShadow: "0 0 0 1px #e5d1b0",
+                        }}
+                        {...register("propertyName", {
+                          required: "Nome da propriedade é obrigatório",
+                        })}
+                      />
+                      <InputRightElement
+                        h={"100%"}
+                        width={"4.5rem"}
+                        alignItems="center"
+                      >
+                        <Button
+                          variant="ghost"
+                          _hover={{ background: "transparent" }}
+                          onClick={() => handleToggleRecording("propertyName")}
+                          isLoading={recordingField === "propertyName"}
+                          aria-label="Gravar nome da propriedade"
+                        >
+                          <Image
+                            src={IconVoice}
+                            alt="Ícone de comando de voz"
+                            width={"1.5rem"}
+                            height={"1.5rem"}
+                          />
+                        </Button>
+                      </InputRightElement>
+                    </InputGroup>
                     <FormErrorMessage>
                       {errors.propertyName && errors.propertyName.message}
                     </FormErrorMessage>
@@ -599,31 +887,53 @@ const AppCadastro = () => {
                 />
                 <FormControl isInvalid={errors.phone}>
                   <FormLabel>Telefone</FormLabel>
-                  <Input
-                    type="tel"
-                    placeholder="Ex: (XX) XXXXX-XXXX"
-                    _placeholder={{ color: "#b0b0b0" }}
-                    border={"2px solid  #83a11d"}
-                    aria-required="true"
-                    width={"100%"}
-                    height={"3rem"}
-                    _focus={{
-                      borderColor: "#c0ab8e",
-                      boxShadow: "0 0 0 1px #e5d1b0",
-                    }}
-                    {...register("phone", {
-                      required: "Telefone é obrigatório",
-                      pattern: {
-                        value: /^\(\d{2}\) \d{4,5}-\d{4}$/,
-                        message:
-                          "Formato de telefone inválido. Use (XX) XXXXX-XXXX ou (XX) XXXX-XXXX",
-                      },
-                    })}
-                    onChange={(e) => {
-                      const formatted = formatPhone(e.target.value);
-                      e.target.value = formatted;
-                    }}
-                  />
+                  <InputGroup>
+                    <Input
+                      type="tel"
+                      placeholder="Ex: (XX) XXXXX-XXXX"
+                      _placeholder={{ color: "#b0b0b0" }}
+                      border={"2px solid  #83a11d"}
+                      aria-required="true"
+                      width={"100%"}
+                      height={"3rem"}
+                      _focus={{
+                        borderColor: "#c0ab8e",
+                        boxShadow: "0 0 0 1px #e5d1b0",
+                      }}
+                      {...register("phone", {
+                        required: "Telefone é obrigatório",
+                        pattern: {
+                          value: /^\(\d{2}\) \d{4,5}-\d{4}$/,
+                          message:
+                            "Formato de telefone inválido. Use (XX) XXXXX-XXXX ou (XX) XXXX-XXXX",
+                        },
+                      })}
+                      onChange={(e) => {
+                        const formatted = formatPhone(e.target.value);
+                        e.target.value = formatted;
+                      }}
+                    />
+                    <InputRightElement
+                      h={"100%"}
+                      width={"4.5rem"}
+                      alignItems="center"
+                    >
+                      <Button
+                        variant="ghost"
+                        _hover={{ background: "transparent" }}
+                        onClick={() => handleToggleRecording("phone")}
+                        isLoading={recordingField === "phone"}
+                        aria-label="Gravar telefone"
+                      >
+                        <Image
+                          src={IconVoice}
+                          alt="Ícone de comando de voz"
+                          width={"1.5rem"}
+                          height={"1.5rem"}
+                        />
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
                   <FormErrorMessage>
                     {errors.phone && errors.phone.message}
                   </FormErrorMessage>
@@ -636,22 +946,44 @@ const AppCadastro = () => {
                 <FormLabel>
                   Conte um pouco da sua história como agricultor
                 </FormLabel>
-                <Input
-                  type="text"
-                  placeholder="Fale sobre sua experiência, desafios, conquistas..."
-                  _placeholder={{ color: "#b0b0b0" }}
-                  border={"2px solid  #83a11d"}
-                  aria-required="true"
-                  width={"100%"}
-                  height={"3rem"}
-                  _focus={{
-                    borderColor: "#c0ab8e",
-                    boxShadow: "0 0 0 1px #e5d1b0",
-                  }}
-                  {...register("farmerStory", {
-                    required: "Conte sua história para continuarmos",
-                  })}
-                />
+                <InputGroup>
+                  <Input
+                    type="text"
+                    placeholder="Fale sobre sua experiência, desafios, conquistas..."
+                    _placeholder={{ color: "#b0b0b0" }}
+                    border={"2px solid  #83a11d"}
+                    aria-required="true"
+                    width={"100%"}
+                    height={"3rem"}
+                    _focus={{
+                      borderColor: "#c0ab8e",
+                      boxShadow: "0 0 0 1px #e5d1b0",
+                    }}
+                    {...register("farmerStory", {
+                      required: "Conte sua história para continuarmos",
+                    })}
+                  />
+                  <InputRightElement
+                    h={"100%"}
+                    width={"4.5rem"}
+                    alignItems="center"
+                  >
+                    <Button
+                      variant="ghost"
+                      _hover={{ background: "transparent" }}
+                      onClick={() => handleToggleRecording("farmerStory")}
+                      isLoading={recordingField === "farmerStory"}
+                      aria-label="Gravar história do agricultor"
+                    >
+                      <Image
+                        src={IconVoice}
+                        alt="Ícone de comando de voz"
+                        width={"1.5rem"}
+                        height={"1.5rem"}
+                      />
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
                 <FormErrorMessage>
                   {errors.farmerStory && errors.farmerStory.message}
                 </FormErrorMessage>
@@ -672,6 +1004,7 @@ const AppCadastro = () => {
                     background: "#808080",
                     color: "#ffffff",
                   }}
+                  aria-label="Voltar para etapa anterior"
                 >
                   Anterior
                 </Button>
@@ -689,6 +1022,7 @@ const AppCadastro = () => {
                     background: "#c0ab8e",
                     color: "#ffffff",
                   }}
+                  aria-label="Ir para próxima etapa"
                 >
                   Próximo
                 </Button>
@@ -706,7 +1040,7 @@ const AppCadastro = () => {
                     background: "#c0ab8e",
                     color: "#ffffff",
                   }}
-                  aria-label="Fazer cadastro"
+                  aria-label="Finalizar cadastro"
                   isLoading={isSubmitting}
                   loadingText="Fazendo cadastro..."
                   spinnerPlacement="end"
@@ -715,6 +1049,14 @@ const AppCadastro = () => {
                 </Button>
               )}
             </ButtonGroup>
+            {recordingField && (
+              <Flex align="center" gap={2} mt={2}>
+                <FiMic color="#83a11d" size={16} />
+                <Text fontSize="sm" color="#83a11d" fontWeight="medium">
+                  Use os botões de microfone para preencher os campos com voz
+                </Text>
+              </Flex>
+            )}
           </form>
         </SimpleGrid>
       </Box>

@@ -10,6 +10,8 @@ import Footer from "../components/footer/AppFooter.jsx";
 import AppRouters from "./routers.jsx";
 import AppButton from "../pages/landingpage/AppButton.jsx";
 import AppChat from "../components/chat/AppChat.jsx";
+import AppAccessibility from "../components/accessibility/AppAccessibility.jsx";
+import "../styles/accessibility.css";
 
 function App() {
   const location = useLocation();
@@ -17,6 +19,7 @@ function App() {
   return (
     <>
       <AppChat />
+      <AppAccessibility />
       {location.pathname !== "/404" && <Header display="flex" />}
       <AppRouters />
       <AppButton />

@@ -2,10 +2,7 @@ import {
   Box,
   Heading,
   Text,
-  Center,
   Image,
-  Flex,
-  Divider,
   Button,
   useToast,
   Modal,
@@ -18,11 +15,11 @@ import {
   useDisclosure,
   Input,
   InputGroup,
+  InputRightElement,
   Stack,
   Card,
   CardBody,
   CardHeader,
-  CardFooter,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -30,9 +27,11 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Typewriter } from "react-simple-typewriter";
-import { FaUserEdit, FaKey, FaTrashAlt } from "react-icons/fa";
+import { FaUserEdit, FaKey, FaTrashAlt, FaRegCreditCard } from "react-icons/fa";
 
 import ImagemConfig from "../../assets/configuração.jpg";
+import IconVoice from "../../assets/icons/voice-command.png";
+import { useSpeechRecognition } from "../../hooks/useSpeechRecognition";
 
 const AppConfig = () => {
   const navigation = useNavigate();
@@ -46,6 +45,7 @@ const AppConfig = () => {
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const { handleToggleRecording, recordingField } = useSpeechRecognition({});
   const cardBg = useColorModeValue(
     "rgba(255,255,255,0.95)",
     "rgba(26,32,44,0.95)"
@@ -284,7 +284,7 @@ const AppConfig = () => {
                   Alterar Senha
                 </Button>
                 <Button
-                  leftIcon={<FaUserEdit size={22} color="#83a11d" />}
+                  leftIcon={<FaRegCreditCard size={22} color="#83a11d" />}
                   variant="outline"
                   colorScheme="green"
                   size="lg"
@@ -293,10 +293,10 @@ const AppConfig = () => {
                   borderWidth={2}
                   borderColor="#83a11d"
                   _hover={{ bg: "#f7fafc", borderColor: "#c0ab8e" }}
-                  onClick={() => navigation("/perfil")}
+                  onClick={() => navigation("/pagamento")}
                   transition="all 0.2s"
                 >
-                  Editar Conta
+                  Trocar Plano
                 </Button>
                 <Button
                   leftIcon={<FaTrashAlt size={22} color="#973a34" />}
@@ -351,75 +351,116 @@ const AppConfig = () => {
           <ModalHeader>Alterar Senha</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Box as="form" display="flex" flexDirection="column" gap={4}>
-              <Text>Digite sua senha atual e a nova senha:</Text>
+            <Stack spacing={4}>
               <InputGroup>
                 <Input
-                  border={"2px solid  #83a11d"}
-                  _focus={{
-                    borderColor: "#c0ab8e",
-                    boxShadow: "0 0 0 1px #e5d1b0",
-                  }}
+                  placeholder="Senha Atual"
                   type={showCurrent ? "text" : "password"}
-                  placeholder="Senha atual"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
+                  onInput={(e) => {
+                    e.currentTarget.value = e.currentTarget.value.replace(
+                      /\s/g,
+                      ""
+                    );
+                  }}
                 />
-                <Button
-                  variant="ghost"
-                  onClick={() => setShowCurrent((v) => !v)}
-                >
-                  {showCurrent ? (
-                    <ViewOffIcon color={"#83a11d"} />
-                  ) : (
-                    <ViewIcon color={"#83a11d"} />
-                  )}
-                </Button>
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => setShowCurrent(!showCurrent)}
+                  >
+                    {showCurrent ? <ViewOffIcon /> : <ViewIcon />}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    _hover={{ background: "transparent" }}
+                    onClick={() =>
+                      handleToggleRecording("currentPassword", {
+                        setter: setCurrentPassword,
+                        trim: true,
+                      })
+                    }
+                    isLoading={recordingField === "currentPassword"}
+                  >
+                    <Image src={IconVoice} w="16px" />
+                  </Button>
+                </InputRightElement>
               </InputGroup>
               <InputGroup>
                 <Input
-                  border={"2px solid  #83a11d"}
-                  _focus={{
-                    borderColor: "#c0ab8e",
-                    boxShadow: "0 0 0 1px #e5d1b0",
-                  }}
+                  placeholder="Nova Senha"
                   type={showNew ? "text" : "password"}
-                  placeholder="Nova senha"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
+                  onInput={(e) => {
+                    e.currentTarget.value = e.currentTarget.value.replace(
+                      /\s/g,
+                      ""
+                    );
+                  }}
                 />
-                <Button variant="ghost" onClick={() => setShowNew((v) => !v)}>
-                  {showNew ? (
-                    <ViewOffIcon color={"#83a11d"} />
-                  ) : (
-                    <ViewIcon color={"#83a11d"} />
-                  )}
-                </Button>
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => setShowNew(!showNew)}
+                  >
+                    {showNew ? <ViewOffIcon /> : <ViewIcon />}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    _hover={{ background: "transparent" }}
+                    onClick={() =>
+                      handleToggleRecording("newPassword", {
+                        setter: setNewPassword,
+                        trim: true,
+                      })
+                    }
+                    isLoading={recordingField === "newPassword"}
+                  >
+                    <Image src={IconVoice} w="16px" />
+                  </Button>
+                </InputRightElement>
               </InputGroup>
               <InputGroup>
                 <Input
-                  border={"2px solid  #83a11d"}
-                  _focus={{
-                    borderColor: "#c0ab8e",
-                    boxShadow: "0 0 0 1px #e5d1b0",
-                  }}
+                  placeholder="Confirmar Nova Senha"
                   type={showConfirm ? "text" : "password"}
-                  placeholder="Confirmar nova senha"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  onInput={(e) => {
+                    e.currentTarget.value = e.currentTarget.value.replace(
+                      /\s/g,
+                      ""
+                    );
+                  }}
                 />
-                <Button
-                  variant="ghost"
-                  onClick={() => setShowConfirm((v) => !v)}
-                >
-                  {showConfirm ? (
-                    <ViewOffIcon color={"#83a11d"} />
-                  ) : (
-                    <ViewIcon color={"#83a11d"} />
-                  )}
-                </Button>
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => setShowConfirm(!showConfirm)}
+                  >
+                    {showConfirm ? <ViewOffIcon /> : <ViewIcon />}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    _hover={{ background: "transparent" }}
+                    onClick={() =>
+                      handleToggleRecording("confirmPassword", {
+                        setter: setConfirmPassword,
+                        trim: true,
+                      })
+                    }
+                    isLoading={recordingField === "confirmPassword"}
+                  >
+                    <Image src={IconVoice} w="16px" />
+                  </Button>
+                </InputRightElement>
               </InputGroup>
-            </Box>
+            </Stack>
           </ModalBody>
           <ModalFooter>
             <Button variant="ghost" mr={3} onClick={handleClosePasswordModal}>
