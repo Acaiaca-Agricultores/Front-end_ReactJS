@@ -8,7 +8,7 @@ import sowingSeeds from "../../assets/loading/sowing-seeds.mp4";
 import vegetables from "../../assets/loading/vegetables.mp4";
 import wheat from "../../assets/loading/wheat.mp4";
 
-import { Center } from "@chakra-ui/react";
+import { Center, Text } from "@chakra-ui/react";
 
 function getRandomLoadingVideo() {
   const videos = [
@@ -29,15 +29,31 @@ function getRandomLoadingVideo() {
 const AppLoading = () => {
   const videoSrc = getRandomLoadingVideo();
   return (
-    <Center display={"flex"} flexDirection="column" gap={4} height="100vh">
+    <Center 
+      display={"flex"} 
+      flexDirection="column" 
+      gap={4} 
+      height="100vh"
+      role="status"
+      aria-live="polite"
+      aria-label="Carregando conteúdo"
+    >
       <video
         src={videoSrc}
         autoPlay
         loop
         muted
         style={{ width: 120, height: 120 }}
-        aria-label="Carregando"
+        aria-label="Animação de carregamento"
+        aria-hidden="true"
       />
+      <Text 
+        fontSize="lg" 
+        color="gray.600"
+        aria-label="Carregando, aguarde um momento"
+      >
+        Carregando...
+      </Text>
     </Center>
   );
 };

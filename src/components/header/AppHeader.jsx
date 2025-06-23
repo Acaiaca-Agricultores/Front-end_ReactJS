@@ -28,6 +28,7 @@ const PATHS = {
   CONFIGURACOES: "/configurações",
   PERFIL: "/perfil",
   ROOT: "/",
+  CADASTRO_PRODUTO: "/cadastro/produto",
 };
 
 const AUTH_PAGES = [PATHS.LOGIN, PATHS.CADASTRO, PATHS.NOT_FOUND];
@@ -111,12 +112,6 @@ const Header = () => {
     };
   }, [handleLogout]);
 
-  const handleLoginRedirect = useCallback(() => {
-    if (isCurrentPage(PATHS.LOGIN) || isCurrentPage(PATHS.CADASTRO)) {
-      window.location.reload();
-    }
-  }, [isCurrentPage]);
-
   useEffect(() => {
     if (
       isLoggedIn &&
@@ -145,7 +140,7 @@ const Header = () => {
         ? "transparent"
         : "rgba(82, 96, 26, 0.8)";
     } else {
-      if (lastScrollY > scrollThreshold) return "rgba(82, 96, 26, 0.95)";
+      if (lastScrollY > scrollThreshold) return "rgba(82, 96, 26, 0.80);";
       if (lastScrollY > 0 && lastScrollY <= scrollThreshold) {
         return `rgba(82, 96, 26, ${0.95 * (lastScrollY / scrollThreshold)})`;
       }
@@ -255,9 +250,11 @@ const Header = () => {
           gap={{ md: "1.5rem", lg: "2rem" }}
         >
           {isLoggedIn && (
-            <Link as={RouterLink} to={PATHS.HOME} {...navLinkStyles}>
-              Home
-            </Link>
+            <>
+              <Link as={RouterLink} to={PATHS.HOME} {...navLinkStyles}>
+                Home
+              </Link>
+            </>
           )}
           <Link
             as={RouterLink}

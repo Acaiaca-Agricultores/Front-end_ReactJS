@@ -57,6 +57,14 @@ const AppMenu = ({ setLastScrollY }) => {
             Home
           </MenuItem>
         )}
+        {isLoggedIn && (
+          <MenuItem
+            onClick={() => navigate("/produto/cadastrar")}
+            _hover={{ textDecoration: "none", color: "#83a11d" }}
+          >
+            Cadastrar Produto
+          </MenuItem>
+        )}
         <MenuItem
           onClick={() =>
             window.scrollTo({ top: 0, behavior: "smooth" }) || navigate("/")

@@ -3,9 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
-  FormControl,
-  FormLabel,
-  Input,
   VStack,
   Heading,
   Text,
@@ -17,13 +14,16 @@ import {
   IconButton,
   Tooltip,
   Center,
-  Icon,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
   Tag,
+  Textarea,
+  Skeleton,
+  useColorModeValue,
+  HStack,
 } from "@chakra-ui/react";
 import {
   EditIcon,
@@ -34,12 +34,22 @@ import {
   AtSignIcon,
   InfoOutlineIcon,
 } from "@chakra-ui/icons";
-import { FiMapPin, FiCamera } from "react-icons/fi";
+import {
+  FiMapPin,
+  FiCamera,
+  FiUser,
+  FiBox,
+  FiBookOpen,
+  FiMic,
+  FiMicOff,
+} from "react-icons/fi";
 import axios from "axios";
 import ImagemPerfil from "../../assets/plataforma-vovo.png";
 import AppLoading from "../../components/loading/AppLoading";
 import AppSelect from "../configuração/AppSelect";
 import AppProducts from "./AppProducts";
+import ProfileDetailItem from "./ProfileDetailItem";
+import { useSpeechRecognition } from "../../hooks/useSpeechRecognition";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -49,70 +59,13 @@ const getProfileImageUrl = (imgPath) => {
   return `${API_URL.replace(/\/$/, "")}/${imgPath.replace(/^\/+/, "")}`;
 };
 
-const ProfileDetailItem = ({
-  icon,
-  label,
-  value,
-  isEditing,
-  name,
-  formData,
-  handleInputChange,
-  placeholder,
-  inputType = "text",
-}) => {
-  if (isEditing) {
-    return (
-      <FormControl id={name}>
-        <FormLabel
-          display="flex"
-          alignItems="center"
-          color="gray.300"
-          fontSize="sm"
-        >
-          {icon && <Icon as={icon} mr={2} />} {label}
-        </FormLabel>
-        <Input
-          name={name}
-          type={inputType}
-          value={formData[name]}
-          onChange={handleInputChange}
-          placeholder={placeholder || `Seu ${label.toLowerCase()}`}
-          color="black"
-          bg="transparent"
-          border={"2px solid  #83a11d"}
-          _hover={{ border: "2px solid  #83a11d" }}
-          _focus={{
-            borderColor: "#c0ab8e",
-            boxShadow: "0 0 0 1px #e5d1b0",
-          }}
-        />
-      </FormControl>
-    );
-  }
-  return (
-    <Box>
-      <Text fontSize="sm" color="gray.400" display="flex" alignItems="center">
-        {icon && <Icon as={icon} mr={2} />} {label}
-      </Text>
-      <Text
-        fontSize="md"
-        p={2}
-        borderWidth="1px"
-        borderRadius="md"
-        minHeight="40px"
-        border={"2px solid  #83a11d"}
-      >
-        {value || "Não informado"}
-      </Text>
-    </Box>
-  );
-};
-
 function AppPerfil() {
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
   const fileInputRef = useRef();
+  const toastIdRef = useRef(null);
+
   const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     username: "",
@@ -122,31 +75,86 @@ function AppPerfil() {
     stateName: "",
     phoneNumber: "",
     imageProfile: "",
+    historia: "",
   });
   const [selectedImage, setSelectedImage] = useState(null);
-  const [newPassword, setNewPassword] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loggedInUserId = localStorage.getItem("userId");
-  const canEditCurrentProfile = !id || id === loggedInUserId; // This determines if the viewer is the owner
-  const userIdToFetch = id || loggedInUserId; // This is the ID of the profile being viewed
+  const canEditCurrentProfile = !id || id === loggedInUserId;
+  const userId = id || loggedInUserId;
+
+  const { handleToggleRecording, recordingField } = useSpeechRecognition({
+    fieldSetter: (value) => {
+      if (activeVoiceField) {
+        setFormData((prev) => ({
+          ...prev,
+          [activeVoiceField]: value,
+        }));
+        setActiveVoiceField(null);
+      }
+    },
+  });
+
+  const [activeVoiceField, setActiveVoiceField] = useState(null);
+
+  const bgColor = useColorModeValue("#f7fafc", "gray.800");
+  const cardBg = useColorModeValue("white", "gray.700");
+  const borderColor = useColorModeValue("#83a11d", "#a4cc24");
+  const textColor = useColorModeValue("gray.700", "gray.200");
+  const accentColor = "#52601A";
+  const accentBg = useColorModeValue("#f5fbe7", "#232d13");
+
+  const handleSessionExpired = useCallback(() => {
+    localStorage.clear();
+    toast({
+      title: "Sessão expirada",
+      description: "Sua sessão expirou. Faça login novamente.",
+      status: "warning",
+      duration: 4000,
+      isClosable: true,
+    });
+    setTimeout(() => {
+      window.location.href = "/login";
+    }, 2000);
+  }, [toast]);
+
+  const handleApiError = useCallback(
+    (err) => {
+      if (
+        err.response &&
+        (err.response.status === 401 ||
+          err.response.data?.msg?.toLowerCase().includes("token"))
+      ) {
+        handleSessionExpired();
+        return;
+      }
+      setError(
+        err.response?.data?.msg ||
+          "Falha ao carregar dados do perfil. Tente novamente."
+      );
+      setIsLoading(false);
+    },
+    [handleSessionExpired]
+  );
 
   const fetchUserData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     const token = localStorage.getItem("token");
-    const userIdToFetch = id || localStorage.getItem("userId");
-    if (!token || !userIdToFetch) {
+
+    if (!token || !userId) {
       setError("Token ou ID do usuário não encontrado. Faça login novamente.");
       setIsLoading(false);
       navigate("/login");
       return;
     }
+
     try {
-      const response = await axios.get(`${API_URL}/user/${userIdToFetch}`, {
+      const response = await axios.get(`${API_URL}/user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const farmerData = response.data.user;
@@ -159,49 +167,41 @@ function AppPerfil() {
         stateName: farmerData.stateName || "",
         phoneNumber: farmerData.phoneNumber || "",
         imageProfile: farmerData.imageProfile || "",
+        historia: farmerData.historia || "",
       });
       if (farmerData.username) {
         localStorage.setItem("username", farmerData.username);
       }
     } catch (err) {
-      if (
-        err.response &&
-        (err.response.status === 401 ||
-          err.response.data?.msg?.toLowerCase().includes("token"))
-      ) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("username");
-        localStorage.removeItem("role");
-        toast({
-          title: "Sessão expirada",
-          description: "Sua sessão expirou. Faça login novamente.",
-          status: "warning",
-          duration: 4000,
-          isClosable: true,
-        });
-        setTimeout(() => {
-          window.location.href = "/login";
-        }, 2000);
-        return;
-      }
-      setError(
-        err.response?.data?.msg ||
-          "Falha ao carregar dados do perfil. Tente novamente."
-      );
-    } finally {
-      setIsLoading(false);
+      handleApiError(err);
+      return;
     }
-  }, [id, navigate, toast]);
+    setIsLoading(false);
+  }, [id, handleApiError, userId, navigate]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
+
+    if (!token || !userId) {
       navigate("/login");
       return;
     }
+
     fetchUserData();
-  }, [fetchUserData, navigate]);
+  }, [id, userId, fetchUserData, navigate]);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 120,
+      behavior: "smooth",
+    });
+  }, []);
+
+  useEffect(() => {
+    if (toastIdRef.current) {
+      toast.close(toastIdRef.current);
+    }
+  }, [toast]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -209,13 +209,43 @@ function AppPerfil() {
   };
 
   const handleImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedImage(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "Arquivo muito grande",
+          description: "A imagem deve ter menos de 5MB.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+      setSelectedImage(file);
     }
   };
 
+  const handleRemoveImage = () => {
+    setSelectedImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleVoiceRecording = (fieldName) => {
+    setActiveVoiceField(fieldName);
+    handleToggleRecording(fieldName, {
+      setter: (value) => {
+        setFormData((prev) => ({
+          ...prev,
+          [fieldName]: value,
+        }));
+      },
+    });
+  };
+
   const handleEditToggle = () => {
-    if (isEditing && userData) {
+    if (isEditing) {
       setFormData({
         username: userData.username || "",
         email: userData.email || "",
@@ -224,8 +254,12 @@ function AppPerfil() {
         stateName: userData.stateName || "",
         phoneNumber: userData.phoneNumber || "",
         imageProfile: userData.imageProfile || "",
+        historia: userData.historia || "",
       });
       setSelectedImage(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
     setIsEditing(!isEditing);
   };
@@ -234,24 +268,53 @@ function AppPerfil() {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
+
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
     const form = new FormData();
+
     let hasChanges = false;
+
+    // Debug logs
+    console.log("FormData atual:", formData);
+    console.log("UserData original:", userData);
+
+    // Verificar mudanças em todos os campos exceto imageProfile
     Object.keys(formData).forEach((key) => {
-      if (formData[key] !== userData[key] && key !== "imageProfile") {
-        form.append(key, formData[key]);
-        hasChanges = true;
+      if (key !== "imageProfile" && key !== "historia") {
+        const currentValue = formData[key] || "";
+        const originalValue = userData[key] || "";
+        if (currentValue !== originalValue) {
+          form.append(key, currentValue);
+          hasChanges = true;
+          console.log(`Campo ${key} mudou:`, {
+            original: originalValue,
+            current: currentValue,
+          });
+        }
       }
     });
+
+    // Verificar especificamente se a história mudou
+    const currentHistoria = formData.historia || "";
+    const originalHistoria = userData.historia || "";
+    if (currentHistoria !== originalHistoria) {
+      form.append("historia", currentHistoria);
+      hasChanges = true;
+      console.log("História mudou:", {
+        original: originalHistoria,
+        current: currentHistoria,
+      });
+    }
+
     if (selectedImage) {
       form.append("profileImage", selectedImage);
       hasChanges = true;
+      console.log("Imagem selecionada");
     }
-    if (newPassword) {
-      form.append("password", newPassword);
-      hasChanges = true;
-    }
+
+    console.log("HasChanges:", hasChanges);
+
     if (!hasChanges) {
       toast({
         title: "Nenhuma alteração detectada.",
@@ -263,13 +326,15 @@ function AppPerfil() {
       setIsSubmitting(false);
       return;
     }
+
     try {
-      await axios.put(`${API_URL}/user/${userId}/edit`, form, {
+      console.log("Enviando dados para API...");
+      const response = await axios.put(`${API_URL}/user/${userId}/edit`, form, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
         },
       });
+      console.log("Resposta da API:", response.data);
       toast({
         title: "Perfil atualizado com sucesso!",
         status: "success",
@@ -279,17 +344,8 @@ function AppPerfil() {
       setIsEditing(false);
       fetchUserData();
     } catch (err) {
-      setError(
-        err.response?.data?.msg ||
-          "Falha ao atualizar o perfil. Tente novamente."
-      );
-      toast({
-        title: "Erro ao Atualizar",
-        description: err.response?.data?.msg || "Tente novamente.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      console.error("Erro na API:", err.response?.data || err.message);
+      handleApiError(err);
     } finally {
       setIsSubmitting(false);
     }
@@ -301,22 +357,19 @@ function AppPerfil() {
 
   if (error && !userData) {
     return (
-      <Center height="80vh" bg="white" color="black">
-        <Box
-          p={8}
-          borderWidth={1}
-          borderRadius="lg"
-          bg="#EDD1AF"
-          color="white"
-        >
+      <Center height="80vh" bg={bgColor}>
+        <Box p={8} borderWidth={1} borderRadius="lg">
           <Alert status="error" borderRadius="md" bg="red.500">
             <AlertIcon color="white" />
             {error}
           </Alert>
           <Button
             mt={4}
-            color="#52601A"
-            onClick={() => fetchUserData()}
+            color={accentColor}
+            onClick={() => {
+              setError(null);
+              fetchUserData();
+            }}
             isLoading={isLoading}
           >
             Tentar Novamente
@@ -328,8 +381,10 @@ function AppPerfil() {
 
   if (!userData) {
     return (
-      <Center height="80vh" bg="#1F1F2B">
-        <Text color="white">Não foi possível carregar os dados do perfil.</Text>
+      <Center height="80vh" bg={bgColor}>
+        <Text color={textColor}>
+          Não foi possível carregar os dados do perfil.
+        </Text>
       </Center>
     );
   }
@@ -339,121 +394,249 @@ function AppPerfil() {
     : getProfileImageUrl(userData.imageProfile);
 
   return (
-    <Box bg="##f0f0f0" minH="100vh" color="black">
+    <Box color={textColor} paddingTop={{ base: "80px", md: "100px" }}>
       <Box
-        h={{ base: "200px", md: "250px" }}
+        h={{ base: "180px", md: "60vh" }}
         bgImage={`url(${ImagemPerfil})`}
         bgSize="cover"
         bgPosition="center"
         position="relative"
       >
-        <Box position="absolute" inset="0" bg="rgba(0, 0, 0, 0.6)" />
+        <Box position="absolute" inset="0" bg="rgba(0, 0, 0, 0.5)" />
       </Box>
+
       <Flex
         direction={{ base: "column", lg: "row" }}
-        maxW="1400px"
-        mx="auto"
-        p={{ base: 4, lg: 8 }}
+        p={{ base: 2, md: 6 }}
         gap={8}
+        mt={{ base: -20, md: -28 }}
+        zIndex={2}
+        minH="100vh"
       >
-        <VStack
+        <Box
           as="aside"
-          w={{ base: "100%", lg: "300px" }}
-          align="flex-start"
-          spacing={5}
-          flexShrink={0}
-          mt={{ base: "-100px", md: "-120px" }}
-          zIndex="2"
+          w={{ base: "100%", lg: "500px" }}
+          bg={cardBg}
+          boxShadow="2xl"
+          borderRadius="2xl"
+          p={6}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          mb={{ base: 8, lg: 0 }}
+          minH="600px"
         >
-          <Box position="relative">
-            <Avatar
-              boxSize={{ base: "200px", md: "300px" }}
-              name={userData.username}
-              src={profileImageUrl}
-              border="4px solid #52601A"
-            />
-            {isEditing && (
-              <IconButton
-                icon={<FiCamera />}
-                aria-label="Trocar foto"
-                size="sm"
-                isRound
-                color="#52601A"
-                position="absolute"
-                bottom="5px"
-                right="5px"
-                onClick={() =>
-                  fileInputRef.current && fileInputRef.current.click()
-                }
+          <Box position="relative" mb={4}>
+            <Skeleton isLoaded={!isLoading}>
+              <Avatar
+                boxSize={{ base: "120px", md: "300px" }}
+                name={userData.username}
+                src={profileImageUrl}
+                border={`4px solid ${borderColor}`}
+                shadow="lg"
               />
+            </Skeleton>
+            {isEditing && (
+              <Tooltip label="Trocar foto" placement="top">
+                <IconButton
+                  icon={<FiCamera />}
+                  aria-label="Trocar foto"
+                  size="sm"
+                  isRound
+                  color={accentColor}
+                  position="absolute"
+                  bottom="5px"
+                  right="5px"
+                  onClick={() => fileInputRef.current?.click()}
+                  bg={accentBg}
+                  _hover={{ bg: accentColor, color: "white" }}
+                />
+              </Tooltip>
             )}
-            <Input
+            <input
               type="file"
               accept="image/*"
               ref={fileInputRef}
               onChange={handleImageChange}
-              display="none"
+              style={{ display: "none" }}
             />
+            {selectedImage && isEditing && (
+              <Button
+                size="xs"
+                mt={2}
+                colorScheme="red"
+                variant="ghost"
+                onClick={handleRemoveImage}
+              >
+                Remover Imagem
+              </Button>
+            )}
           </Box>
-          <VStack align="flex-start" spacing={1} w="full">
-            <Flex w="full" justify="space-between" align="center">
-              <Heading as="h1" size="lg">
+
+          <VStack align="center" spacing={1} w="full">
+            <Flex w="full" justify="center" align="center" gap={2}>
+              <Heading as="h1" size="lg" textAlign="center">
                 {formData.username || "Usuário"}
               </Heading>
-              {canEditCurrentProfile && !isEditing && userData && (
-                <Tooltip label="Editar Perfil" placement="top">
+              {canEditCurrentProfile && !isEditing && (
+                <Tooltip label="Editar perfil">
                   <IconButton
                     icon={<EditIcon />}
-                    aria-label="Editar Perfil"
+                    aria-label="Editar perfil"
+                    size="sm"
                     onClick={handleEditToggle}
-                    variant="ghost"
-                    color="#52601A"
                   />
                 </Tooltip>
               )}
+              {isEditing && (
+                <HStack>
+                  <Tooltip label="Salvar">
+                    <IconButton
+                      icon={<CheckIcon />}
+                      aria-label="Salvar"
+                      size="sm"
+                      colorScheme="green"
+                      type="submit"
+                      form="profile-edit-form"
+                      isLoading={isSubmitting}
+                    />
+                  </Tooltip>
+                  <Tooltip label="Cancelar">
+                    <IconButton
+                      icon={<CloseIcon />}
+                      aria-label="Cancelar"
+                      size="sm"
+                      colorScheme="red"
+                      onClick={handleEditToggle}
+                    />
+                  </Tooltip>
+                </HStack>
+              )}
             </Flex>
+            {isEditing && (
+              <Flex align="center" gap={2} mt={2}>
+                <FiMic color={accentColor} size={16} />
+                <Text fontSize="sm" color={accentColor} fontWeight="medium">
+                  Use os botões de microfone para preencher os campos com voz
+                </Text>
+              </Flex>
+            )}
             <Tag
               colorScheme={userData.role === "consumidor" ? "blue" : "green"}
               size="md"
               variant="solid"
               borderRadius="full"
+              margin={"10px"}
             >
               {userData.role === "consumidor" ? "Consumidor" : "Agricultor"}
             </Tag>
           </VStack>
-          <Text color="gray.400" fontSize="sm">
-            Bem-vindo(a) ao seu painel! Aqui você pode gerenciar suas
-            informações.
-          </Text>
-        </VStack>
-        <Box as="main" flex={1} w="100%" mt={{ base: 4, lg: 0 }}>
-          <Tabs variant="unstyled">
-            <TabList>
-              <Tab
-                _selected={{
-                  color: "white",
-                  bg: "#52601A",
-                  borderRadius: "lg",
-                }}
-                color="gray.400"
-              >
-                Meu Perfil
+          {userData.role !== "consumidor" && (
+            <Box
+              w="full"
+              bg={accentBg}
+              borderRadius="lg"
+              p={4}
+              mb={2}
+              boxShadow="md"
+              minH="80px"
+            >
+              <Flex align="center" gap={2} mb={1}>
+                <FiBookOpen color={accentColor} size={18} />
+                <Text fontWeight="bold">História</Text>
+              </Flex>
+              {isEditing ? (
+                <Box>
+                  <HStack spacing={2} mb={2}>
+                    <Text fontWeight="bold" fontSize="sm">
+                      História
+                    </Text>
+                    <Tooltip
+                      label={
+                        recordingField === "historia"
+                          ? "Parar gravação"
+                          : "Gravar história com voz"
+                      }
+                      placement="top"
+                    >
+                      <IconButton
+                        icon={
+                          recordingField === "historia" ? (
+                            <FiMicOff />
+                          ) : (
+                            <FiMic />
+                          )
+                        }
+                        aria-label={
+                          recordingField === "historia"
+                            ? "Parar gravação"
+                            : "Gravar história com voz"
+                        }
+                        size="xs"
+                        colorScheme={
+                          recordingField === "historia" ? "red" : "green"
+                        }
+                        onClick={() => handleVoiceRecording("historia")}
+                        variant={
+                          recordingField === "historia" ? "solid" : "outline"
+                        }
+                      />
+                    </Tooltip>
+                  </HStack>
+                  <Textarea
+                    name="historia"
+                    value={formData.historia}
+                    onChange={handleInputChange}
+                    placeholder="Conte um pouco da sua história..."
+                    color={textColor}
+                    bg="transparent"
+                    border={`2px solid ${borderColor}`}
+                    _hover={{ border: `2px solid ${borderColor}` }}
+                    _focus={{
+                      borderColor: accentColor,
+                      boxShadow: `0 0 0 1px ${accentColor}`,
+                    }}
+                    minH="80px"
+                  />
+                </Box>
+              ) : (
+                <Text color={textColor} fontSize="sm" mt={1}>
+                  {userData.historia || "Nenhuma história compartilhada ainda."}
+                </Text>
+              )}
+            </Box>
+          )}
+        </Box>
+
+        <Box
+          as="main"
+          flex={1}
+          w="100%"
+          mt={{ base: "40px", lg: "32px" }}
+          minH="600px"
+        >
+          <Tabs variant="soft-rounded" colorScheme="green" isFitted>
+            <TabList mb={4}>
+              <Tab style={{ color: "white" }} _selected={{ bg: accentColor }}>
+                <FiUser style={{ marginRight: 8 }} /> Perfil
               </Tab>
-              <Tab
-                _selected={{
-                  color: "white",
-                  bg: "#52601A",
-                  borderRadius: "lg",
-                }}
-                color="gray.400"
-              >
-                Meus Produtos
-              </Tab>
+              {userData.role !== "consumidor" && (
+                <Tab style={{ color: "white" }} _selected={{ bg: accentColor }}>
+                  <FiBox style={{ marginRight: 8 }} /> Produtos
+                </Tab>
+              )}
             </TabList>
-            <TabPanels mt={6}>
+
+            <TabPanels>
               <TabPanel p={0}>
-                <Box boxShadow="xl" p={{ base: 4, md: 6 }} borderRadius="lg">
-                  <form onSubmit={handleEditSubmit}>
+                <Box
+                  boxShadow="xl"
+                  p={{ base: 4, md: 6 }}
+                  borderRadius="0px 0px 20px 20px"
+                  bg={cardBg}
+                  minH="500px"
+                >
+                  <form id="profile-edit-form" onSubmit={handleEditSubmit}>
                     <VStack spacing={6} align="stretch">
                       {error && (
                         <Alert status="error" borderRadius="md">
@@ -461,6 +644,7 @@ function AppPerfil() {
                           {error}
                         </Alert>
                       )}
+
                       <ProfileDetailItem
                         icon={AtSignIcon}
                         label="Nome de Usuário"
@@ -469,7 +653,12 @@ function AppPerfil() {
                         isEditing={isEditing}
                         formData={formData}
                         handleInputChange={handleInputChange}
+                        onVoiceRecording={
+                          isEditing ? handleVoiceRecording : null
+                        }
+                        isRecording={recordingField === "username"}
                       />
+
                       <ProfileDetailItem
                         icon={EmailIcon}
                         label="Email"
@@ -479,7 +668,12 @@ function AppPerfil() {
                         formData={formData}
                         handleInputChange={handleInputChange}
                         inputType="email"
+                        onVoiceRecording={
+                          isEditing ? handleVoiceRecording : null
+                        }
+                        isRecording={recordingField === "email"}
                       />
+
                       <ProfileDetailItem
                         icon={PhoneIcon}
                         label="Telefone"
@@ -489,7 +683,12 @@ function AppPerfil() {
                         formData={formData}
                         handleInputChange={handleInputChange}
                         inputType="tel"
+                        onVoiceRecording={
+                          isEditing ? handleVoiceRecording : null
+                        }
+                        isRecording={recordingField === "phoneNumber"}
                       />
+
                       <ProfileDetailItem
                         icon={InfoOutlineIcon}
                         label="Nome da Propriedade"
@@ -498,7 +697,12 @@ function AppPerfil() {
                         isEditing={isEditing}
                         formData={formData}
                         handleInputChange={handleInputChange}
+                        onVoiceRecording={
+                          isEditing ? handleVoiceRecording : null
+                        }
+                        isRecording={recordingField === "propertyName"}
                       />
+
                       {isEditing ? (
                         <AppSelect
                           selectedEstado={formData.stateName}
@@ -531,31 +735,27 @@ function AppPerfil() {
                           isEditing={false}
                         />
                       )}
-                      {isEditing && (
-                        <Button
-                          mt={4}
-                          leftIcon={<CheckIcon />}
-                          color="white"
-                          bg="#52601A"
-                          type="submit"
-                          isLoading={isSubmitting}
-                          loadingText="Salvando..."
-                          width="full"
-                          size="lg"
-                          _hover={{ bg: "#EDD1AF" }}
-                        >
-                          Salvar Alterações
-                        </Button>
-                      )}
                     </VStack>
                   </form>
                 </Box>
               </TabPanel>
-              <TabPanel>
-                <Center boxShadow="xl" borderRadius="lg" background={"#EDD1AF"} p={6}>
-                  <AppProducts isOwner={canEditCurrentProfile} viewedUserId={userIdToFetch} />
-                </Center>
-              </TabPanel>
+
+              {userData.role !== "consumidor" && (
+                <TabPanel padding={0}>
+                  <Box
+                    boxShadow="xl"
+                    borderRadius="0px 0px 20px 20px"
+                    p={6}
+                    minH="500px"
+                    bg={cardBg}
+                  >
+                    <AppProducts
+                      isOwner={canEditCurrentProfile}
+                      viewedUserId={userId}
+                    />
+                  </Box>
+                </TabPanel>
+              )}
             </TabPanels>
           </Tabs>
         </Box>

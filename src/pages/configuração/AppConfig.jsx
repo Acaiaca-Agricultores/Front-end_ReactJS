@@ -2,10 +2,7 @@ import {
   Box,
   Heading,
   Text,
-  Center,
   Image,
-  Flex,
-  Divider,
   Button,
   useToast,
   Modal,
@@ -18,17 +15,23 @@ import {
   useDisclosure,
   Input,
   InputGroup,
+  InputRightElement,
+  Stack,
+  Card,
+  CardBody,
+  CardHeader,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Typewriter } from "react-simple-typewriter";
+import { FaUserEdit, FaKey, FaTrashAlt, FaRegCreditCard } from "react-icons/fa";
 
-import ImagemFeira from "../../assets/feira.jpg";
-import IconPassword from "../../assets/icons/atualizar-senha.svg";
-import IconProfile from "../../assets/icons/editar-conta.svg";
-import IconDelete from "../../assets/icons/delete.png";
+import ImagemConfig from "../../assets/configuração.jpg";
+import IconVoice from "../../assets/icons/voice-command.png";
+import { useSpeechRecognition } from "../../hooks/useSpeechRecognition";
 
 const AppConfig = () => {
   const navigation = useNavigate();
@@ -42,6 +45,12 @@ const AppConfig = () => {
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const { handleToggleRecording, recordingField } = useSpeechRecognition({});
+  const cardBg = useColorModeValue(
+    "rgba(255,255,255,0.95)",
+    "rgba(26,32,44,0.95)"
+  );
+  const cardShadow = useColorModeValue("lg", "dark-lg");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -186,18 +195,20 @@ const AppConfig = () => {
 
   return (
     <>
-      <Flex
-        as="section"
-        role="region"
-        aria-label="Seção configuração de conta"
-        backgroundImage={`url(${ImagemFeira})`}
+      <Box
+        w="100%"
+        minH="100vh"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        p={{ base: 4, md: 8 }}
+        pt={{ base: 24, md: 32 }}
+        position="relative"
+        backgroundImage={`url(${ImagemConfig})`}
         backgroundSize="cover"
         backgroundPosition="center"
         backgroundRepeat="no-repeat"
-        position="relative"
         overflow="hidden"
-        objectFit="cover"
-        h={{ base: "auto", md: "60vh" }}
       >
         <Box
           position="absolute"
@@ -206,17 +217,24 @@ const AppConfig = () => {
           backdropFilter="blur(2px)"
           zIndex="1"
         />
-        <Center
+        <Box
           zIndex="2"
-          gap="2rem"
-          padding={{ base: "1.5rem", md: "4.5rem" }}
-          color="white"
-          width={"100vw"}
-          height={"60vh"}
           position="relative"
-          flexDirection={"column"}
+          width="100%"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
         >
-          <Text fontSize={{ base: "2rem", md: "2.5rem" }} fontWeight="bold">
+          <Text
+            fontSize={{ base: "2.2rem", md: "2.8rem" }}
+            fontWeight="extrabold"
+            letterSpacing="wide"
+            textShadow="0 2px 8px #0008"
+            color="white"
+            mb={8}
+            textAlign="center"
+          >
             <Typewriter
               words={[`Bem-vindo a Acaiacá, ${userName}!`]}
               loop={0}
@@ -227,57 +245,78 @@ const AppConfig = () => {
               delaySpeed={1000}
             />
           </Text>
-        </Center>
-      </Flex>
-      <Box
-        textAlign={"center"}
-        p={4}
-        maxW="800px"
-        mx="auto"
-        padding={{ base: "1rem", md: "2rem" }}
-      >
-        <Heading padding={10}>Detalhes da Conta</Heading>
-        <Center flexDirection="column" gap={10} mt={4}>
-          <Box display={"flex"} alignItems="center" gap={2}>
-            <Image width={"3rem"} src={IconPassword} alt="Alterar Plano" />
-            <Button
-              background={"transparent"}
-              color={"#000000"}
-              onClick={handleOpenPasswordModal}
-            >
-              Alterar Senha
-            </Button>
-          </Box>
-          <Divider />
-
-          <Box display={"flex"} alignItems="center" gap={2}>
-            <Image width={"3rem"} src={IconProfile} alt="Editar Perfil" />
-            <Button
-              onClick={() => navigation("/perfil")}
-              background={"transparent"}
-              color={"#000000"}
-            >
-              Editar Conta
-            </Button>
-          </Box>
-          <Divider />
-
-          <Box display={"flex"} alignItems="center" gap={2}>
-            <Image width={"3rem"} src={IconDelete} alt="Deletar Conta" />
-            <Button
-              backgroundColor="transparent"
-              color="#973a34"
-              onClick={handleDeleteAccount}
-              colorScheme="red"
-              _hover={{
-                backgroundColor: "rgba(151, 58, 52, 0.1)",
-                color: "#973a34",
-              }}
-            >
-              Deletar Conta
-            </Button>
-          </Box>
-        </Center>
+          <Card
+            bg={cardBg}
+            boxShadow={cardShadow}
+            borderRadius="2xl"
+            maxW="420px"
+            w="100%"
+            p={{ base: 4, md: 8 }}
+            transition="box-shadow 0.2s"
+            _hover={{ boxShadow: "2xl" }}
+            position="relative"
+            zIndex="2"
+            mt={{ base: 12, md: 20 }}
+          >
+            <CardHeader textAlign="center" pb={2}>
+              <Heading size="lg" color="#83a11d">
+                Configurações da Conta
+              </Heading>
+              <Text fontSize="md" color="gray.500" mt={2}>
+                Gerencie sua conta de forma segura e prática.
+              </Text>
+            </CardHeader>
+            <CardBody>
+              <Stack spacing={6}>
+                <Button
+                  leftIcon={<FaKey size={22} color="#83a11d" />}
+                  variant="outline"
+                  colorScheme="green"
+                  size="lg"
+                  fontWeight="bold"
+                  borderRadius="xl"
+                  borderWidth={2}
+                  borderColor="#83a11d"
+                  _hover={{ bg: "#f7fafc", borderColor: "#c0ab8e" }}
+                  onClick={handleOpenPasswordModal}
+                  transition="all 0.2s"
+                >
+                  Alterar Senha
+                </Button>
+                <Button
+                  leftIcon={<FaRegCreditCard size={22} color="#83a11d" />}
+                  variant="outline"
+                  colorScheme="green"
+                  size="lg"
+                  fontWeight="bold"
+                  borderRadius="xl"
+                  borderWidth={2}
+                  borderColor="#83a11d"
+                  _hover={{ bg: "#f7fafc", borderColor: "#c0ab8e" }}
+                  onClick={() => navigation("/pagamento")}
+                  transition="all 0.2s"
+                >
+                  Trocar Plano
+                </Button>
+                <Button
+                  leftIcon={<FaTrashAlt size={22} color="#973a34" />}
+                  variant="outline"
+                  colorScheme="red"
+                  size="lg"
+                  fontWeight="bold"
+                  borderRadius="xl"
+                  borderWidth={2}
+                  borderColor="#973a34"
+                  _hover={{ bg: "#fff5f5", borderColor: "#c53030" }}
+                  onClick={handleDeleteAccount}
+                  transition="all 0.2s"
+                >
+                  Deletar Conta
+                </Button>
+              </Stack>
+            </CardBody>
+          </Card>
+        </Box>
       </Box>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -312,75 +351,116 @@ const AppConfig = () => {
           <ModalHeader>Alterar Senha</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Box as="form" display="flex" flexDirection="column" gap={4}>
-              <Text>Digite sua senha atual e a nova senha:</Text>
+            <Stack spacing={4}>
               <InputGroup>
                 <Input
-                  border={"2px solid  #83a11d"}
-                  _focus={{
-                    borderColor: "#c0ab8e",
-                    boxShadow: "0 0 0 1px #e5d1b0",
-                  }}
+                  placeholder="Senha Atual"
                   type={showCurrent ? "text" : "password"}
-                  placeholder="Senha atual"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
+                  onInput={(e) => {
+                    e.currentTarget.value = e.currentTarget.value.replace(
+                      /\s/g,
+                      ""
+                    );
+                  }}
                 />
-                <Button
-                  variant="ghost"
-                  onClick={() => setShowCurrent((v) => !v)}
-                >
-                  {showCurrent ? (
-                    <ViewOffIcon color={"#83a11d"} />
-                  ) : (
-                    <ViewIcon color={"#83a11d"} />
-                  )}
-                </Button>
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => setShowCurrent(!showCurrent)}
+                  >
+                    {showCurrent ? <ViewOffIcon /> : <ViewIcon />}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    _hover={{ background: "transparent" }}
+                    onClick={() =>
+                      handleToggleRecording("currentPassword", {
+                        setter: setCurrentPassword,
+                        trim: true,
+                      })
+                    }
+                    isLoading={recordingField === "currentPassword"}
+                  >
+                    <Image src={IconVoice} w="16px" />
+                  </Button>
+                </InputRightElement>
               </InputGroup>
               <InputGroup>
                 <Input
-                  border={"2px solid  #83a11d"}
-                  _focus={{
-                    borderColor: "#c0ab8e",
-                    boxShadow: "0 0 0 1px #e5d1b0",
-                  }}
+                  placeholder="Nova Senha"
                   type={showNew ? "text" : "password"}
-                  placeholder="Nova senha"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
+                  onInput={(e) => {
+                    e.currentTarget.value = e.currentTarget.value.replace(
+                      /\s/g,
+                      ""
+                    );
+                  }}
                 />
-                <Button variant="ghost" onClick={() => setShowNew((v) => !v)}>
-                  {showNew ? (
-                    <ViewOffIcon color={"#83a11d"} />
-                  ) : (
-                    <ViewIcon color={"#83a11d"} />
-                  )}
-                </Button>
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => setShowNew(!showNew)}
+                  >
+                    {showNew ? <ViewOffIcon /> : <ViewIcon />}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    _hover={{ background: "transparent" }}
+                    onClick={() =>
+                      handleToggleRecording("newPassword", {
+                        setter: setNewPassword,
+                        trim: true,
+                      })
+                    }
+                    isLoading={recordingField === "newPassword"}
+                  >
+                    <Image src={IconVoice} w="16px" />
+                  </Button>
+                </InputRightElement>
               </InputGroup>
               <InputGroup>
                 <Input
-                  border={"2px solid  #83a11d"}
-                  _focus={{
-                    borderColor: "#c0ab8e",
-                    boxShadow: "0 0 0 1px #e5d1b0",
-                  }}
+                  placeholder="Confirmar Nova Senha"
                   type={showConfirm ? "text" : "password"}
-                  placeholder="Confirmar nova senha"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  onInput={(e) => {
+                    e.currentTarget.value = e.currentTarget.value.replace(
+                      /\s/g,
+                      ""
+                    );
+                  }}
                 />
-                <Button
-                  variant="ghost"
-                  onClick={() => setShowConfirm((v) => !v)}
-                >
-                  {showConfirm ? (
-                    <ViewOffIcon color={"#83a11d"} />
-                  ) : (
-                    <ViewIcon color={"#83a11d"} />
-                  )}
-                </Button>
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => setShowConfirm(!showConfirm)}
+                  >
+                    {showConfirm ? <ViewOffIcon /> : <ViewIcon />}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    _hover={{ background: "transparent" }}
+                    onClick={() =>
+                      handleToggleRecording("confirmPassword", {
+                        setter: setConfirmPassword,
+                        trim: true,
+                      })
+                    }
+                    isLoading={recordingField === "confirmPassword"}
+                  >
+                    <Image src={IconVoice} w="16px" />
+                  </Button>
+                </InputRightElement>
               </InputGroup>
-            </Box>
+            </Stack>
           </ModalBody>
           <ModalFooter>
             <Button variant="ghost" mr={3} onClick={handleClosePasswordModal}>

@@ -36,8 +36,22 @@ const AppChat = () => {
           cursor: "pointer",
         }}
         onClick={toggleChat}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleChat();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label="Abrir chat com assistente virtual IAcai"
+        aria-pressed={isOpen}
       >
-        <img src={IAcaiPerfil} alt="Chat Icon" style={{ width: "70px" }} />
+        <img 
+          src={IAcaiPerfil} 
+          alt="Ícone do assistente virtual IAcai" 
+          style={{ width: "70px" }} 
+        />
       </div>
     </ChatContext.Provider>
   );

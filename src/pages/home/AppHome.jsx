@@ -39,7 +39,7 @@ import ImagemFeira from "../../assets/feira.jpg";
 import ImageDefault from "../../assets/default.png";
 import AppLoading from "../../components/loading/AppLoading";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL
 
 const useAgriData = () => {
   const navigate = useNavigate();
@@ -71,28 +71,74 @@ const useAgriData = () => {
           return;
         }
 
-        const productsData = await productsResponse.json();
-        const mapearProducts = productsData.map((p) => ({
-          ...p,
-          id: p.id || p._id,
-          title: p.name,
-          image: p.image ? `${API_URL}${p.image}` : ImageDefault,
-          agricultor: p.User ? { ...p.User } : {},
-        }));
-        setProducts(mapearProducts);
+        // Check if responses are successful
+        if (!productsResponse.ok) {
+          console.error(
+            "Products API error:",
+            productsResponse.status,
+            productsResponse.statusText
+          );
+          setProducts([]);
+        } else {
+          const productsData = await productsResponse.json();
 
-        const farmersData = await farmersResponse.json();
-        const mapearFarmers = farmersData.map((user) => ({
-          ...user,
-          id: user.id || user._id || user.userId,
-          title: user.username,
-          image: user.imageProfile?.startsWith("http")
-            ? user.imageProfile
-            : user.imageProfile
-            ? `${API_URL}${user.imageProfile}`
-            : ImageDefault,
-        }));
-        setFarmers(mapearFarmers);
+          // Handle API response structure: {success: true, products: Array, count: number}
+          const productsArray = productsData.products || productsData;
+
+          // Validate that productsArray is an array
+          if (!Array.isArray(productsArray)) {
+            console.error(
+              "API returned non-array products data:",
+              productsData
+            );
+            setProducts([]);
+          } else {
+            const mapearProducts = productsArray.map((p) => ({
+              ...p,
+              id: p.id || p._id,
+              title: p.name,
+              image: p.image ? `${API_URL}${p.image}` : ImageDefault,
+              agricultor: p.User ? { ...p.User } : {},
+            }));
+            setProducts(mapearProducts);
+          }
+        }
+
+        if (!farmersResponse.ok) {
+          console.error(
+            "Farmers API error:",
+            farmersResponse.status,
+            farmersResponse.statusText
+          );
+          setFarmers([]);
+        } else {
+          const farmersData = await farmersResponse.json();
+
+          // Handle API response structure: {success: true, farmers: Array, count: number} or similar
+          const farmersArray =
+            farmersData.farmers ||
+            farmersData.users ||
+            farmersData.agricultores ||
+            farmersData;
+
+          // Validate that farmersArray is an array
+          if (!Array.isArray(farmersArray)) {
+            console.error("API returned non-array farmers data:", farmersData);
+            setFarmers([]);
+          } else {
+            const mapearFarmers = farmersArray.map((user) => ({
+              ...user,
+              id: user.id || user._id || user.userId,
+              title: user.username,
+              image: user.imageProfile?.startsWith("http")
+                ? user.imageProfile
+                : user.imageProfile
+                ? `${API_URL}${user.imageProfile}`
+                : ImageDefault,
+            }));
+            setFarmers(mapearFarmers);
+          }
+        }
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       } finally {
@@ -188,12 +234,13 @@ const CategorySelector = ({ categories, selected, onSelect }) => {
   );
 };
 
-const AppAgriHome = () => {
+const AppHome = () => {
   const { loading, products, farmers } = useAgriData();
   const [userName, setUserName] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [priceOrder, setPriceOrder] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedFarmer, setSelectedFarmer] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -208,6 +255,14 @@ const AppAgriHome = () => {
     { label: "Frutas", value: "Frutas" },
     { label: "Verduras", value: "Verduras" },
     { label: "Legumes", value: "Legumes" },
+    { label: "Tubérculos", value: "Tubérculos" },
+    { label: "Grãos", value: "Grãos" },
+    { label: "Oleaginosas", value: "Oleaginosas" },
+    { label: "Temperos", value: "Temperos" },
+    { label: "Chás", value: "Chás" },
+    { label: "Mel", value: "Mel" },
+    { label: "Ovos", value: "Ovos" },
+    { label: "Laticínios", value: "Laticínios" },
   ];
 
   const normalizeString = (str) =>
@@ -220,32 +275,113 @@ const AppAgriHome = () => {
     let data = selectedCategory === "Agricultores" ? farmers : products;
 
     if (selectedCategory !== "Todos" && selectedCategory !== "Agricultores") {
-      data = products.filter(
-        (item) =>
-          item.category.toLowerCase() ===
-          selectedCategory.slice(0, -1).toLowerCase()
-      );
+      data = products.filter((item) => {
+        const itemCategory = item.category?.toLowerCase();
+        const selectedCategoryLower = selectedCategory.toLowerCase();
+
+        const categoryMapping = {
+          frutas: ["fruta", "frutas"],
+          verduras: ["verdura", "verduras", "hortaliça", "hortaliças"],
+          legumes: ["legume", "legumes"],
+          tubérculos: ["tuberculo", "tubérculo", "tuberculos", "tubérculos"],
+          grãos: ["grao", "grão", "graos", "grãos"],
+          oleaginosas: ["oleaginosa", "oleaginosas"],
+          temperos: ["tempero", "temperos", "condimento", "condimentos"],
+          chás: ["cha", "chá", "chas", "chás"],
+          mel: ["mel"],
+          ovos: ["ovo", "ovos"],
+          laticínios: [
+            "laticinio",
+            "laticínio",
+            "laticinios",
+            "laticínios",
+            "derivados do leite",
+          ],
+        };
+
+        return (
+          categoryMapping[selectedCategoryLower]?.includes(itemCategory) ||
+          itemCategory === selectedCategoryLower
+        );
+      });
     }
 
     if (searchTerm.trim()) {
       const normalizedSearch = normalizeString(searchTerm);
-      data = data.filter((item) =>
-        normalizeString(item.title).includes(normalizedSearch)
+
+      if (selectedCategory === "Todos") {
+        const filteredProducts = products.filter((item) =>
+          normalizeString(item.title).includes(normalizedSearch)
+        );
+        const filteredFarmers = farmers.filter((item) =>
+          normalizeString(item.username).includes(normalizedSearch)
+        );
+        data = [...filteredProducts, ...filteredFarmers];
+      } else {
+        data = data.filter((item) =>
+          normalizeString(item.title || item.username).includes(
+            normalizedSearch
+          )
+        );
+      }
+    }
+
+    if (selectedFarmer && selectedCategory !== "Agricultores") {
+      data = data.filter(
+        (item) =>
+          item.agricultor?.id === selectedFarmer ||
+          item.agricultor?._id === selectedFarmer ||
+          item.agricultor?.userId === selectedFarmer
       );
     }
 
     if (priceOrder && selectedCategory !== "Agricultores") {
-      data = [...data].sort((a, b) =>
-        priceOrder === "crescente" ? a.price - b.price : b.price - a.price
-      );
+      data = [...data].sort((a, b) => {
+        switch (priceOrder) {
+          case "crescente":
+            return (a.price || 0) - (b.price || 0);
+          case "decrescente":
+            return (b.price || 0) - (a.price || 0);
+          case "nome":
+            return (a.title || a.username).localeCompare(
+              b.title || b.username,
+              "pt-BR"
+            );
+          case "nome_desc":
+            return (b.title || b.username).localeCompare(
+              a.title || a.username,
+              "pt-BR"
+            );
+          case "recentes":
+            return (
+              new Date(b.createdAt || b.updatedAt || 0) -
+              new Date(a.createdAt || a.updatedAt || 0)
+            );
+          case "antigos":
+            return (
+              new Date(a.createdAt || a.updatedAt || 0) -
+              new Date(b.createdAt || b.updatedAt || 0)
+            );
+          default:
+            return 0;
+        }
+      });
     }
 
     return data;
-  }, [selectedCategory, searchTerm, priceOrder, products, farmers]);
+  }, [
+    selectedCategory,
+    searchTerm,
+    priceOrder,
+    products,
+    farmers,
+    selectedFarmer,
+  ]);
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
     setPriceOrder("");
+    setSelectedFarmer("");
   };
 
   const cardStyles = {
@@ -321,7 +457,7 @@ const AppAgriHome = () => {
     </Card>
   );
 
-  const renderProductCard = (item, index) => (
+  const renderProductCard = (product, index) => (
     <Card key={index} {...cardStyles}>
       <CardBody
         flex="1 1 auto"
@@ -333,22 +469,22 @@ const AppAgriHome = () => {
           width="100%"
           height={{ base: "150px", md: "200px" }}
           objectFit="cover"
-          src={item.image || ImageDefault}
-          alt={`Imagem de ${item.name}`}
+          src={product.image || ImageDefault}
+          alt={`Imagem de ${product.name}`}
           borderRadius="md"
           mb={4}
         />
         <Stack gap={2}>
-          <Heading size="md">{item.name}</Heading>
+          <Heading size="md">{product.name}</Heading>
           <Text color="green.600" fontSize="lg" fontWeight="bold">
-            R$ {Number(item.price).toFixed(2)}
+            R$ {Number(product.price).toFixed(2)}
           </Text>
           <Text fontSize="sm" color="gray.600" noOfLines={2}>
-            {item.description}
+            {product.description}
           </Text>
-          {item.agricultor?.username && (
+          {product.agricultor?.username && (
             <Text fontSize="sm" color="gray.500" mt={2}>
-              Vendido por: <strong>{item.agricultor.username}</strong>
+              Vendido por: <strong>{product.agricultor.username}</strong>
             </Text>
           )}
         </Stack>
@@ -358,7 +494,9 @@ const AppAgriHome = () => {
         <Button
           {...buttonStyles}
           width="100%"
-          onClick={() => navigate(`/produto/${item.id}`)}
+          onClick={() => {
+            navigate(`/produto/${product.id}`);
+          }}
         >
           Ver Produto
         </Button>
@@ -369,20 +507,118 @@ const AppAgriHome = () => {
   const carousels = [
     {
       title: "Frutas",
-      data: products.filter((p) => p.category.toLowerCase() === "fruta"),
+      data: products.filter(
+        (p) =>
+          p.category && ["fruta", "frutas"].includes(p.category.toLowerCase())
+      ),
       show: ["Todos", "Frutas"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
     },
     {
       title: "Verduras",
-      data: products.filter((p) => p.category.toLowerCase() === "verdura"),
+      data: products.filter(
+        (p) =>
+          p.category &&
+          ["verdura", "verduras", "hortaliça", "hortaliças"].includes(
+            p.category.toLowerCase()
+          )
+      ),
       show: ["Todos", "Verduras"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
     },
     {
       title: "Legumes",
-      data: products.filter((p) => p.category.toLowerCase() === "legume"),
+      data: products.filter(
+        (p) =>
+          p.category && ["legume", "legumes"].includes(p.category.toLowerCase())
+      ),
       show: ["Todos", "Legumes"].includes(selectedCategory),
+      renderItem: (item, index) => renderProductCard(item, index),
+    },
+    {
+      title: "Tubérculos",
+      data: products.filter(
+        (p) =>
+          p.category &&
+          ["tuberculo", "tubérculo", "tuberculos", "tubérculos"].includes(
+            p.category.toLowerCase()
+          )
+      ),
+      show: ["Todos", "Tubérculos"].includes(selectedCategory),
+      renderItem: (item, index) => renderProductCard(item, index),
+    },
+    {
+      title: "Grãos",
+      data: products.filter(
+        (p) =>
+          p.category &&
+          ["grao", "grão", "graos", "grãos"].includes(p.category.toLowerCase())
+      ),
+      show: ["Todos", "Grãos"].includes(selectedCategory),
+      renderItem: (item, index) => renderProductCard(item, index),
+    },
+    {
+      title: "Oleaginosas",
+      data: products.filter(
+        (p) =>
+          p.category &&
+          ["oleaginosa", "oleaginosas"].includes(p.category.toLowerCase())
+      ),
+      show: ["Todos", "Oleaginosas"].includes(selectedCategory),
+      renderItem: (item, index) => renderProductCard(item, index),
+    },
+    {
+      title: "Temperos",
+      data: products.filter(
+        (p) =>
+          p.category &&
+          ["tempero", "temperos", "condimento", "condimentos"].includes(
+            p.category.toLowerCase()
+          )
+      ),
+      show: ["Todos", "Temperos"].includes(selectedCategory),
+      renderItem: (item, index) => renderProductCard(item, index),
+    },
+    {
+      title: "Chás",
+      data: products.filter(
+        (p) =>
+          p.category &&
+          ["cha", "chá", "chas", "chás"].includes(p.category.toLowerCase())
+      ),
+      show: ["Todos", "Chás"].includes(selectedCategory),
+      renderItem: (item, index) => renderProductCard(item, index),
+    },
+    {
+      title: "Mel",
+      data: products.filter(
+        (p) => p.category && ["mel"].includes(p.category.toLowerCase())
+      ),
+      show: ["Todos", "Mel"].includes(selectedCategory),
+      renderItem: (item, index) => renderProductCard(item, index),
+    },
+    {
+      title: "Ovos",
+      data: products.filter(
+        (p) => p.category && ["ovo", "ovos"].includes(p.category.toLowerCase())
+      ),
+      show: ["Todos", "Ovos"].includes(selectedCategory),
+      renderItem: (item, index) => renderProductCard(item, index),
+    },
+    {
+      title: "Laticínios",
+      data: products.filter(
+        (p) =>
+          p.category &&
+          [
+            "laticinio",
+            "laticínio",
+            "laticinios",
+            "laticínios",
+            "derivados do leite",
+          ].includes(p.category.toLowerCase())
+      ),
+      show: ["Todos", "Laticínios"].includes(selectedCategory),
       renderItem: (item, index) => renderProductCard(item, index),
     },
     {
@@ -486,6 +722,18 @@ const AppAgriHome = () => {
                 <MenuItem onClick={() => setPriceOrder("decrescente")}>
                   Preço Decrescente
                 </MenuItem>
+                <MenuItem onClick={() => setPriceOrder("nome")}>
+                  Nome A-Z
+                </MenuItem>
+                <MenuItem onClick={() => setPriceOrder("nome_desc")}>
+                  Nome Z-A
+                </MenuItem>
+                <MenuItem onClick={() => setPriceOrder("recentes")}>
+                  Mais Recentes
+                </MenuItem>
+                <MenuItem onClick={() => setPriceOrder("antigos")}>
+                  Mais Antigos
+                </MenuItem>
               </MenuList>
             </Menu>
             <InputGroup flexGrow={1}>
@@ -525,13 +773,7 @@ const AppAgriHome = () => {
                     <AppCarrossel
                       key={carousel.title}
                       title={carousel.title}
-                      data={
-                        carousel.title
-                          .toLowerCase()
-                          .includes(selectedCategory.toLowerCase().slice(0, -1))
-                          ? filteredData
-                          : carousel.data
-                      }
+                      data={carousel.data}
                       renderItem={carousel.renderItem}
                     />
                   )
@@ -544,4 +786,4 @@ const AppAgriHome = () => {
   );
 };
 
-export default AppAgriHome;
+export default AppHome;

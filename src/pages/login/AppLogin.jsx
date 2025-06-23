@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "../../styles/global-styles.css";
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
-import { useState } from "react";
 import axios from "axios";
 import {
   Box,
@@ -19,14 +18,17 @@ import {
   RadioGroup,
   Stack,
   useToast,
+  Image,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
 import ImageAgricultor from "../../assets/agricultor-forms.jpg";
+import IconVoice from "../../assets/icons/voice-command.png";
+import { useSpeechRecognition } from "../../hooks/useSpeechRecognition";
 
 const AppLogin = () => {
   const toast = useToast();
-  const [value, setValue] = React.useState("agricultor");
+  const [value, setValueReact] = useState("agricultor");
   const [show, setShow] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const handleClick = () => setShow(!show);
@@ -36,7 +38,18 @@ const AppLogin = () => {
     handleSubmit,
     formState: { errors },
     control,
+    setValue: setFormValue,
   } = useForm();
+
+  const { handleToggleRecording, recordingField } = useSpeechRecognition({
+    setValue: (fieldName, value) => {
+      let processedValue = value;
+      if (fieldName === "email") {
+        processedValue = value.toLowerCase().replace(/\s/g, "");
+      }
+      setFormValue(fieldName, processedValue, { shouldValidate: true });
+    },
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -95,17 +108,15 @@ const AppLogin = () => {
         }
       );
 
-      const responseData = response.data;
-      const token = responseData.token;
-      const userName = responseData.username || "Usuário";
-      const userId = responseData.userId;
+      const { user, token } = response.data;
+      const { id: userId, username: userName, role: userRole, historia } = user;
+
       localStorage.setItem("token", token);
-      localStorage.setItem("userRole", role);
+      localStorage.setItem("userRole", userRole);
       localStorage.setItem("userName", userName);
-      localStorage.setItem("email", email); // Salva o email do login
-      if (userId) {
-        localStorage.setItem("userId", userId);
-      }
+      localStorage.setItem("userId", userId);
+      localStorage.setItem("email", email);
+      localStorage.setItem("historia", historia);
 
       toast({
         title: "Sucesso",
@@ -198,28 +209,60 @@ const AppLogin = () => {
             </Text>
             <FormControl isInvalid={errors.email}>
               <FormLabel htmlFor="email">Email</FormLabel>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Digite seu email"
-                _placeholder={{ color: "#b0b0b0" }}
-                border={"2px solid  #83a11d"}
-                aria-required="true"
-                autoComplete="email"
-                width={"100%"}
-                height={"4rem"}
-                _focus={{
-                  borderColor: "#c0ab8e",
-                  boxShadow: "0 0 0 1px #e5d1b0",
-                }}
-                {...register("email", {
-                  required: "Email obrigatório",
-                  pattern: {
-                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                    message: "Email inválido",
-                  },
-                })}
-              />
+              <InputGroup>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Digite seu email"
+                  _placeholder={{ color: "#b0b0b0" }}
+                  border={"2px solid  #83a11d"}
+                  aria-required="true"
+                  autoComplete="email"
+                  width={"100%"}
+                  height={"4rem"}
+                  _focus={{
+                    borderColor: "#c0ab8e",
+                    boxShadow: "0 0 0 1px #e5d1b0",
+                  }}
+                  {...register("email", {
+                    required: "Email obrigatório",
+                    pattern: {
+                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                      message: "Email inválido",
+                    },
+                  })}
+                  onInput={(e) => {
+                    e.currentTarget.value = e.currentTarget.value
+                      .replace(/\s/g, "")
+                      .toLowerCase();
+                  }}
+                />
+                <InputRightElement
+                  h={"100%"}
+                  width={"4.5rem"}
+                  alignItems="center"
+                >
+                  <Button
+                    variant="ghost"
+                    _hover={{ background: "transparent" }}
+                    onClick={() =>
+                      handleToggleRecording("email", {
+                        trim: true,
+                        toLowerCase: true,
+                      })
+                    }
+                    isLoading={recordingField === "email"}
+                    aria-label="Gravar e-mail"
+                  >
+                    <Image
+                      src={IconVoice}
+                      alt="Ícone de comando de voz"
+                      width={"1.5rem"}
+                      height={"1.5rem"}
+                    />
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
               <FormErrorMessage>
                 {errors.email && errors.email.message}
               </FormErrorMessage>
@@ -248,23 +291,46 @@ const AppLogin = () => {
                       message: "A senha deve ter pelo menos 6 caracteres",
                     },
                   })}
+                  onInput={(e) => {
+                    e.currentTarget.value = e.currentTarget.value.replace(
+                      /\s/g,
+                      ""
+                    );
+                  }}
                 />
-                <InputRightElement height={"4rem"} width={"4.5rem"}>
+                <InputRightElement
+                  h={"100%"}
+                  width={"6.5rem"}
+                  display="flex"
+                  alignItems="center"
+                >
                   <Button
                     variant="ghost"
-                    onClick={handleClick}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    background="transparent"
-                    boxSize={"100%"}
                     _hover={{ background: "transparent" }}
+                    onClick={handleClick}
+                    aria-label={show ? "Ocultar senha" : "Mostrar senha"}
                   >
                     {show ? (
                       <ViewOffIcon color={"#83a11d"} />
                     ) : (
                       <ViewIcon color={"#83a11d"} />
                     )}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    _hover={{ background: "transparent" }}
+                    onClick={() =>
+                      handleToggleRecording("password", { trim: true })
+                    }
+                    isLoading={recordingField === "password"}
+                    aria-label="Gravar senha"
+                  >
+                    <Image
+                      src={IconVoice}
+                      alt="Ícone de comando de voz"
+                      width={"1.5rem"}
+                      height={"1.5rem"}
+                    />
                   </Button>
                 </InputRightElement>
               </InputGroup>
@@ -283,10 +349,10 @@ const AppLogin = () => {
                   <RadioGroup
                     {...field}
                     onChange={(val) => {
-                      setValue(val);
                       field.onChange(val);
+                      setValueReact(val);
                     }}
-                    value={value}
+                    value={field.value}
                   >
                     <Stack
                       direction="row"

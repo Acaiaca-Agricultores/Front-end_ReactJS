@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import LandingPageApp from "../pages/landingpage/app.jsx";
 import AppAbout from "../pages/landingpage/AppAbout.jsx";
@@ -9,7 +9,10 @@ import AppCadastro from "../pages/cadastro/AppCadastro.jsx";
 import AppConfig from "../pages/configuração/AppConfig.jsx";
 import AppPerfil from "../pages/perfil/AppPerfil.jsx";
 import AppSenha from "../pages/configuração/AppSenha.jsx";
-import AppProduto from "../pages/cadastro/AppProduto.jsx";
+import AppCadastroProduto from "../pages/cadastro/AppProduto.jsx";
+import AppProduto from "../pages/produto/AppProduto.jsx";
+import AppPagamento from "../pages/pagamento/AppPagamento.jsx";
+import AppSubsPagamento from "../pages/pagamento/AppSubsPagamento.jsx";
 
 const AppRouters = () => {
   return (
@@ -25,7 +28,10 @@ const AppRouters = () => {
       <Route path="/cadastro" element={<AppCadastro />} />
       <Route path="/configurações" element={<AppConfig />} />
       <Route path="/esqueci-senha" element={<AppSenha />} />
-      <Route path="/cadastro/produto" element={<AppProduto />} />
+      <Route path="/cadastro/produto" element={<AppCadastroProduto />} />
+      <Route path="/produto/:id" element={<AppProduto />} />
+      <Route path="/assinatura" element={<AppSubsPagamento />} />
+      <Route path="/pagamento" element={<AppPagamento />} />
     </Routes>
   );
 };

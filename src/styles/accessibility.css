@@ -1,0 +1,33 @@
+/* Alto Contraste */
+.high-contrast {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+.high-contrast * {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+
+.high-contrast a {
+  color: #ffff00 !important;
+}
+
+.high-contrast button {
+  border: 2px solid #fff !important;
+}
+
+/* Navegação por Teclado */
+.keyboard-navigation :focus {
+  outline: 3px solid #4299e1 !important;
+  outline-offset: 2px !important;
+}
+
+.keyboard-navigation button:focus,
+.keyboard-navigation a:focus,
+.keyboard-navigation input:focus,
+.keyboard-navigation select:focus,
+.keyboard-navigation textarea:focus {
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6) !important;
+}

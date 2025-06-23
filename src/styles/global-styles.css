@@ -9,3 +9,7 @@
 body {
   font-family: "Onest", sans-serif;
 }
+
+html {
+  scroll-behavior: smooth;
+}
