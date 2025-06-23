@@ -394,7 +394,7 @@ function AppPerfil() {
     : getProfileImageUrl(userData.imageProfile);
 
   return (
-    <Box color={textColor} paddingTop={{ base: "80px", md: "100px" }}>
+    <Box color={textColor}>
       <Box
         h={{ base: "180px", md: "60vh" }}
         bgImage={`url(${ImagemPerfil})`}
