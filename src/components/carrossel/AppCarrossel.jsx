@@ -43,7 +43,7 @@ const AppCarrossel = ({ data, title, renderItem, itemsDesktop = 3 }) => {
   return (
     <>
       <Heading padding={"2rem 0 1rem 0"}>{title}</Heading>
-      <Flex align="center" justify="center" gap={4}>
+      <Flex align="center" justify="center">
         <IconButton
           aria-label="Anterior"
           icon={<ChevronLeftIcon boxSize={8} />}

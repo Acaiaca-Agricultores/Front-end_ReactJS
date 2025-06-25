@@ -125,9 +125,9 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
       </Box>
 
       <Flex direction="column" flex={1} gap={2}>
-        <Heading 
-          size="md" 
-          color="gray.700" 
+        <Heading
+          size="md"
+          color="gray.700"
           noOfLines={2}
           id={`product-title-${item.id}`}
           tabIndex={0}
@@ -135,21 +135,21 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
           {item.name || "Sem nome"}
         </Heading>
 
-        <Text 
-          fontSize="2xl" 
-          color="green.600" 
+        <Text
+          fontSize="2xl"
+          color="green.600"
           fontWeight="bold"
-          aria-label={`Preço: ${item.price ? formatPrice(item.price) : "Preço não disponível"}`}
+          aria-label={`Preço: ${
+            item.price ? formatPrice(item.price) : "Preço não disponível"
+          }`}
           tabIndex={0}
         >
-          {item.price
-            ? formatPrice(item.price)
-            : "Preço não disponível"}
+          {item.price ? formatPrice(item.price) : "Preço não disponível"}
         </Text>
 
-        <Text 
-          color="gray.600" 
-          noOfLines={2} 
+        <Text
+          color="gray.600"
+          noOfLines={2}
           fontSize="sm"
           id={`product-description-${item.id}`}
           tabIndex={0}
@@ -159,8 +159,8 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
 
         <Flex gap={2} mt={2} flexWrap="wrap">
           {item.category && (
-            <Badge 
-              colorScheme="purple" 
+            <Badge
+              colorScheme="purple"
               fontSize="sm"
               aria-label={`Categoria: ${item.category}`}
             >
@@ -168,8 +168,8 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
             </Badge>
           )}
           {item.quantity > 0 && (
-            <Badge 
-              colorScheme="green" 
+            <Badge
+              colorScheme="green"
               fontSize="sm"
               aria-label={`Quantidade disponível: ${item.quantity} unidades`}
             >

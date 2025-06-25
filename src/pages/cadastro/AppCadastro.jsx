@@ -24,6 +24,7 @@ import {
   PopoverCloseButton,
   SimpleGrid,
   Flex,
+  Textarea,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
@@ -74,6 +75,7 @@ const AppCadastro = () => {
       state: "",
       city: "",
       phone: "",
+      farmerStory: "",
     },
     mode: "onTouched",
   });
@@ -179,6 +181,8 @@ const AppCadastro = () => {
       if (watch("role") !== "consumidor") {
         fieldsToValidate.push("propertyName");
       }
+    } else if (activeStep === 3 && watch("role") === "agricultor") {
+      fieldsToValidate = ["farmerStory"];
     }
 
     if (fieldsToValidate.length > 0) {
@@ -245,13 +249,20 @@ const AppCadastro = () => {
       state: selectedEstado,
       city: selectedCidade,
       phoneNumber: phone,
-      ...(role === "agricultor" && { farmerStory }),
     };
+
+    if (role === "agricultor" && farmerStory && farmerStory.trim() !== "") {
+      payload.farmerStory = farmerStory.trim();
+    }
+
+    // Remove campos vazios ou undefined
     Object.keys(payload).forEach(
       (key) =>
         (payload[key] === undefined || payload[key] === "") &&
         delete payload[key]
     );
+
+    console.log("Payload sendo enviado:", payload);
 
     try {
       const response = await axios.post(API_URL + "/auth/register", payload, {
@@ -946,44 +957,43 @@ const AppCadastro = () => {
                 <FormLabel>
                   Conte um pouco da sua história como agricultor
                 </FormLabel>
-                <InputGroup>
-                  <Input
-                    type="text"
-                    placeholder="Fale sobre sua experiência, desafios, conquistas..."
-                    _placeholder={{ color: "#b0b0b0" }}
-                    border={"2px solid  #83a11d"}
-                    aria-required="true"
-                    width={"100%"}
-                    height={"3rem"}
-                    _focus={{
-                      borderColor: "#c0ab8e",
-                      boxShadow: "0 0 0 1px #e5d1b0",
-                    }}
-                    {...register("farmerStory", {
-                      required: "Conte sua história para continuarmos",
-                    })}
-                  />
-                  <InputRightElement
-                    h={"100%"}
-                    width={"4.5rem"}
-                    alignItems="center"
-                  >
-                    <Button
-                      variant="ghost"
-                      _hover={{ background: "transparent" }}
-                      onClick={() => handleToggleRecording("farmerStory")}
-                      isLoading={recordingField === "farmerStory"}
-                      aria-label="Gravar história do agricultor"
-                    >
-                      <Image
-                        src={IconVoice}
-                        alt="Ícone de comando de voz"
-                        width={"1.5rem"}
-                        height={"1.5rem"}
-                      />
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
+                <Textarea
+                  placeholder="Fale sobre sua experiência, desafios, conquistas..."
+                  _placeholder={{ color: "#b0b0b0" }}
+                  border={"2px solid  #83a11d"}
+                  aria-required="true"
+                  width={"100%"}
+                  minHeight={"6rem"}
+                  resize="vertical"
+                  _focus={{
+                    borderColor: "#c0ab8e",
+                    boxShadow: "0 0 0 1px #e5d1b0",
+                  }}
+                  {...register("farmerStory", {
+                    required: "Conte sua história para continuarmos",
+                    minLength: {
+                      value: 10,
+                      message: "A história deve ter pelo menos 10 caracteres"
+                    },
+                    validate: (value) => {
+                      if (!value || value.trim().length < 10) {
+                        return "Conte um pouco mais sobre sua história como agricultor";
+                      }
+                      return true;
+                    }
+                  })}
+                />
+                <Button
+                  variant="ghost"
+                  _hover={{ background: "transparent" }}
+                  onClick={() => handleToggleRecording("farmerStory")}
+                  isLoading={recordingField === "farmerStory"}
+                  aria-label="Gravar história do agricultor"
+                  mt={2}
+                  leftIcon={<Image src={IconVoice} alt="Ícone de comando de voz" width={"1.5rem"} height={"1.5rem"} />}
+                >
+                  Gravar com voz
+                </Button>
                 <FormErrorMessage>
                   {errors.farmerStory && errors.farmerStory.message}
                 </FormErrorMessage>

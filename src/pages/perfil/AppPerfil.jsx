@@ -24,6 +24,7 @@ import {
   Skeleton,
   useColorModeValue,
   HStack,
+  Spinner,
 } from "@chakra-ui/react";
 import {
   EditIcon,
@@ -47,7 +48,7 @@ import axios from "axios";
 import ImagemPerfil from "../../assets/plataforma-vovo.png";
 import AppLoading from "../../components/loading/AppLoading";
 import AppSelect from "../configuração/AppSelect";
-import AppProducts from "./AppProducts";
+import AppProductsUser from "./AppProductsUser";
 import ProfileDetailItem from "./ProfileDetailItem";
 import { useSpeechRecognition } from "../../hooks/useSpeechRecognition";
 
@@ -66,6 +67,28 @@ function AppPerfil() {
   const fileInputRef = useRef();
   const toastIdRef = useRef(null);
 
+  const token = localStorage.getItem("token");
+  const loggedInUserId = localStorage.getItem("userId");
+
+  if (!token || !loggedInUserId) {
+    localStorage.clear();
+    window.location.href = "/login";
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+        bg="gray.50"
+      >
+        <VStack spacing={4}>
+          <Text>Redirecionando para login...</Text>
+          <Spinner size="lg" color="green.500" />
+        </VStack>
+      </Box>
+    );
+  }
+
   const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     username: "",
@@ -83,9 +106,13 @@ function AppPerfil() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const loggedInUserId = localStorage.getItem("userId");
   const canEditCurrentProfile = !id || id === loggedInUserId;
   const userId = id || loggedInUserId;
+
+  if (!userId) {
+    navigate("/login");
+    return null;
+  }
 
   const { handleToggleRecording, recordingField } = useSpeechRecognition({
     fieldSetter: (value) => {
@@ -146,8 +173,15 @@ function AppPerfil() {
     setError(null);
     const token = localStorage.getItem("token");
 
-    if (!token || !userId) {
-      setError("Token ou ID do usuário não encontrado. Faça login novamente.");
+    if (!token) {
+      setError("Token não encontrado. Faça login novamente.");
+      setIsLoading(false);
+      navigate("/login");
+      return;
+    }
+
+    if (!userId) {
+      setError("ID do usuário não encontrado. Faça login novamente.");
       setIsLoading(false);
       navigate("/login");
       return;
@@ -182,7 +216,12 @@ function AppPerfil() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (!token || !userId) {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    if (!userId) {
       navigate("/login");
       return;
     }
@@ -275,11 +314,6 @@ function AppPerfil() {
 
     let hasChanges = false;
 
-    // Debug logs
-    console.log("FormData atual:", formData);
-    console.log("UserData original:", userData);
-
-    // Verificar mudanças em todos os campos exceto imageProfile
     Object.keys(formData).forEach((key) => {
       if (key !== "imageProfile" && key !== "historia") {
         const currentValue = formData[key] || "";
@@ -287,33 +321,21 @@ function AppPerfil() {
         if (currentValue !== originalValue) {
           form.append(key, currentValue);
           hasChanges = true;
-          console.log(`Campo ${key} mudou:`, {
-            original: originalValue,
-            current: currentValue,
-          });
         }
       }
     });
 
-    // Verificar especificamente se a história mudou
     const currentHistoria = formData.historia || "";
     const originalHistoria = userData.historia || "";
     if (currentHistoria !== originalHistoria) {
       form.append("historia", currentHistoria);
       hasChanges = true;
-      console.log("História mudou:", {
-        original: originalHistoria,
-        current: currentHistoria,
-      });
     }
 
     if (selectedImage) {
       form.append("profileImage", selectedImage);
       hasChanges = true;
-      console.log("Imagem selecionada");
     }
-
-    console.log("HasChanges:", hasChanges);
 
     if (!hasChanges) {
       toast({
@@ -328,13 +350,11 @@ function AppPerfil() {
     }
 
     try {
-      console.log("Enviando dados para API...");
       const response = await axios.put(`${API_URL}/user/${userId}/edit`, form, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Resposta da API:", response.data);
       toast({
         title: "Perfil atualizado com sucesso!",
         status: "success",
@@ -344,7 +364,6 @@ function AppPerfil() {
       setIsEditing(false);
       fetchUserData();
     } catch (err) {
-      console.error("Erro na API:", err.response?.data || err.message);
       handleApiError(err);
     } finally {
       setIsSubmitting(false);
@@ -749,7 +768,7 @@ function AppPerfil() {
                     minH="500px"
                     bg={cardBg}
                   >
-                    <AppProducts
+                    <AppProductsUser
                       isOwner={canEditCurrentProfile}
                       viewedUserId={userId}
                     />

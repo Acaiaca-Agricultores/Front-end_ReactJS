@@ -648,36 +648,37 @@ const AppProduto = () => {
                   />
                 </FormControl>
               </SimpleGrid>
+
+              <Flex gap={4} mt={6} gridColumn="1 / -1">
+                <Button
+                  type="submit"
+                  w="100%"
+                  colorScheme="green"
+                  borderRadius="md"
+                  fontWeight="bold"
+                  size="lg"
+                  isLoading={isLoading}
+                  spinner={<Spinner size="md" color="white" />}
+                  aria-label={
+                    productToEdit ? "Salvar Alterações" : "Cadastrar produto"
+                  }
+                >
+                  {productToEdit ? "Salvar" : "Cadastrar"}
+                </Button>
+                <Button
+                  onClick={handleCancel}
+                  w="100%"
+                  colorScheme="gray"
+                  borderRadius="md"
+                  fontWeight="bold"
+                  size="lg"
+                  variant="outline"
+                  aria-label="Cancelar"
+                >
+                  Cancelar
+                </Button>
+              </Flex>
             </SimpleGrid>
-          </Flex>
-          <Flex gap={4} mt={6}>
-            <Button
-              type="submit"
-              w="100%"
-              colorScheme="green"
-              borderRadius="md"
-              fontWeight="bold"
-              size="lg"
-              isLoading={isLoading}
-              spinner={<Spinner size="md" color="white" />}
-              aria-label={
-                productToEdit ? "Salvar Alterações" : "Cadastrar produto"
-              }
-            >
-              {productToEdit ? "Salvar" : "Cadastrar"}
-            </Button>
-            <Button
-              onClick={handleCancel}
-              w="100%"
-              colorScheme="gray"
-              borderRadius="md"
-              fontWeight="bold"
-              size="lg"
-              variant="outline"
-              aria-label="Cancelar"
-            >
-              Cancelar
-            </Button>
           </Flex>
         </Box>
       </Box>

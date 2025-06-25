@@ -11,6 +11,7 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import { FaWhatsapp, FaShare } from "react-icons/fa";
+import { IoArrowBack } from "react-icons/io5";
 import { motion } from "framer-motion";
 
 const MotionBox = motion.create(Box);
@@ -18,6 +19,10 @@ const MotionBox = motion.create(Box);
 function ProductDetailCard({ product, API_URL }) {
   const imageUrl = `${API_URL}${product.image}`;
   const toast = useToast();
+
+  const handleGoBack = () => {
+    window.history.back();
+  };
 
   const handleShare = async () => {
     try {
@@ -38,21 +43,22 @@ function ProductDetailCard({ product, API_URL }) {
 
   const formatPhoneNumber = (phone) => {
     const numbers = phone.replace(/\D/g, "");
-    
+
     const withCountryCode = numbers.startsWith("55") ? numbers : `55${numbers}`;
-    
+
     let formattedNumber = withCountryCode;
-    
+
     if (formattedNumber.length < 12) {
       toast({
         title: "Número de telefone incompleto",
-        description: "O número de telefone do vendedor parece estar incompleto.",
+        description:
+          "O número de telefone do vendedor parece estar incompleto.",
         status: "warning",
         duration: 3000,
         isClosable: true,
       });
     }
-    
+
     return formattedNumber;
   };
 
@@ -72,7 +78,9 @@ function ProductDetailCard({ product, API_URL }) {
     }
 
     const formattedPhone = formatPhoneNumber(phone);
-    const message = encodeURIComponent(`Olá, tenho interesse no produto ${product.name}`);
+    const message = encodeURIComponent(
+      `Olá, tenho interesse no produto ${product.name}`
+    );
     const whatsappUrl = `https://wa.me/${formattedPhone}?text=${message}`;
 
     window.open(whatsappUrl, "_blank");
@@ -116,6 +124,15 @@ function ProductDetailCard({ product, API_URL }) {
       aria-labelledby="product-title"
       aria-describedby="product-description"
     >
+      <Box mb={5}>
+        <Button
+          leftIcon={<IoArrowBack />}
+          colorScheme="green"
+          onClick={handleGoBack}
+        >
+          Voltar
+        </Button>
+      </Box>
       <Flex direction={{ base: "column", md: "row" }} gap={6}>
         <Box
           flexShrink={0}
@@ -130,7 +147,6 @@ function ProductDetailCard({ product, API_URL }) {
             width="100%"
             height="100%"
             style={{ transition: "transform 0.3s ease" }}
-            _hover={{ transform: "scale(1.05)" }}
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = `${API_URL}/uploads/products/default_placeholder.jpg`;
@@ -140,9 +156,9 @@ function ProductDetailCard({ product, API_URL }) {
 
         <Box flex="1">
           <Flex justifyContent="space-between" alignItems="center" mb={4}>
-            <Heading 
-              as="h1" 
-              size="xl" 
+            <Heading
+              as="h1"
+              size="xl"
               color="green.700"
               id="product-title"
               tabIndex={0}
@@ -154,15 +170,17 @@ function ProductDetailCard({ product, API_URL }) {
               fontSize="md"
               p={2}
               borderRadius="md"
-              aria-label={`Status: ${product.quantity > 0 ? "Disponível" : "Indisponível"}`}
+              aria-label={`Status: ${
+                product.quantity > 0 ? "Disponível" : "Indisponível"
+              }`}
             >
               {product.quantity > 0 ? "Disponível" : "Indisponível"}
             </Badge>
           </Flex>
 
           <Box display="flex" flexDirection="column" gap={4}>
-            <Text 
-              fontSize="xl" 
+            <Text
+              fontSize="xl"
               color="gray.700"
               id="product-description"
               tabIndex={0}
@@ -170,11 +188,15 @@ function ProductDetailCard({ product, API_URL }) {
               {product.description || "Nenhuma descrição disponível."}
             </Text>
 
-            <Text 
-              fontSize="3xl" 
-              color="green.600" 
+            <Text
+              fontSize="3xl"
+              color="green.600"
               fontWeight="bold"
-              aria-label={`Preço: ${product.price ? formatPrice(product.price) : "Preço não disponível"}`}
+              aria-label={`Preço: ${
+                product.price
+                  ? formatPrice(product.price)
+                  : "Preço não disponível"
+              }`}
               tabIndex={0}
             >
               {product.price
@@ -200,9 +222,9 @@ function ProductDetailCard({ product, API_URL }) {
 
             <Divider my={4} />
 
-            <Box 
-              bg="gray.50" 
-              p={4} 
+            <Box
+              bg="gray.50"
+              p={4}
               borderRadius="md"
               role="region"
               aria-label="Informações do Vendedor"
