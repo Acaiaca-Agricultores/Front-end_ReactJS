@@ -77,6 +77,50 @@ export default function SelectEstadoCidade({
     // eslint-disable-next-line
   }, [selectedEstado]);
 
+  // Carregar cidades quando o componente for montado e já houver um estado selecionado
+  useEffect(() => {
+    if (selectedEstado && selectedCidade && cidades.length === 0) {
+      setLoadingCidades(true);
+      fetch(
+        `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedEstado}/municipios?orderBy=nome`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setCidades(data);
+          } else {
+            setCidades([]);
+          }
+        })
+        .catch(() => {
+          setCidades([]);
+        })
+        .finally(() => setLoadingCidades(false));
+    }
+  }, [selectedEstado, selectedCidade, cidades.length]);
+
+  // Carregar cidades quando o componente for montado com estado já selecionado
+  useEffect(() => {
+    if (selectedEstado && cidades.length === 0 && !loadingCidades) {
+      setLoadingCidades(true);
+      fetch(
+        `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedEstado}/municipios?orderBy=nome`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setCidades(data);
+          } else {
+            setCidades([]);
+          }
+        })
+        .catch(() => {
+          setCidades([]);
+        })
+        .finally(() => setLoadingCidades(false));
+    }
+  }, [selectedEstado, cidades.length, loadingCidades]);
+
   return (
     <>
       <FormControl mb={4} isRequired={isRequired} isInvalid={!!errorEstados}>

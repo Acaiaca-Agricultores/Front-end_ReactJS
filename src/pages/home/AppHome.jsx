@@ -311,7 +311,7 @@ const AppHome = () => {
 
       if (selectedCategory === "Todos") {
         const filteredProducts = products.filter((item) =>
-          normalizeString(item.title).includes(normalizedSearch)
+          normalizeString(item.name || item.title).includes(normalizedSearch)
         );
         const filteredFarmers = farmers.filter((item) =>
           normalizeString(item.username).includes(normalizedSearch)
@@ -319,7 +319,7 @@ const AppHome = () => {
         data = [...filteredProducts, ...filteredFarmers];
       } else {
         data = data.filter((item) =>
-          normalizeString(item.title || item.username).includes(
+          normalizeString(item.name || item.title || item.username).includes(
             normalizedSearch
           )
         );
@@ -335,7 +335,7 @@ const AppHome = () => {
       );
     }
 
-    if (priceOrder && selectedCategory !== "Agricultores") {
+    if (priceOrder) {
       data = [...data].sort((a, b) => {
         switch (priceOrder) {
           case "crescente":
@@ -343,13 +343,13 @@ const AppHome = () => {
           case "decrescente":
             return (b.price || 0) - (a.price || 0);
           case "nome":
-            return (a.title || a.username).localeCompare(
-              b.title || b.username,
+            return (a.name || a.title || a.username).localeCompare(
+              b.name || b.title || b.username,
               "pt-BR"
             );
           case "nome_desc":
-            return (b.title || b.username).localeCompare(
-              a.title || a.username,
+            return (b.name || b.title || b.username).localeCompare(
+              a.name || a.title || a.username,
               "pt-BR"
             );
           case "recentes":
@@ -382,6 +382,40 @@ const AppHome = () => {
     setSelectedCategory(category);
     setPriceOrder("");
     setSelectedFarmer("");
+  };
+
+  const getCarouselData = (carousel, data) => {
+    if (carousel.title === "Nossos Agricultores") {
+      return data.filter(item => item.propertyName);
+    }
+    
+    return data.filter(item => {
+      const itemCategory = item.category?.toLowerCase();
+      const categoryMapping = {
+        "Frutas": ["fruta", "frutas"],
+        "Verduras": ["verdura", "verduras", "hortaliça", "hortaliças"],
+        "Legumes": ["legume", "legumes"],
+        "Tubérculos": ["tuberculo", "tubérculo", "tuberculos", "tubérculos"],
+        "Grãos": ["grao", "grão", "graos", "grãos"],
+        "Oleaginosas": ["oleaginosa", "oleaginosas"],
+        "Temperos": ["tempero", "temperos", "condimento", "condimentos"],
+        "Chás": ["cha", "chá", "chas", "chás"],
+        "Mel": ["mel"],
+        "Ovos": ["ovo", "ovos"],
+        "Laticínios": [
+          "laticinio",
+          "laticínio",
+          "laticinios",
+          "laticínios",
+          "derivados do leite",
+        ],
+      };
+      
+      return (
+        categoryMapping[carousel.title]?.includes(itemCategory) ||
+        itemCategory === carousel.title.toLowerCase()
+      );
+    });
   };
 
   const cardStyles = {
@@ -773,7 +807,7 @@ const AppHome = () => {
                     <AppCarrossel
                       key={carousel.title}
                       title={carousel.title}
-                      data={carousel.data}
+                      data={priceOrder ? getCarouselData(carousel, filteredData) : carousel.data}
                       renderItem={carousel.renderItem}
                     />
                   )

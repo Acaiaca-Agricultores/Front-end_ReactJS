@@ -34,6 +34,7 @@ import {
   PhoneIcon,
   AtSignIcon,
   InfoOutlineIcon,
+  CheckCircleIcon,
 } from "@chakra-ui/icons";
 import {
   FiMapPin,
@@ -236,6 +237,22 @@ function AppPerfil() {
     });
   }, []);
 
+  // Sincronizar formData com userData quando userData mudar
+  useEffect(() => {
+    if (userData) {
+      setFormData({
+        username: userData.username || "",
+        email: userData.email || "",
+        propertyName: userData.propertyName || "",
+        cityName: userData.cityName || "",
+        stateName: userData.stateName || "",
+        phoneNumber: userData.phoneNumber || "",
+        imageProfile: userData.imageProfile || "",
+        historia: userData.historia || "",
+      });
+    }
+  }, [userData]);
+
   useEffect(() => {
     if (toastIdRef.current) {
       toast.close(toastIdRef.current);
@@ -299,6 +316,17 @@ function AppPerfil() {
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+    } else {
+      setFormData({
+        username: userData.username || "",
+        email: userData.email || "",
+        propertyName: userData.propertyName || "",
+        cityName: userData.cityName || "",
+        stateName: userData.stateName || "",
+        phoneNumber: userData.phoneNumber || "",
+        imageProfile: userData.imageProfile || "",
+        historia: userData.historia || "",
+      });
     }
     setIsEditing(!isEditing);
   };
@@ -497,6 +525,7 @@ function AppPerfil() {
               <Heading as="h1" size="lg" textAlign="center">
                 {formData.username || "Usuário"}
               </Heading>
+              <CheckCircleIcon color="green.500" boxSize={5} />
               {canEditCurrentProfile && !isEditing && (
                 <Tooltip label="Editar perfil">
                   <IconButton
