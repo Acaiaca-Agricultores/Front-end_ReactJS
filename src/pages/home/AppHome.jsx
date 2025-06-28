@@ -39,7 +39,7 @@ import ImagemFeira from "../../assets/feira.jpg";
 import ImageDefault from "../../assets/default.png";
 import AppLoading from "../../components/loading/AppLoading";
 
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL;
 
 const useAgriData = () => {
   const navigate = useNavigate();
@@ -203,7 +203,7 @@ const CategorySelector = ({ categories, selected, onSelect }) => {
       spacing="0.5rem"
       listStyleType="none"
       m={0}
-      p="0 2rem"
+      padding="0 2rem"
     >
       <ListItem
         color="#83a11d"
@@ -386,23 +386,23 @@ const AppHome = () => {
 
   const getCarouselData = (carousel, data) => {
     if (carousel.title === "Nossos Agricultores") {
-      return data.filter(item => item.propertyName);
+      return data.filter((item) => item.propertyName);
     }
-    
-    return data.filter(item => {
+
+    return data.filter((item) => {
       const itemCategory = item.category?.toLowerCase();
       const categoryMapping = {
-        "Frutas": ["fruta", "frutas"],
-        "Verduras": ["verdura", "verduras", "hortaliça", "hortaliças"],
-        "Legumes": ["legume", "legumes"],
-        "Tubérculos": ["tuberculo", "tubérculo", "tuberculos", "tubérculos"],
-        "Grãos": ["grao", "grão", "graos", "grãos"],
-        "Oleaginosas": ["oleaginosa", "oleaginosas"],
-        "Temperos": ["tempero", "temperos", "condimento", "condimentos"],
-        "Chás": ["cha", "chá", "chas", "chás"],
-        "Mel": ["mel"],
-        "Ovos": ["ovo", "ovos"],
-        "Laticínios": [
+        Frutas: ["fruta", "frutas"],
+        Verduras: ["verdura", "verduras", "hortaliça", "hortaliças"],
+        Legumes: ["legume", "legumes"],
+        Tubérculos: ["tuberculo", "tubérculo", "tuberculos", "tubérculos"],
+        Grãos: ["grao", "grão", "graos", "grãos"],
+        Oleaginosas: ["oleaginosa", "oleaginosas"],
+        Temperos: ["tempero", "temperos", "condimento", "condimentos"],
+        Chás: ["cha", "chá", "chas", "chás"],
+        Mel: ["mel"],
+        Ovos: ["ovo", "ovos"],
+        Laticínios: [
           "laticinio",
           "laticínio",
           "laticinios",
@@ -410,7 +410,7 @@ const AppHome = () => {
           "derivados do leite",
         ],
       };
-      
+
       return (
         categoryMapping[carousel.title]?.includes(itemCategory) ||
         itemCategory === carousel.title.toLowerCase()
@@ -713,7 +713,7 @@ const AppHome = () => {
       <Grid
         templateColumns={{ base: "1fr", md: "repeat(5, 1fr)" }}
         gap={4}
-        p={{ base: "2rem", md: "2rem 0" }}
+        padding={{ base: "2rem", md: "2rem 2rem 0 0" }}
       >
         <GridItem
           colSpan={{ base: 4, md: 1 }}
@@ -736,7 +736,7 @@ const AppHome = () => {
             gap="1rem"
             alignItems="center"
             w="100%"
-            p={{ base: "0 2rem", md: "0" }}
+            padding={{ base: "0 2rem", md: "0" }}
           >
             <Menu>
               <MenuButton
@@ -789,7 +789,7 @@ const AppHome = () => {
             </InputGroup>
           </Flex>
 
-          <Box p={{ base: "0", md: "0 2rem" }}>
+          <Box padding={{ base: "0", md: "0 2rem" }}>
             {searchTerm.trim() && selectedCategory === "Todos" ? (
               <AppCarrossel
                 data={filteredData}
@@ -807,7 +807,11 @@ const AppHome = () => {
                     <AppCarrossel
                       key={carousel.title}
                       title={carousel.title}
-                      data={priceOrder ? getCarouselData(carousel, filteredData) : carousel.data}
+                      data={
+                        priceOrder
+                          ? getCarouselData(carousel, filteredData)
+                          : carousel.data
+                      }
                       renderItem={carousel.renderItem}
                     />
                   )

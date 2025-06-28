@@ -13,6 +13,8 @@ import AppCadastroProduto from "../pages/cadastro/AppProduto.jsx";
 import AppProduto from "../pages/produto/AppProduto.jsx";
 import AppPagamento from "../pages/pagamento/AppPagamento.jsx";
 import AppSubsPagamento from "../pages/pagamento/AppSubsPagamento.jsx";
+import AppTermos from "../pages/termos-privacidade/AppTermos.jsx";
+import AppPrivacidade from "../pages/termos-privacidade/AppPrivacidade.jsx";
 
 const AppRouters = () => {
   return (
@@ -32,6 +34,8 @@ const AppRouters = () => {
       <Route path="/produto/:id" element={<AppProduto />} />
       <Route path="/assinatura" element={<AppSubsPagamento />} />
       <Route path="/pagamento" element={<AppPagamento />} />
+      <Route path="/termos-de-uso" element={<AppTermos />} />
+      <Route path="/politica-privacidade" element={<AppPrivacidade />} />
     </Routes>
   );
 };
