@@ -5,6 +5,7 @@ import InstagramIcon from "../../assets/icons/instagram.svg";
 import LinkedInIcon from "../../assets/icons/linkedin.svg";
 
 import { Divider, Box, Flex, Image, Text, Link } from "@chakra-ui/react";
+import { Link as RouterLink } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -108,20 +109,22 @@ const Footer = () => {
           direction={{ base: "column", md: "row" }}
           textAlign="center"
         >
-          <Link
-            href="#"
-            aria-label="Política de Privacidade"
-            _hover={{ color: "#c0ab8e" }}
+          <RouterLink
+            to="/politica-privacidade"
+            style={{ color: "inherit", textDecoration: "none" }}
           >
-            Política de Privacidade
-          </Link>
-          <Link
-            href="#"
-            aria-label="Termos e Condições"
-            _hover={{ color: "#c0ab8e" }}
+            <Text _hover={{ color: "#c0ab8e" }} cursor="pointer">
+              Política de Privacidade
+            </Text>
+          </RouterLink>
+          <RouterLink
+            to="/termos-de-uso"
+            style={{ color: "inherit", textDecoration: "none" }}
           >
-            Termos e Condições
-          </Link>
+            <Text _hover={{ color: "#c0ab8e" }} cursor="pointer">
+              Termos de Uso
+            </Text>
+          </RouterLink>
           <Link
             href="#"
             aria-label="Política de Cookies"

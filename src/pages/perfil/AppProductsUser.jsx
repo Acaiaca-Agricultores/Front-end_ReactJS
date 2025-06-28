@@ -66,7 +66,7 @@ export default function AppProducts({ isOwner, viewedUserId }) {
   if (isLoading) return <AppLoading />;
 
   return (
-    <Center w="100%" h="100%" flexDirection="column" gap={4}>
+    <Center flexDirection="column" gap={4} maxW="900px" padding={4}>
       {error && (
         <Text color="red.500" fontWeight="bold" mt={4}>
           {error}
@@ -88,32 +88,32 @@ export default function AppProducts({ isOwner, viewedUserId }) {
         </>
       )}
 
-      <Box width="100%" height="100%" maxW="550px" mx="auto" overflowX="hidden">
-        <AppCarrossel
-          data={products}
-          title={
-            !isOwner
-              ? `Produtos de ${
-                  localStorage.getItem("currentProfileUsername") ||
-                  "este usuário"
-                }`
-              : ""
-          }
-          renderItem={(item) => (
-            <ProductCard
-              item={item}
-              API_URL={API_URL}
-              isOwner={isOwner}
-              onDelete={(deletedId) => {
-                setProducts((prevProducts) =>
-                  prevProducts.filter((product) => product.id !== deletedId)
-                );
-              }}
-            />
-          )}
-          itemsDesktop={1}
-        />
-      </Box>
+      <AppCarrossel
+
+        data={products}
+        title={
+          !isOwner
+            ? `Produtos de ${
+                localStorage.getItem("currentProfileUsername") || "este usuário"
+              }`
+            : ""
+        }
+        renderItem={(item) => (
+          <ProductCard
+            item={item}
+            API_URL={API_URL}
+            isOwner={isOwner}
+            onDelete={(deletedId) => {
+              setProducts((prevProducts) =>
+                prevProducts.filter((product) => product.id !== deletedId)
+              );
+            }}
+          />
+        )}
+        itemsDesktop={2}
+        itemsTablet={2}
+        itemsMobile={1}
+      />
     </Center>
   );
 }
