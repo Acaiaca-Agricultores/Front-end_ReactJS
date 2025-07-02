@@ -10,6 +10,12 @@ import {
   Divider,
   useToast,
   Icon,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { EditIcon, DeleteIcon, ViewIcon } from "@chakra-ui/icons";
@@ -18,6 +24,8 @@ import axios from "axios";
 const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
   const navigate = useNavigate();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const cancelRef = React.useRef();
   const toast = useToast();
 
   const handleManageProduct = () => {
@@ -34,10 +42,6 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
   };
 
   const handleDeleteProduct = async () => {
-    if (!window.confirm("Tem certeza que deseja deletar este produto?")) {
-      return;
-    }
-
     setIsDeleting(true);
     const token = localStorage.getItem("token");
     if (!token) {
@@ -63,6 +67,7 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
       });
     } finally {
       setIsDeleting(false);
+      setIsConfirmOpen(false);
     }
   };
 
@@ -250,7 +255,7 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
                 Editar
               </Button>
               <Button
-                onClick={handleDeleteProduct}
+                onClick={() => setIsConfirmOpen(true)}
                 flex={1}
                 color="white"
                 background="red.500"
@@ -270,6 +275,30 @@ const ProductCard = ({ item, API_URL, isOwner, onDelete }) => {
                 Deletar
               </Button>
             </Flex>
+            <AlertDialog
+              isOpen={isConfirmOpen}
+              leastDestructiveRef={cancelRef}
+              onClose={() => setIsConfirmOpen(false)}
+            >
+              <AlertDialogOverlay>
+                <AlertDialogContent>
+                  <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                    Confirmar Deleção
+                  </AlertDialogHeader>
+                  <AlertDialogBody>
+                    Tem certeza que deseja deletar este produto? Esta ação não pode ser desfeita.
+                  </AlertDialogBody>
+                  <AlertDialogFooter>
+                    <Button ref={cancelRef} onClick={() => setIsConfirmOpen(false)}>
+                      Cancelar
+                    </Button>
+                    <Button colorScheme="red" onClick={handleDeleteProduct} ml={3} isLoading={isDeleting}>
+                      Deletar
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialogOverlay>
+            </AlertDialog>
           </>
         )}
       </Flex>
