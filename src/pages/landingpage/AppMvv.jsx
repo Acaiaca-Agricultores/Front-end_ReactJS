@@ -1,5 +1,6 @@
 import { Button, Box, SimpleGrid, Text, Card } from "@chakra-ui/react";
 import AppModal from "./AppModal";
+import ScrollAnimated from "../../components/ScrollAnimated";
 
 import IconMission from "../../assets/icons/flag.mp4";
 import IconVision from "../../assets/icons/eye.mp4";
@@ -64,13 +65,17 @@ const MvvApp = ({ activeModal, isOpen, onClose, handleOpenModal }) => {
         flexDirection={{ base: "column", md: "row" }}
       >
         {MVVData.map((item, index) => (
-          <Card
-            padding={"2rem"}
-            key={index}
-            role="article"
-            aria-labelledby={`mvv-title-${index}`}
-            aria-describedby={`mvv-description-${index}`}
+          <ScrollAnimated 
+            key={index} 
+            animationType="slide-left" 
+            delay={index + 1}
           >
+            <Card
+              padding={"2rem"}
+              role="article"
+              aria-labelledby={`mvv-title-${index}`}
+              aria-describedby={`mvv-description-${index}`}
+            >
             <Box
               display={"flex"}
               flexDirection={"column"}
@@ -121,6 +126,7 @@ const MvvApp = ({ activeModal, isOpen, onClose, handleOpenModal }) => {
               </Button>
             </Box>
           </Card>
+          </ScrollAnimated>
         ))}
       </SimpleGrid>
       <AppModal

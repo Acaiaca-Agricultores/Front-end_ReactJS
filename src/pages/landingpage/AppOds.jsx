@@ -8,6 +8,7 @@ import {
   Heading,
   Center,
 } from "@chakra-ui/react";
+import ScrollAnimated from "../../components/ScrollAnimated";
 
 import FolhaCheck from "../../assets/leaf.png";
 import ImagemODS2 from "../../assets/imagem-ods2.png";
@@ -22,19 +23,23 @@ const AppOds = () => {
         }
       >
         <Center padding={{ base: "2rem", md: "4.5rem" }} display={"flex"} flexDirection={"column"} gap={"2rem"}>
-          <Heading
-            as="h1"
-            fontSize={{ base: "1.5rem", md: "2rem" }}
-            tabIndex={0}
-            aria-label="Impacto Social"
-          >
-            Impacto Social e Sustentabilidade
-          </Heading>
-          <Text textAlign={{ base: "center", md: "end" }}>
-            Atuamos diretamente para reduzir os índices da fome e fortalecer a
-            economia rural, alinhando-se aos Objetivos de Desenvolvimento
-            Sustentável da ONU
-          </Text>
+          <ScrollAnimated animationType="slide-left" delay={1}>
+            <Heading
+              as="h1"
+              fontSize={{ base: "1.5rem", md: "2rem" }}
+              tabIndex={0}
+              aria-label="Impacto Social"
+            >
+              Impacto Social e Sustentabilidade
+            </Heading>
+          </ScrollAnimated>
+          <ScrollAnimated animationType="slide-left" delay={2}>
+            <Text textAlign={{ base: "center", md: "end" }}>
+              Atuamos diretamente para reduzir os índices da fome e fortalecer a
+              economia rural, alinhando-se aos Objetivos de Desenvolvimento
+              Sustentável da ONU
+            </Text>
+          </ScrollAnimated>
         </Center>
         <SimpleGrid
           as="section"
@@ -46,60 +51,72 @@ const AppOds = () => {
           backgroundColor={"transparent"}
           alignItems={"center"}
         >
-          <Box
-            display={"flex"}
-            flexDirection={{ base: "column", md: "row" }}
-            gap={"2rem"}
-            alignItems={"center"}
-          >
-            <Image
-              src={ImagemODS2}
-              alt="Imagem ilustrativa do Objetivo de Desenvolvimento Sustentável 2: Fome Zero e Agricultura Sustentável"
-              boxSize={{ base: "100%", md: "18.75rem" }}
-            />
-            <Image
-              src={ImagemODS8}
-              alt="Imagem ilustrativa do Objetivo de Desenvolvimento Sustentável 8: Trabalho Decente e Crescimento Econômico"
-              boxSize={{ base: "100%", md: "18.75rem" }}
-            />
-          </Box>
-          <Box
-            display={"flex"}
-            flexDirection={"column"}
-            alignItems={{ base: "center", md: "flex-end" }}
-            gap={"2rem"}
-          >
-            <UnorderedList
+          <ScrollAnimated animationType="slide-left" delay={3}>
+            <Box
+              display={"flex"}
+              flexDirection={{ base: "column", md: "row" }}
+              gap={"2rem"}
+              alignItems={"center"}
+            >
+              <ScrollAnimated animationType="image-animation" delay={4}>
+                <Image
+                  src={ImagemODS2}
+                  alt="Imagem ilustrativa do Objetivo de Desenvolvimento Sustentável 2: Fome Zero e Agricultura Sustentável"
+                  boxSize={{ base: "100%", md: "18.75rem" }}
+                />
+              </ScrollAnimated>
+              <ScrollAnimated animationType="image-animation" delay={5}>
+                <Image
+                  src={ImagemODS8}
+                  alt="Imagem ilustrativa do Objetivo de Desenvolvimento Sustentável 8: Trabalho Decente e Crescimento Econômico"
+                  boxSize={{ base: "100%", md: "18.75rem" }}
+                />
+              </ScrollAnimated>
+            </Box>
+          </ScrollAnimated>
+          <ScrollAnimated animationType="slide-right" delay={6}>
+            <Box
               display={"flex"}
               flexDirection={"column"}
-              gap={"1rem"}
-              aria-label="Ações de impacto social"
-              sx={{
-                "& > li": {
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: "10px",
-                },
-              }}
+              alignItems={{ base: "center", md: "flex-end" }}
+              gap={"2rem"}
             >
-              <ListItem>
-                <Image
-                  src={FolhaCheck}
-                  alt="Ícone de confirmação"
-                  boxSize="1.2em"
-                />
-                <Text>Valorização dos pequenos produtores</Text>
-              </ListItem>
-              <ListItem>
-                <Image
-                  src={FolhaCheck}
-                  alt="Ícone de confirmação"
-                  boxSize="1.2em"
-                />
-                <Text>Fortalecimento da economia rural</Text>
-              </ListItem>
-            </UnorderedList>
-          </Box>
+              <UnorderedList
+                display={"flex"}
+                flexDirection={"column"}
+                gap={"1rem"}
+                aria-label="Ações de impacto social"
+                sx={{
+                  "& > li": {
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "10px",
+                  },
+                }}
+              >
+                <ScrollAnimated animationType="fade-in" delay={7}>
+                  <ListItem>
+                    <Image
+                      src={FolhaCheck}
+                      alt="Ícone de confirmação"
+                      boxSize="1.2em"
+                    />
+                    <Text>Valorização dos pequenos produtores</Text>
+                  </ListItem>
+                </ScrollAnimated>
+                <ScrollAnimated animationType="fade-in" delay={8}>
+                  <ListItem>
+                    <Image
+                      src={FolhaCheck}
+                      alt="Ícone de confirmação"
+                      boxSize="1.2em"
+                    />
+                    <Text>Fortalecimento da economia rural</Text>
+                  </ListItem>
+                </ScrollAnimated>
+              </UnorderedList>
+            </Box>
+          </ScrollAnimated>
         </SimpleGrid>
       </Box>
     </>
