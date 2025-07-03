@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 import { Typewriter } from "react-simple-typewriter";
 import { useNavigate } from "react-router-dom";
+import ScrollAnimated from "../../components/ScrollAnimated";
 
 import IconSeed from "../../assets/icons/growing-seed.mp4";
 import IconRoots from "../../assets/icons/tree.mp4";
@@ -128,26 +129,34 @@ const AppSubs = () => {
         "linear-gradient(180deg,rgba(124, 76, 70, 1) 0%, rgba(68, 38, 35, 1) 100%)"
       }
     >
-      <Text
-        as={"h1"}
-        fontSize={{ base: "2rem", md: "3rem" }}
-        tabIndex={0}
-        aria-label="Assinatura"
-        role="heading"
-        color={"#ffffff"}
-      >
-        Assinatura
-      </Text>
-      <Text as={"p"} textAlign={"center"} color={"#ffffff"} fontSize={"1.2rem"}>
-        Vantagens da sua assinatura após o limite gratuito
-      </Text>
+      <ScrollAnimated animationType="slide-left" delay={1}>
+        <Text
+          as={"h1"}
+          fontSize={{ base: "2rem", md: "3rem" }}
+          tabIndex={0}
+          aria-label="Assinatura"
+          role="heading"
+          color={"#ffffff"}
+        >
+          Assinatura
+        </Text>
+      </ScrollAnimated>
+      <ScrollAnimated animationType="slide-left" delay={2}>
+        <Text as={"p"} textAlign={"center"} color={"#ffffff"} fontSize={"1.2rem"}>
+          Vantagens da sua assinatura após o limite gratuito
+        </Text>
+      </ScrollAnimated>
       <Grid
         templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
         alignItems={"center"}
       >
         {cardData.map((card, index) => (
           <GridItem key={index} gap={5} padding={"2rem"}>
-            <Card
+            <ScrollAnimated 
+              animationType="slide-left" 
+              delay={index + 3}
+            >
+              <Card
               paddingTop={
                 card.title === "Plano Semente" ||
                 card.title === "Plano Colheita"
@@ -261,31 +270,32 @@ const AppSubs = () => {
                 </CardBody>
               </CardHeader>
             </Card>
+            </ScrollAnimated>
           </GridItem>
         ))}
       </Grid>
-      <Box width={{ base: "100%", md: "50%" }}>
-        <Button
-          {...buttonStyles}
-          w="100%"
-          h={{ base: "3rem", md: "5rem" }}
-          aria-label="Cadastre-se na plataforma"
-          onClick={() => navigation("/cadastro")}
-          marginTop={{ base: "2rem", md: "3rem" }}
-        >
-          <Typewriter
-            words={["Cadastre-se já!"]}
-            //bold no texto
-            fontWeight={800}
-            loop={0}
-            cursor
-            cursorStyle="|"
-            typeSpeed={70}
-            deleteSpeed={50}
-            delaySpeed={1000}
-          />
-        </Button>
-      </Box>
+        <Box width={{ base: "100%", md: "50%" }}>
+          <Button
+            {...buttonStyles}
+            w="100%"
+            h={{ base: "3rem", md: "5rem" }}
+            aria-label="Cadastre-se na plataforma"
+            onClick={() => navigation("/cadastro")}
+            marginTop={{ base: "2rem", md: "3rem" }}
+          >
+            <Typewriter
+              words={["Cadastre-se já!"]}
+              //bold no texto
+              fontWeight={800}
+              loop={0}
+              cursor
+              cursorStyle="|"
+              typeSpeed={70}
+              deleteSpeed={50}
+              delaySpeed={1000}
+            />
+          </Button>
+        </Box>
     </Box>
   );
 };

@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useSpeechRecognition } from "../../hooks/useSpeechRecognition";
+import ScrollAnimated from "../../components/ScrollAnimated";
 import IconVoice from "../../assets/icons/voice-command.png";
 
 const API_URL = "http://localhost:8080/sending-email";
@@ -83,24 +84,28 @@ const AppForms = () => {
       alignItems={"center"}
       justifyContent={"center"}
     >
-      <Box
-        border={"2px solid  #83a11d"}
-        borderRadius="8px"
-        p={6}
-        margin={"4rem"}
-        background="rgba(0, 0, 0, 0.5)"
-        backdropFilter="blur(8px)"
-        width={{ base: "100%", md: "50%" }}
-        color={"white"}
-      >
-        <Text as={"h1"} color={"#ffffff"} textAlign={"center"} fontSize="2xl">
-          Fomulário de Contato
-        </Text>
-        <form
-          role="form"
-          aria-label="Formulário de contato"
-          onSubmit={handleSubmit}
+      <ScrollAnimated animationType="fade-in" delay={1}>
+        <Box
+          border={"2px solid  #83a11d"}
+          borderRadius="8px"
+          p={6}
+          margin={"4rem"}
+          background="rgba(0, 0, 0, 0.5)"
+          backdropFilter="blur(8px)"
+          width={{ base: "100%", md: "60vw" }}
+          color={"white"}
         >
+          <ScrollAnimated animationType="fade-in" delay={2}>
+            <Text as={"h1"} color={"#ffffff"} textAlign={"center"} fontSize="2xl">
+              Fomulário de Contato
+            </Text>
+          </ScrollAnimated>
+          <ScrollAnimated animationType="fade-in" delay={3}>
+            <form
+              role="form"
+              aria-label="Formulário de contato"
+              onSubmit={handleSubmit}
+            >
           <FormControl id="nome" mb={4} isRequired>
             <FormLabel htmlFor="nome">Nome</FormLabel>
             <InputGroup>
@@ -274,8 +279,10 @@ const AppForms = () => {
           >
             Enviar
           </Button>
-        </form>
-      </Box>
+            </form>
+          </ScrollAnimated>
+        </Box>
+      </ScrollAnimated>
     </Box>
   );
 };

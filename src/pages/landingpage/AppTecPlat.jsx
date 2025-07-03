@@ -10,6 +10,7 @@ import {
   UnorderedList,
   ListItem,
 } from "@chakra-ui/react";
+import ScrollAnimated from "../../components/ScrollAnimated";
 
 import ImageAIcai from "../../assets/IAcai-frutas.png";
 import ImageSec from "../../assets/icons/cyber-security.mp4";
@@ -44,6 +45,10 @@ const cardStyles = {
   textAlign: "center",
   borderRadius: "md",
   bg: "#fff",
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
 };
 
 const BoxStyles = {
@@ -80,60 +85,74 @@ const AppTechPlat = () => (
           color={"white"}
           width={{ base: "100%", md: "70%" }}
         >
-          <Heading
-            as="h1"
-            fontSize={{ base: "1.5rem", md: "2.5rem" }}
-            aria-label="Tecnologia"
-            role="heading"
-            textAlign={"center"}
-            mb={10}
-          >
-            Simples e Intuitivo
-          </Heading>
+          <ScrollAnimated animationType="fade-in" delay={1}>
+            <Heading
+              as="h1"
+              fontSize={{ base: "1.5rem", md: "2.5rem" }}
+              aria-label="Tecnologia"
+              role="heading"
+              textAlign={"center"}
+              mb={10}
+            >
+              Simples e Intuitivo
+            </Heading>
+          </ScrollAnimated>
           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={5}>
-            <Box
-              display="flex"
-              flexDirection="column"
-              gap="2rem"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <Text fontSize={{ base: "1.2rem", md: "1.5rem" }} color="#83A11D">
-                Olá sou a{" "}
-                <span>
-                  <strong>IAcai</strong>
-                </span>
-                , sejam todos bem vindos a nossa plataforma!
-              </Text>
-              <Text>
-                Sou a inteligência artificial que vai te ajudar a encontrar os
-                melhores produtos agrícolas e receitas. Vamos juntos explorar o
-                mundo dos alimentos frescos e saudáveis?
-              </Text>
-            </Box>
-            <Box display="flex" justifyContent="center" alignItems="center">
-              <Image
-                src={ImageAIcai}
-                alt="Imagem do assistente virtual IAcai"
-                width="20rem"
-              />
-            </Box>
-            <Box
-              display="flex"
-              flexDirection="column"
-              gap="2rem"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <Text fontSize={{ base: "1.2rem", md: "1.5rem" }} color="#83A11D">
-                Vocês conhecem a nossa plataforma?
-              </Text>
-              <Text>
-                Nossa plataforma é uma ferramenta inovadora que conecta
-                agricultores e consumidores, promovendo a compra e venda de
-                produtos agrícolas de forma direta e transparente.
-              </Text>
-            </Box>
+            <ScrollAnimated animationType="slide-left" delay={2}>
+              <Box
+                display="flex"
+                flexDirection="column"
+                gap="2rem"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Text
+                  fontSize={{ base: "1.2rem", md: "1.5rem" }}
+                  color="#83A11D"
+                >
+                  Olá sou a{" "}
+                  <span>
+                    <strong>IAcai</strong>
+                  </span>
+                  , sejam todos bem vindos a nossa plataforma!
+                </Text>
+                <Text>
+                  Sou a inteligência artificial que vai te ajudar a encontrar os
+                  melhores produtos agrícolas e receitas. Vamos juntos explorar
+                  o mundo dos alimentos frescos e saudáveis?
+                </Text>
+              </Box>
+            </ScrollAnimated>
+            <ScrollAnimated animationType="scale-in" delay={3}>
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <Image
+                  src={ImageAIcai}
+                  alt="Imagem do assistente virtual IAcai"
+                  width="20rem"
+                />
+              </Box>
+            </ScrollAnimated>
+            <ScrollAnimated animationType="slide-right" delay={4}>
+              <Box
+                display="flex"
+                flexDirection="column"
+                gap="2rem"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Text
+                  fontSize={{ base: "1.2rem", md: "1.5rem" }}
+                  color="#83A11D"
+                >
+                  Vocês conhecem a nossa plataforma?
+                </Text>
+                <Text>
+                  Nossa plataforma é uma ferramenta inovadora que conecta
+                  agricultores e consumidores, promovendo a compra e venda de
+                  produtos agrícolas de forma direta e transparente.
+                </Text>
+              </Box>
+            </ScrollAnimated>
           </SimpleGrid>
         </Box>
       </Box>
@@ -173,67 +192,91 @@ const AppTechPlat = () => (
               },
             }}
           >
-            <ListItem>
-              <Image
-                src={IconVoice}
-                aria-label={`Ícone animado representando a plataforma`}
-                style={{ width: "50px", height: "50px" }}
-                muted
-                loop
-                autoPlay
-                playsInline
-              />
-              <Box>
-                <Heading color={"#FEE528"}>
-                  Assistente por Comando de Voz
-                </Heading>
-                <Text textAlign={{ base: "center", md: "start" }}>
-                  A IA funciona por meio de comandos de voz, permitindo a
-                  criação de listas de compras de forma prática e rápida,
-                  facilitando o dia a dia do usuário.
-                </Text>
-              </Box>
-            </ListItem>
-            <ListItem>
-              <Image
-                src={IconChat2}
-                aria-label={`Ícone animado representando a plataforma`}
-                style={{ width: "50px", height: "50px" }}
-                muted
-                loop
-                autoPlay
-                playsInline
-              />
-              <Box>
-                <Heading color={"#FFD314"}>
-                  Conversas sobre Sustentabilidade
-                </Heading>
-                <Text textAlign={{ base: "center", md: "start" }}>
-                  Além de montar a lista, é possível conversar com a IA sobre
-                  temas relacionados à sustentabilidade, como formas de cultivo,
-                  origem dos produtos e impactos ambientais.
-                </Text>
-              </Box>
-            </ListItem>
-            <ListItem>
-              <Image
-                src={IconFamily}
-                aria-label={`Ícone animado representando a plataforma`}
-                style={{ width: "50px", height: "50px" }}
-                muted
-                loop
-                autoPlay
-                playsInline
-              />
-              <Box>
-                <Heading color={"#EFB923"}>Acessível para Todos</Heading>
-                <Text textAlign={{ base: "center", md: "start" }}>
-                  A solução é pensada para ser acessível até mesmo para quem tem
-                  pouca familiaridade com tecnologia, tornando o consumo
-                  consciente mais fácil e democrático.
-                </Text>
-              </Box>
-            </ListItem>
+            <ScrollAnimated animationType="slide-left" delay={1}>
+              <ListItem>
+                <ScrollAnimated animationType="image-animation" delay={3}>
+                  <Image
+                    src={IconVoice}
+                    aria-label={`Ícone animado representando a plataforma`}
+                    style={{ width: "50px", height: "50px" }}
+                    muted
+                    loop
+                    autoPlay
+                    playsInline
+                  />
+                </ScrollAnimated>
+                <Box>
+                  <ScrollAnimated animationType="text-animation" delay={5}>
+                    <Heading color={"#FEE528"}>
+                      Assistente por Comando de Voz
+                    </Heading>
+                  </ScrollAnimated>
+                  <ScrollAnimated animationType="text-animation" delay={6}>
+                    <Text textAlign={{ base: "center", md: "start" }}>
+                      A IA funciona por meio de comandos de voz, permitindo a
+                      criação de listas de compras de forma prática e rápida,
+                      facilitando o dia a dia do usuário.
+                    </Text>
+                  </ScrollAnimated>
+                </Box>
+              </ListItem>
+            </ScrollAnimated>
+            <ScrollAnimated animationType="slide-left" delay={8}>
+              <ListItem>
+                <ScrollAnimated animationType="image-animation" delay={10}>
+                  <Image
+                    src={IconChat2}
+                    aria-label={`Ícone animado representando a plataforma`}
+                    style={{ width: "50px", height: "50px" }}
+                    muted
+                    loop
+                    autoPlay
+                    playsInline
+                  />
+                </ScrollAnimated>
+                <Box>
+                  <ScrollAnimated animationType="text-animation" delay={12}>
+                    <Heading color={"#FFD314"}>
+                      Conversas sobre Sustentabilidade
+                    </Heading>
+                  </ScrollAnimated>
+                  <ScrollAnimated animationType="text-animation" delay={14}>
+                    <Text textAlign={{ base: "center", md: "start" }}>
+                      Além de montar a lista, é possível conversar com a IA
+                      sobre temas relacionados à sustentabilidade, como formas
+                      de cultivo, origem dos produtos e impactos ambientais.
+                    </Text>
+                  </ScrollAnimated>
+                </Box>
+              </ListItem>
+            </ScrollAnimated>
+            <ScrollAnimated animationType="slide-left" delay={9}>
+              <ListItem>
+                <ScrollAnimated animationType="image-animation" delay={10}>
+                  <Image
+                    src={IconFamily}
+                    aria-label={`Ícone animado representando a plataforma`}
+                    style={{ width: "50px", height: "50px" }}
+                    muted
+                    loop
+                    autoPlay
+                    playsInline
+                  />
+                </ScrollAnimated>
+                <Box>
+                  <ScrollAnimated animationType="text-animation" delay={11}>
+                    <Heading color={"#EFB923"}>Acessível para Todos</Heading>
+                  </ScrollAnimated>
+                  <ScrollAnimated animationType="text-animation" delay={12}>
+                    <Text textAlign={{ base: "center", md: "start" }}>
+                      A solução é pensada para ser acessível até mesmo para quem
+                      tem pouca familiaridade com tecnologia, tornando o consumo
+                      consciente mais fácil e democrático.
+                    </Text>
+                  </ScrollAnimated>
+                </Box>
+              </ListItem>
+            </ScrollAnimated>
           </UnorderedList>
         </Box>
       </SimpleGrid>
@@ -242,41 +285,48 @@ const AppTechPlat = () => (
         padding={{ base: "2rem", md: "4.5rem 12.5rem" }}
         background={"#fcead0"}
       >
-        <Heading
-          as="h1"
-          fontSize={{ base: "1.5rem", md: "2.5rem" }}
-          aria-label="Tecnologia"
-          role="heading"
-          textAlign={"center"}
-          mb={10}
-        >
-          Segurança e Confiabilidade
-        </Heading>
+        <ScrollAnimated animationType="fade-in" delay={1}>
+          <Heading
+            as="h1"
+            fontSize={{ base: "1.5rem", md: "2.5rem" }}
+            aria-label="Tecnologia"
+            role="heading"
+            textAlign={"center"}
+            mb={10}
+          >
+            Segurança e Confiabilidade
+          </Heading>
+        </ScrollAnimated>
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} width="100%">
           {dataCardSec.map((item, index) => (
-            <Card
-              id="card"
+            <ScrollAnimated
               key={index}
-              {...cardStyles}
-              width="100%"
-              alignItems={"center"}
+              animationType="card-animation"
+              delay={index + 2}
             >
-              <video
-                src={ImageSec}
-                aria-label={`Ícone animado representando a plataforma`}
-                style={{ width: "80px", height: "80px" }}
-                muted
-                loop
-                autoPlay
-                playsInline
-              />
-              <CardHeader>
-                <Heading size="md">{item.title}</Heading>
-              </CardHeader>
-              <CardBody>
-                <Text>{item.description}</Text>
-              </CardBody>
-            </Card>
+              <Card
+                id="card"
+                {...cardStyles}
+                width="100%"
+                alignItems={"center"}
+              >
+                <video
+                  src={ImageSec}
+                  aria-label={`Ícone animado representando a plataforma`}
+                  style={{ width: "80px", height: "80px" }}
+                  muted
+                  loop
+                  autoPlay
+                  playsInline
+                />
+                <CardHeader>
+                  <Heading size="md">{item.title}</Heading>
+                </CardHeader>
+                <CardBody flex="1" display="flex" alignItems="center">
+                  <Text>{item.description}</Text>
+                </CardBody>
+              </Card>
+            </ScrollAnimated>
           ))}
         </SimpleGrid>
       </Box>

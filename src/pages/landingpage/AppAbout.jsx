@@ -13,6 +13,7 @@ import AppPerfil from "./AppPerfis";
 import ImagePlataforma from "../../assets/plataforma.png";
 import { Typewriter } from "react-simple-typewriter";
 import { useNavigate } from "react-router-dom";
+import ScrollAnimated from "../../components/ScrollAnimated";
 
 const AppAbout = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -58,41 +59,45 @@ const AppAbout = () => {
             position="relative"
             flexDirection={"column"}
           >
-            <Box>
-              <Text fontSize={{ base: "2rem", md: "3rem" }} fontWeight="bold">
-                <Typewriter
-                  words={[
-                    "Sobre a Projeto Acaiacá",
-                    "Não tenha medo de plantar!",
-                  ]}
-                  loop={0}
-                  cursor
-                  cursorStyle="_"
-                  typeSpeed={70}
-                  deleteSpeed={50}
-                  delaySpeed={1000}
-                />
-              </Text>
-            </Box>
-            <Box
-              display="flex"
-              gap="1rem"
-              flexDirection={{ base: "column", sm: "row" }}
-              alignItems={"center"}
-            >
-              <Button
-                onClick={() => navigation("/cadastro")}
-                width={"20rem"}
-                height={{ base: "3rem", md: "5rem" }}
-                aria-label="Cadastre-se na plataforma"
-                backgroundColor={"#83a11d"}
-                border="none"
-                color={"ffffff"}
-                _hover={{ bg: "#c0ab8e", color: "black" }}
+            <ScrollAnimated animationType="slide-left" delay={1}>
+              <Box>
+                <Text fontSize={{ base: "2rem", md: "3rem" }} fontWeight="bold">
+                  <Typewriter
+                    words={[
+                      "Sobre a Projeto Acaiacá",
+                      "Não tenha medo de plantar!",
+                    ]}
+                    loop={0}
+                    cursor
+                    cursorStyle="_"
+                    typeSpeed={70}
+                    deleteSpeed={50}
+                    delaySpeed={1000}
+                  />
+                </Text>
+              </Box>
+            </ScrollAnimated>
+            <ScrollAnimated animationType="slide-left" delay={2}>
+              <Box
+                display="flex"
+                gap="1rem"
+                flexDirection={{ base: "column", sm: "row" }}
+                alignItems={"center"}
               >
-                Cadastre-se agora!
-              </Button>
-            </Box>
+                <Button
+                  onClick={() => navigation("/cadastro")}
+                  width={"20rem"}
+                  height={{ base: "3rem", md: "5rem" }}
+                  aria-label="Cadastre-se na plataforma"
+                  backgroundColor={"#83a11d"}
+                  border="none"
+                  color={"ffffff"}
+                  _hover={{ bg: "#c0ab8e", color: "black" }}
+                >
+                  Cadastre-se agora!
+                </Button>
+              </Box>
+            </ScrollAnimated>
           </Center>
         </Flex>
 

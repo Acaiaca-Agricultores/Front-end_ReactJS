@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import ScrollAnimated from "../../components/ScrollAnimated";
 import dataAgricultores from "../../services/dataCardAgri.json";
 
 const testimonials = dataAgricultores.agricultores.map((item) => ({
@@ -41,17 +42,20 @@ const AppTestimonials = ({ title = "Depoimentos de Agricultores" }) => {
 
   return (
     <Box bg="#fcead0" padding={"4rem"} borderRadius="md">
-      <Heading as="h2" size="xl" textAlign="center" my={10}>
-        {title}
-      </Heading>
-      <Carousel
-        responsive={responsive}
-        infinite
-        autoPlay={true}
-        keyBoardControl
-        containerClass="carousel-container"
-        itemClass="carousel-item-padding-40-px"
-      >
+      <ScrollAnimated animationType="fade-in" delay={1}>
+        <Heading as="h2" size="xl" textAlign="center" my={10}>
+          {title}
+        </Heading>
+      </ScrollAnimated>
+      <ScrollAnimated animationType="fade-in" delay={2}>
+        <Carousel
+          responsive={responsive}
+          infinite
+          autoPlay={true}
+          keyBoardControl
+          containerClass="carousel-container"
+          itemClass="carousel-item-padding-40-px"
+        >
         {testimonials.map((item, idx) => (
           <Card
             key={idx}
@@ -91,7 +95,8 @@ const AppTestimonials = ({ title = "Depoimentos de Agricultores" }) => {
             </CardFooter>
           </Card>
         ))}
-      </Carousel>
+        </Carousel>
+      </ScrollAnimated>
     </Box>
   );
 };
