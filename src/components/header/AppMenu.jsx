@@ -111,6 +111,14 @@ const AppMenu = ({ setLastScrollY }) => {
         >
           Sobre
         </MenuItem>
+        {shouldRenderButtons && (
+          <MenuItem
+            onClick={(e) => scrollTo(e, "faq")}
+            _hover={{ textDecoration: "none", color: "#83a11d" }}
+          >
+            FAQ
+          </MenuItem>
+        )}
         <MenuItem
           onClick={() => navigate("/perfil")}
           _hover={{ textDecoration: "none", color: "#83a11d" }}

@@ -292,12 +292,20 @@ const Header = () => {
           </Link>
 
           {shouldRenderLandingPageNav && (
-            <Link
-              onClick={(e) => scrollToSection(e, "appforms")}
-              {...navLinkStyles}
-            >
-              Fale Conosco
-            </Link>
+            <>
+              <Link
+                onClick={(e) => scrollToSection(e, "faq")}
+                {...navLinkStyles}
+              >
+                FAQ
+              </Link>
+              <Link
+                onClick={(e) => scrollToSection(e, "appforms")}
+                {...navLinkStyles}
+              >
+                Fale Conosco
+              </Link>
+            </>
           )}
         </Flex>
         <Box display={{ base: "none", md: "block" }}>
