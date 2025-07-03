@@ -54,9 +54,9 @@ const AppCarrossel = ({
           color="white"
           borderRadius="full"
           size="lg"
-          _hover={{ 
+          _hover={{
             bg: "#83a11d",
-            boxShadow: "lg"
+            boxShadow: "lg",
           }}
           _active={{ bg: "#83a11d" }}
           boxShadow="0 4px 12px rgba(0,0,0,0.15)"
@@ -77,9 +77,9 @@ const AppCarrossel = ({
           color="white"
           borderRadius="full"
           size="lg"
-          _hover={{ 
+          _hover={{
             bg: "#83a11d",
-            boxShadow: "lg"
+            boxShadow: "lg",
           }}
           _active={{ bg: "#83a11d" }}
           boxShadow="0 4px 12px rgba(0,0,0,0.15)"
@@ -100,22 +100,19 @@ const AppCarrossel = ({
     <Box position="relative" width="100%">
       {title && (
         <VStack spacing={2} mb={6} textAlign="center">
-          <Heading 
-            size="lg" 
-            color="gray.700"
-            fontWeight="bold"
-          >
+          <Heading size="lg" color="gray.700" fontWeight="bold">
             {title}
           </Heading>
           <Text color="gray.500" fontSize="sm">
-            {data.length} produto{data.length !== 1 ? 's' : ''} disponível{data.length !== 1 ? 'is' : ''}
+            {data.length} produto{data.length !== 1 ? "s" : ""}{" "}
+            {data.length !== 1 ? "disponíveis" : "disponível"}
           </Text>
         </VStack>
       )}
-      
-      <Box 
-        position="relative" 
-        width="100%" 
+
+      <Box
+        position="relative"
+        width="100%"
         px={{ base: 4, md: 8, lg: 12 }}
         py={4}
       >
@@ -148,11 +145,7 @@ const AppCarrossel = ({
           itemClass="carousel-item-padding-40-px"
         >
           {data.map((item, index) => (
-            <Box 
-              key={item.id || index} 
-              px={{ base: 2, md: 3 }}
-              py={2}
-            >
+            <Box key={item.id || index} px={{ base: 2, md: 3 }} py={2}>
               {renderItem(item, index)}
             </Box>
           ))}
