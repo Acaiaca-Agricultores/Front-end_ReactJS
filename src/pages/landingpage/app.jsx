@@ -5,6 +5,7 @@ import AppAgricultor from "./AppAgricultor";
 import AppTechPlat from "./AppTecPlat";
 import AppSubs from "./AppSubs";
 import AppForms from "./AppForms";
+import AppFAQ from "./AppFAQ";
 import AppTestimonials from "./AppTestimonials";
 
 const App = () => {
@@ -14,6 +15,7 @@ const App = () => {
       <AppTechPlat />
       <AppSubs />
       <AppTestimonials />
+      <AppFAQ />
       <AppForms />
     </>
   );
