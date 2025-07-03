@@ -18,6 +18,7 @@ import { Typewriter } from "react-simple-typewriter";
 import BannerGif from "../../assets/banner.gif";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ScrollAnimated from "../../components/ScrollAnimated";
 
 import Logo from "../../assets/logo_semfundo.png";
 import IconPlay from "../../assets/icons/play-button.png";
@@ -87,70 +88,78 @@ const AppAgricultor = () => {
         width={{ base: "100%", md: "110%" }}
         position="relative"
       >
-        <Box>
-          <Image
-            src={Logo}
-            alt="Logo da Plataforma Açaíaca"
-            width={{ base: "10rem", md: "80%" }}
-            role="img"
-            aria-label="Logo da Plataforma Açaíaca"
-            display={{ base: "none", md: "block" }}
-          />
-        </Box>
-        <Box>
-          <Text {...textBigStyles}>
-            <Typewriter
-              words={["Amor é algo que se planta", "E se rega todos os dias."]}
-              loop={0}
-              cursor
-              cursorStyle="_"
-              typeSpeed={70}
-              deleteSpeed={50}
-              delaySpeed={1000}
+        <ScrollAnimated animationType="fade-in" delay={1}>
+          <Box>
+            <Image
+              src={Logo}
+              alt="Logo da Plataforma Açaíaca"
+              width={{ base: "10rem", md: "80%" }}
+              role="img"
+              aria-label="Logo da Plataforma Açaíaca"
+              display={{ base: "none", md: "block" }}
             />
-          </Text>
-        </Box>
-        <Box>
-          <Text {...textSmallStyles}>Cada colheita é um gesto de cuidado.</Text>
-          <Text {...textSmallStyles}>
-            Cada compra, um apoio ao pequeno agricultor.
-          </Text>
-        </Box>
-        <Box
-          display="flex"
-          gap="1rem"
-          flexDirection={{ base: "column", sm: "row" }}
-          alignItems={"center"}
-        >
-          <Button
-            {...buttonStyles}
-            w="100%"
-            h={{ base: "3rem", md: "5rem" }}
-            aria-label="Cadastre-se na plataforma"
-            onClick={() => navigation("/cadastro")}
-            backgroundColor={"#83a11d"}
-            border="none"
-            color={"ffffff"}
+          </Box>
+        </ScrollAnimated>
+        <ScrollAnimated animationType="fade-in" delay={2}>
+          <Box>
+            <Text {...textBigStyles}>
+              <Typewriter
+                words={["Amor é algo que se planta", "E se rega todos os dias."]}
+                loop={0}
+                cursor
+                cursorStyle="_"
+                typeSpeed={70}
+                deleteSpeed={50}
+                delaySpeed={1000}
+              />
+            </Text>
+          </Box>
+        </ScrollAnimated>
+        <ScrollAnimated animationType="fade-in" delay={3}>
+          <Box>
+            <Text {...textSmallStyles}>Cada colheita é um gesto de cuidado.</Text>
+            <Text {...textSmallStyles}>
+              Cada compra, um apoio ao pequeno agricultor.
+            </Text>
+          </Box>
+        </ScrollAnimated>
+        <ScrollAnimated animationType="bounce-in" delay={4}>
+          <Box
+            display="flex"
+            gap="1rem"
+            flexDirection={{ base: "column", sm: "row" }}
+            alignItems={"center"}
           >
-            <Typewriter
-              words={["Cadastre-se agora!"]}
-              loop={0}
-              cursor
-              cursorStyle="|"
-              typeSpeed={70}
-              deleteSpeed={50}
-              delaySpeed={1000}
-            />
-          </Button>
-          <Button
-            {...buttonStyles}
-            w="100%"
-            aria-label="Saiba mais sobre a plataforma"
-            onClick={() => navigation("/sobre")}
-          >
-            Saiba Mais!
-          </Button>
-        </Box>
+            <Button
+              {...buttonStyles}
+              w="100%"
+              h={{ base: "3rem", md: "5rem" }}
+              aria-label="Cadastre-se na plataforma"
+              onClick={() => navigation("/cadastro")}
+              backgroundColor={"#83a11d"}
+              border="none"
+              color={"ffffff"}
+            >
+              <Typewriter
+                words={["Cadastre-se agora!"]}
+                loop={0}
+                cursor
+                cursorStyle="|"
+                typeSpeed={70}
+                deleteSpeed={50}
+                delaySpeed={1000}
+              />
+            </Button>
+            <Button
+              {...buttonStyles}
+              w="100%"
+              aria-label="Saiba mais sobre a plataforma"
+              onClick={() => navigation("/sobre")}
+            >
+              Saiba Mais!
+            </Button>
+          </Box>
+        </ScrollAnimated>
       </GridItem>
 
       <GridItem

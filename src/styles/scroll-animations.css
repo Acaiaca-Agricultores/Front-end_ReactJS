@@ -1,0 +1,113 @@
+/* Animações de scroll para elementos da landing page */
+
+.scroll-fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease-out;
+}
+
+.scroll-fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-slide-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: all 0.6s ease-out;
+}
+
+.scroll-slide-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-slide-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: all 0.6s ease-out;
+}
+
+.scroll-slide-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-scale-in {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.6s ease-out;
+}
+
+.scroll-scale-in.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.scroll-bounce-in {
+  opacity: 0;
+  transform: translateY(50px) scale(0.9);
+  transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.scroll-bounce-in.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Delays para animações em sequência */
+.scroll-delay-1 {
+  transition-delay: 0.1s;
+}
+
+.scroll-delay-2 {
+  transition-delay: 0.2s;
+}
+
+.scroll-delay-3 {
+  transition-delay: 0.3s;
+}
+
+.scroll-delay-4 {
+  transition-delay: 0.4s;
+}
+
+.scroll-delay-5 {
+  transition-delay: 0.5s;
+}
+
+/* Animações específicas para cards */
+.card-animation {
+  opacity: 0;
+  transform: translateY(40px) scale(0.95);
+  transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card-animation.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Animações para textos */
+.text-animation {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s ease-out;
+}
+
+.text-animation.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Animações para imagens */
+.image-animation {
+  opacity: 0;
+  transform: scale(0.9) rotate(-2deg);
+  transition: all 0.6s ease-out;
+}
+
+.image-animation.visible {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+} 

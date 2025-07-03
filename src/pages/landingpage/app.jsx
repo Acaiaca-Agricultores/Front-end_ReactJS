@@ -1,4 +1,5 @@
 import "./styles-app.css";
+import "../../styles/scroll-animations.css";
 
 import AppAgricultor from "./AppAgricultor";
 import AppTechPlat from "./AppTecPlat";
