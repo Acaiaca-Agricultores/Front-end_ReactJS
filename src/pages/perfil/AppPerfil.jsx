@@ -23,6 +23,7 @@ import {
   Textarea,
   Skeleton,
   useColorModeValue,
+  useBreakpointValue,
   HStack,
   Spinner,
 } from "@chakra-ui/react";
@@ -44,6 +45,7 @@ import {
   FiBookOpen,
   FiMic,
   FiMicOff,
+  FiLogOut,
 } from "react-icons/fi";
 import axios from "axios";
 import ImagemPerfil from "../../assets/plataforma-vovo.png";
@@ -135,6 +137,7 @@ function AppPerfil() {
   const textColor = useColorModeValue("gray.700", "gray.200");
   const accentColor = "#52601A";
   const accentBg = useColorModeValue("#f5fbe7", "#232d13");
+  const tabColor = useBreakpointValue({ base: "black", md: "white" });
 
   const handleSessionExpired = useCallback(() => {
     localStorage.clear();
@@ -298,6 +301,18 @@ function AppPerfil() {
         }));
       },
     });
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    toast({
+      title: "Logout realizado com sucesso",
+      description: "Você foi desconectado da sua conta.",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    navigate("/login");
   };
 
   const handleEditToggle = () => {
@@ -654,6 +669,25 @@ function AppPerfil() {
               )}
             </Box>
           )}
+          
+          {/* Botão de Sair - apenas mobile */}
+          <Button
+            leftIcon={<FiLogOut />}
+            colorScheme="red"
+            variant="outline"
+            size="md"
+            width="100%"
+            mt={4}
+            display={{ base: "flex", lg: "none" }}
+            onClick={handleLogout}
+            _hover={{
+              bg: "red.500",
+              color: "white",
+              borderColor: "red.500",
+            }}
+          >
+            Sair da Conta
+          </Button>
         </Box>
 
         <Box
@@ -665,11 +699,17 @@ function AppPerfil() {
         >
           <Tabs variant="soft-rounded" colorScheme="green" isFitted>
             <TabList mb={4}>
-              <Tab style={{ color: "white" }} _selected={{ bg: accentColor }}>
+              <Tab
+                style={{ color: tabColor }}
+                _selected={{ bg: accentColor, color: "white" }}
+              >
                 <FiUser style={{ marginRight: 8 }} /> Perfil
               </Tab>
               {userData.role !== "consumidor" && (
-                <Tab style={{ color: "white" }} _selected={{ bg: accentColor }}>
+                <Tab
+                  style={{ color: tabColor }}
+                  _selected={{ bg: accentColor, color: "white" }}
+                >
                   <FiBox style={{ marginRight: 8 }} /> Produtos
                 </Tab>
               )}
