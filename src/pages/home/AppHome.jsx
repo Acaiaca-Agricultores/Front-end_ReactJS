@@ -669,7 +669,7 @@ const AppHome = () => {
     <Box backgroundColor="#f7f7f7">
       <Flex
         as="section"
-        h={{ base: "auto", md: "60vh" }}
+        h={"60vh"}
         backgroundImage={`url(${ImagemFeira})`}
         backgroundSize="cover"
         backgroundPosition="center"
@@ -794,6 +794,7 @@ const AppHome = () => {
               <AppCarrossel
                 data={filteredData}
                 title="Resultados da Pesquisa"
+                itemType={filteredData.some(item => item.propertyName) ? "agricultor" : "produto"}
                 renderItem={(item) =>
                   item.propertyName
                     ? renderFarmerCard(item)
@@ -807,6 +808,7 @@ const AppHome = () => {
                     <AppCarrossel
                       key={carousel.title}
                       title={carousel.title}
+                      itemType={carousel.title === "Nossos Agricultores" ? "agricultor" : "produto"}
                       data={
                         priceOrder
                           ? getCarouselData(carousel, filteredData)

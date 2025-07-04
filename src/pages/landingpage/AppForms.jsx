@@ -89,7 +89,7 @@ const AppForms = () => {
           border={"2px solid  #83a11d"}
           borderRadius="8px"
           p={6}
-          margin={"4rem"}
+          margin={{ base: "0", md: "4rem" }}
           background="rgba(0, 0, 0, 0.5)"
           backdropFilter="blur(8px)"
           width={{ base: "100%", md: "60vw" }}

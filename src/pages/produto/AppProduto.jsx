@@ -210,10 +210,10 @@ const AppProduto = () => {
 
       <Container maxW="container.xl" mt="24rem">
         {farmerProducts.length > 0 && (
-          <Box mt={12}>
+          <Box mt={"31rem"}>
             <AppCarrossel
               data={farmerProducts}
-              title="Outros produtos deste agricultor"
+              title="Produtos do mesmo agricultor"
               renderItem={(item) => (
                 <ProductCard item={item} API_URL={API_URL} isOwner={false} />
               )}

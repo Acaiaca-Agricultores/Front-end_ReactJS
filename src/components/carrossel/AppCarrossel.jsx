@@ -5,10 +5,14 @@ import { Heading, IconButton, Flex, Box, Text, VStack } from "@chakra-ui/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
 /**
- * @param {object}
- * @param {Array<object>}
- * @param {string}
- * @param {Function}
+ * @param {object} props
+ * @param {Array<object>} props.data
+ * @param {string} props.title
+ * @param {Function} props.renderItem
+ * @param {number} props.itemsDesktop
+ * @param {number} props.itemsTablet
+ * @param {number} props.itemsMobile
+ * @param {string} props.itemType
  */
 const AppCarrossel = ({
   data,
@@ -17,6 +21,7 @@ const AppCarrossel = ({
   itemsDesktop = 3,
   itemsTablet = 2,
   itemsMobile = 1,
+  itemType = "produto", // novo prop para definir o tipo do item
 }) => {
   const carouselRef = useRef();
 
@@ -104,7 +109,7 @@ const AppCarrossel = ({
             {title}
           </Heading>
           <Text color="gray.500" fontSize="sm">
-            {data.length} produto{data.length !== 1 ? "s" : ""}{" "}
+            {data.length} {itemType === "agricultor" ? (data.length !== 1 ? "agricultores" : "agricultor") : `${itemType}${data.length !== 1 ? "s" : ""}`}{" "}
             {data.length !== 1 ? "disponíveis" : "disponível"}
           </Text>
         </VStack>
