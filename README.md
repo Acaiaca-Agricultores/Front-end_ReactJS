@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# plataforma-acaiaca-teste-dados-mockados
-=======
 <img src="img-readme-acaiaca-front/25500F.png">
 
 # 🌿 Acaiacá
